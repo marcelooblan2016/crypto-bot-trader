@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@chainsafe/dappeteer": "^2.3.0",
+    "api.coinmarketcap": "^1.0.1"
+  }
+}
