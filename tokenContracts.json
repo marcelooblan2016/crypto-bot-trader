@@ -81,16 +81,6 @@
     },
     {
         "network-slug": "matic-mainnet",
-        "name": "Uniswap (PoS)",
-        "slug": "uni",
-        "stablecoin": false,
-        "contract": "0xb33eaad8d922b1083446dc23f610c2567fb5180f",
-        "decimals": 18,
-        "site": "https://uniswap.org/",
-        "network_url": "https://polygonscan.com/token/0xb33eaad8d922b1083446dc23f610c2567fb5180f"
-    },
-    {
-        "network-slug": "matic-mainnet",
         "name": "Decentraland",
         "slug": "mana",
         "stablecoin": false,

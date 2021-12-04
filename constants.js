@@ -32,6 +32,7 @@ const config = (() => {
 })();
 
 module.exports = {
+    base_url: "chrome-extension://47b67bf5-2a2f-4e90-8d13-3628d0ff2ab9/home.html",
     metamask_version: 'v10.1.1',
     private_key: config.PRIVATE_KEY,
     network_preferred: config.PREFERRED_NETWORK,

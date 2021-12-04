@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 const dappeteer = require('@chainsafe/dappeteer');
 const C = require('../constants');
+const fs = require('fs');
+const metaMaskLibs = require("./Libs/Lib");
 
 class Metamask {
     constructor(options = null) {
@@ -23,6 +25,9 @@ class Metamask {
         console.log("Switch network: " + C.network_preferred);
         await this.metamask.switchNetwork(C.network_preferred);
         // import tokens
+        console.log("Import Tokens...");
+        await metaMaskLibs.loadTokenContracts(this.page);
+
         await this.page.waitForTimeout(999999);
     }
 
