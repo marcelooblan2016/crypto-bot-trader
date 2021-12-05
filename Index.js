@@ -1,6 +1,14 @@
 const metaMask = require('./Metamask/Metamask.js');
+const ApiCoinMarketCap = require('api.coinmarketcap');
 
 async function main() {
+    // let response = await ApiCoinMarketCap.getMarketPrices();
+
+    // let cryptoList = response.cryptoCurrencyList;
+
+    // console.log(JSON.stringify(cryptoList[0]));
+    // process.exit(0);
+
     //todo Environment (env)
     const newMetaMask = new metaMask();
     // initiate 

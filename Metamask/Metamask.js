@@ -10,7 +10,10 @@ class Metamask {
         this.page = null;
         this.metamask = null;
     }
-
+    /*
+     * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens
+     * @return void
+     */
     async build () {
         console.log("Launching browser...");
         this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version });
@@ -24,13 +27,21 @@ class Metamask {
         // switch to preferred network
         console.log("Switch network: " + C.network_preferred);
         await this.metamask.switchNetwork(C.network_preferred);
-        // import tokens
         console.log("Import Tokens...");
-        await metaMaskLibs.loadTokenContracts(this.page);
+        await metaMaskLibs.loadTokenContracts(this.page, C);
+        await this.page.waitForTimeout(5000);
+        // token swap
+        await this.swapToken(this.page, 'matic', 'usdc', 0.15);
+        // await this.page.waitForTimeout(999999);
+        // process.exit(0);
+        // import tokens
 
         await this.page.waitForTimeout(999999);
     }
-
+    /*
+     * addNewNetworks : List all available networks, filter new network then add it.
+     * @return void
+     */
     async addNewNetworks () {
         console.log("Adding new networks...");
         let networks = C.networks;
@@ -47,10 +58,13 @@ class Metamask {
             });
         }
     }
-
-    selectPreferredNetwork () {
-        let networks = C.networks;
-        return networks.filter( (network) => network.slug == C.network_preferred)[0]['slug'];
+    /*
+     * swapToken
+     * @params Page page, String tokenFrom, String tokenTo
+     * @return boolean
+     */
+    async swapToken(page, tokenFrom, tokenTo, amount) {
+        await metaMaskLibs.swapToken(this.page, tokenFrom, tokenTo, amount, C);
     }
 }
 

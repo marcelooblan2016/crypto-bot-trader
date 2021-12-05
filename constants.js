@@ -32,7 +32,9 @@ const config = (() => {
 })();
 
 module.exports = {
-    base_url: "chrome-extension://47b67bf5-2a2f-4e90-8d13-3628d0ff2ab9/home.html",
+    urls: {
+        "prefix": "chrome-extension://",
+    },
     metamask_version: 'v10.1.1',
     private_key: config.PRIVATE_KEY,
     network_preferred: config.PREFERRED_NETWORK,
@@ -49,4 +51,23 @@ module.exports = {
             "block_explorer_url": "https://explorer.matic.network"
         }
     ],
+    elements: {
+        
+        add_token: {
+            input_contract_address: "#custom-address",
+            input_custom_symbol: "#custom-symbol",
+            input_custom_decimals: "#custom-decimals",
+            button_next: "//button[contains(., 'Next')]",
+            button_add_token: "//button[contains(., 'Add Tokens')]"
+        },
+        swap_token: {
+            div_dropdown_search_list_pair: ".dropdown-input-pair .dropdown-search-list",
+            input_dropdown_input_pair: ".dropdown-input-pair input[placeholder=\"Search for a token\"]",
+            label_dropdown_option_pair: ".dropdown-input-pair .searchable-item-list__labels .searchable-item-list__primary-label",
+            input_amount_pair: ".dropdown-input-pair input.MuiInputBase-input",
+            div_dropdown_search_list_pair_to: ".dropdown-input-pair.dropdown-input-pair__to .dropdown-search-list",
+            input_dropdown_input_pair_to: ".dropdown-input-pair.dropdown-input-pair__to input[placeholder=\"Search for a token\"]",
+            label_dropdown_option_pair_to: ".dropdown-input-pair.dropdown-input-pair__to .searchable-item-list__labels .searchable-item-list__primary-label"
+        }
+    }
 };
