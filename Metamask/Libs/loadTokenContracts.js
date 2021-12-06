@@ -20,10 +20,10 @@ async function loadTokenContracts(page, C) {
             await page.type(C.elements.add_token.input_custom_symbol, tokenContract['slug']);
             await page.type(C.elements.add_token.input_custom_decimals, (tokenContract['decimals']).toString());
             await page.waitForTimeout(2000);
-            const [buttonNext] = await page.$x(C.elements.add_token.button_next);
+            const [buttonNext] = await page.$x(C.elements.add_token.button_next_xpath);
             buttonNext.click();
             await page.waitForTimeout(1000);
-            const [buttonAddTokens] = await page.$x(C.elements.add_token.button_add_token);
+            const [buttonAddTokens] = await page.$x(C.elements.add_token.button_add_token_xpath);
             buttonAddTokens.click();
             await page.waitForTimeout(1000);
         }

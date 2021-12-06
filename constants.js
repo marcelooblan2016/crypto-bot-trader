@@ -57,8 +57,8 @@ module.exports = {
             input_contract_address: "#custom-address",
             input_custom_symbol: "#custom-symbol",
             input_custom_decimals: "#custom-decimals",
-            button_next: "//button[contains(., 'Next')]",
-            button_add_token: "//button[contains(., 'Add Tokens')]"
+            button_next_xpath: "//button[contains(., 'Next')]",
+            button_add_token_xpath: "//button[contains(., 'Add Tokens')]"
         },
         swap_token: {
             div_dropdown_search_list_pair: ".dropdown-input-pair .dropdown-search-list",
@@ -67,7 +67,11 @@ module.exports = {
             input_amount_pair: ".dropdown-input-pair input.MuiInputBase-input",
             div_dropdown_search_list_pair_to: ".dropdown-input-pair.dropdown-input-pair__to .dropdown-search-list",
             input_dropdown_input_pair_to: ".dropdown-input-pair.dropdown-input-pair__to input[placeholder=\"Search for a token\"]",
-            label_dropdown_option_pair_to: ".dropdown-input-pair.dropdown-input-pair__to .searchable-item-list__labels .searchable-item-list__primary-label"
+            label_dropdown_option_pair_to: ".dropdown-input-pair.dropdown-input-pair__to .searchable-item-list__labels .searchable-item-list__primary-label",
+            button_swap_review_xpath: "//button[contains(., 'Review Swap')]",
+            button_swap_xpath: "//button[contains(text(),'Swap')]",
+            div_transaction_complete_xpath: "//div[contains(text(), 'Transaction complete')]",
+            button_close_xpath: "//button[contains(text(), 'Close')]"
         }
     }
 };

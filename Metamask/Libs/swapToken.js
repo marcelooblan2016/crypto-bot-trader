@@ -40,9 +40,26 @@ async function swapToken(page, tokenFrom, tokenTo, amount, C) {
             'tokenTo': tokenTo,
             'config': C
         });
+        await page.waitForTimeout(1000);
+        // if have confirmation
+        //     -- todo
+        const [buttonSwapReview] = await page.$x(C.elements.swap_token.button_swap_review_xpath);
+        buttonSwapReview.click();
+        await page.waitForNavigation();
+        await page.waitForXPath(C.elements.swap_token.button_swap_xpath)
+        const [buttonSwap] = await page.$x(C.elements.swap_token.button_swap_xpath);
+        buttonSwap.click();
+        await page.waitForNavigation();
+        await page.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath);
+        const [buttonClose] = await page.$x(C.elements.swap_token.button_close_xpath);
+        buttonClose.click();
+        await page.waitForNavigation();
+        console.log("Swapping token: successful");
+        return true;
 
     } catch (error) {
-        console.log(error);
+        console.log("Swapping token: failed");
+        return false;
     }
 }
 

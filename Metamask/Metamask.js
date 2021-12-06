@@ -31,7 +31,8 @@ class Metamask {
         await metaMaskLibs.loadTokenContracts(this.page, C);
         await this.page.waitForTimeout(5000);
         // token swap
-        await this.swapToken(this.page, 'matic', 'usdc', 0.15);
+        // const swapTokenResponse = await this.swapToken(this.page, 'matic', 'usdc', 0.05);
+        // console.log(swapTokenResponse);
         // await this.page.waitForTimeout(999999);
         // process.exit(0);
         // import tokens
@@ -64,7 +65,7 @@ class Metamask {
      * @return boolean
      */
     async swapToken(page, tokenFrom, tokenTo, amount) {
-        await metaMaskLibs.swapToken(this.page, tokenFrom, tokenTo, amount, C);
+        return await metaMaskLibs.swapToken(this.page, tokenFrom, tokenTo, amount, C);
     }
 }
 
