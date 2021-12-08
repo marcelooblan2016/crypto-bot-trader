@@ -12,17 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const api_coinmarketcap_1 = __importDefault(require("api.coinmarketcap"));
 const Metamask_1 = __importDefault(require("./Metamask/Metamask"));
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         const newMetaMask = new Metamask_1.default();
         // initiate 
         yield newMetaMask.build();
-        process.exit(0);
-        process.exit(0);
-        let response = yield api_coinmarketcap_1.default.getMarketPrices();
-        let cryptoList = response.cryptoCurrencyList;
-        console.log(JSON.stringify(cryptoList));
+        // let rsp: boolean;
+        // rsp = await newMetaMask.swapToken('dai', 'matic', 2);
+        // console.log(rsp);
+        // await newMetaMask.page!.waitForTimeout(999999);
+        // process.exit(0);
+        // process.exit(0);
+        // let response = await ApiCoinMarketCap.getMarketPrices();
+        // let cryptoList = response.cryptoCurrencyList;
+        // console.log(JSON.stringify(cryptoList));
     });
 })();

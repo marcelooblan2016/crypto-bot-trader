@@ -34,12 +34,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const dappeteer = __importStar(require("@chainsafe/dappeteer"));
 const constants_1 = __importDefault(require("../constants"));
+const Lib_1 = __importDefault(require("./Libs/Lib"));
 class Metamask {
     constructor(options) {
         this.browser = null;
         this.page = null;
         this.metamask = null;
     }
+    /*
+     * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens
+     * @return void
+     */
     build() {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("Launching browser...");
@@ -47,7 +52,67 @@ class Metamask {
             console.log("Setup metamask...");
             this.metamask = yield dappeteer.setupMetamask(this.browser);
             this.page = this.metamask.page;
-            process.exit(0);
+            // import private key
+            yield this.metamask.importPK(constants_1.default.private_key);
+            // add new networks
+            yield this.addNewNetworks();
+            // switch to preferred network
+            console.log("Switch network: " + constants_1.default.network_preferred);
+            yield this.metamask.switchNetwork(constants_1.default.network_preferred);
+            // load tokens
+            yield this.loadTokenContracts();
+        });
+    }
+    /*
+     * Import tokens with contracts
+     * load erc-20 tokens for safe swapping
+     * @return void
+     */
+    loadTokenContracts() {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("Import Tokens...");
+            yield Lib_1.default.loadTokenContracts({
+                page: this.page,
+                C: constants_1.default
+            });
+        });
+    }
+    /*
+     * addNewNetworks : List all available networks, filter new network then add it.
+     * @return void
+     */
+    addNewNetworks() {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log("Adding new networks...");
+            let networks = constants_1.default.networks;
+            let newNetworks = networks.filter((network) => typeof network['new'] != 'undefined' && network['new'] == true);
+            for (let index in newNetworks) {
+                let network = newNetworks[index];
+                console.log("Adding network: " + network.slug);
+                yield this.metamask.addNetwork({
+                    networkName: network.slug,
+                    rpc: network.rpc_url,
+                    chainId: network.chain_id,
+                    symbol: network.currency_symbol,
+                    explorer: network.block_explorer_url,
+                });
+            }
+        });
+    }
+    /*
+     * swapToken
+     * @params Page page, String tokenFrom, String tokenTo
+     * @return boolean
+     */
+    swapToken(tokenFrom, tokenTo, amount) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield Lib_1.default.swapToken({
+                page: this.page,
+                tokenFrom: tokenFrom,
+                tokenTo: tokenTo,
+                amount: amount,
+                C: constants_1.default
+            });
         });
     }
 }

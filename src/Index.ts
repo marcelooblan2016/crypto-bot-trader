@@ -5,14 +5,20 @@ import metaMask from './Metamask/Metamask';
     const newMetaMask = new metaMask();
     // initiate 
     await newMetaMask.build();
-    process.exit(0);
+    // let rsp: boolean;
+    // rsp = await newMetaMask.swapToken('dai', 'matic', 2);
+    // console.log(rsp);
 
-    process.exit(0);
-    let response = await ApiCoinMarketCap.getMarketPrices();
+    // await newMetaMask.page!.waitForTimeout(999999);
 
-    let cryptoList = response.cryptoCurrencyList;
+    // process.exit(0);
 
-    console.log(JSON.stringify(cryptoList));
+    // process.exit(0);
+    // let response = await ApiCoinMarketCap.getMarketPrices();
+
+    // let cryptoList = response.cryptoCurrencyList;
+
+    // console.log(JSON.stringify(cryptoList));
 
 
 })();
