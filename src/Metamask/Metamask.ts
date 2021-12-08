@@ -1,11 +1,15 @@
-const puppeteer = require('puppeteer');
-const dappeteer = require('@chainsafe/dappeteer');
-const C = require('../constants');
-const fs = require('fs');
-const metaMaskLibs = require("./Libs/Lib");
+import puppeteer from 'puppeteer';
+import {Page, Browser} from 'puppeteer';
+import * as dappeteer from '@chainsafe/dappeteer';
+import C from '../constants';
+import metaMaskLibs from "./Libs/Lib";
 
 class Metamask {
-    constructor(options = null) {
+    public page: Page | null;
+    protected browser: Browser | null;
+    protected metamask: any;
+
+    constructor(options? : any) {
         this.browser = null;
         this.page = null;
         this.metamask = null;
@@ -14,7 +18,8 @@ class Metamask {
      * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens
      * @return void
      */
-    async build () {
+    public async build (): Promise<void>
+    {
         console.log("Launching browser...");
         this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version });
         console.log("Setup metamask...");
@@ -27,23 +32,28 @@ class Metamask {
         // switch to preferred network
         console.log("Switch network: " + C.network_preferred);
         await this.metamask.switchNetwork(C.network_preferred);
+        // load tokens
+        await this.loadTokenContracts();
+    }
+    /*
+     * Import tokens with contracts
+     * load erc-20 tokens for safe swapping
+     * @return void
+     */
+    async loadTokenContracts (): Promise<void>
+    {
         console.log("Import Tokens...");
-        await metaMaskLibs.loadTokenContracts(this.page, C);
-        await this.page.waitForTimeout(5000);
-        // token swap
-        // const swapTokenResponse = await this.swapToken(this.page, 'matic', 'usdc', 0.05);
-        // console.log(swapTokenResponse);
-        // await this.page.waitForTimeout(999999);
-        // process.exit(0);
-        // import tokens
-
-        await this.page.waitForTimeout(999999);
+        await metaMaskLibs.loadTokenContracts({
+            page: this.page,
+            C: C
+        });
     }
     /*
      * addNewNetworks : List all available networks, filter new network then add it.
      * @return void
      */
-    async addNewNetworks () {
+    async addNewNetworks (): Promise<void>
+    {
         console.log("Adding new networks...");
         let networks = C.networks;
         let newNetworks = networks.filter( (network) => typeof network['new'] != 'undefined' && network['new'] == true);
@@ -64,9 +74,16 @@ class Metamask {
      * @params Page page, String tokenFrom, String tokenTo
      * @return boolean
      */
-    async swapToken(page, tokenFrom, tokenTo, amount) {
-        return await metaMaskLibs.swapToken(this.page, tokenFrom, tokenTo, amount, C);
+    async swapToken(tokenFrom: string, tokenTo: string, amount: number): Promise<boolean>
+    {
+        return await metaMaskLibs.swapToken({
+            page: this.page,
+            tokenFrom: tokenFrom,
+            tokenTo: tokenTo,
+            amount: amount,
+            C: C
+        });
     }
 }
 
-module.exports = Metamask;
+export default Metamask

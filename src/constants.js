@@ -1,7 +1,7 @@
 const config = (() => {
     let fs = require('fs');
     try {
-        let envFilePath = './.env';
+        let envFilePath = '../.env';
         console.log("Env File: Loading...");
 
         if (!fs.existsSync(envFilePath)) {
@@ -52,7 +52,6 @@ module.exports = {
         }
     ],
     elements: {
-        
         add_token: {
             input_contract_address: "#custom-address",
             input_custom_symbol: "#custom-symbol",
