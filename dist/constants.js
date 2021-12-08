@@ -1,36 +1,31 @@
+"use strict";
 const config = (() => {
     let fs = require('fs');
     try {
         let envFilePath = './.env';
         console.log("Env File: Loading...");
-
         if (!fs.existsSync(envFilePath)) {
-            throw new Error('Env missing.')
+            throw new Error('Env missing.');
         }
-
         console.log("Env File: Loaded.");
-
         let rawData = fs.readFileSync(envFilePath, 'utf8');
         let envValues = {};
         let data = rawData.split("\n")
-        .filter( function (rowStr) {
-
+            .filter(function (rowStr) {
             return rowStr.includes('=') && !rowStr.includes('#');
         })
-        .map( function (rawValue) {
+            .map(function (rawValue) {
             let row = rawValue.split("=");
             let value = row[1].split('"').join('');
             envValues[row[0]] = value;
         });
-
         return envValues;
-    } catch(e) {
+    }
+    catch (e) {
         console.log(e);
         process.exit(0);
     }
-
 })();
-
 module.exports = {
     urls: {
         "prefix": "chrome-extension://",
@@ -39,8 +34,8 @@ module.exports = {
     private_key: config.PRIVATE_KEY,
     network_preferred: config.PREFERRED_NETWORK,
     networks: [
-        {"slug": "ropsten", "name": "Ropsten Test Network"},
-        {"slug": "rinkeby", "name": "Rinkeby Test Network"},
+        { "slug": "ropsten", "name": "Ropsten Test Network" },
+        { "slug": "rinkeby", "name": "Rinkeby Test Network" },
         {
             "slug": "matic-mainnet",
             "name": "Matic Mainnet",
@@ -52,7 +47,6 @@ module.exports = {
         }
     ],
     elements: {
-        
         add_token: {
             input_contract_address: "#custom-address",
             input_custom_symbol: "#custom-symbol",
