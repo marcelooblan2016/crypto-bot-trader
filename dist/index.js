@@ -12,12 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Metamask_1 = __importDefault(require("./Metamask/Metamask"));
+const metaMask_1 = __importDefault(require("./Metamask/metaMask"));
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
-        const newMetaMask = new Metamask_1.default();
+        const newMetaMask = new metaMask_1.default();
         // initiate 
         yield newMetaMask.build();
+        let tokenBalances = yield newMetaMask.getBalances();
+        console.log(tokenBalances);
         // let rsp: boolean;
         // rsp = await newMetaMask.swapToken('dai', 'matic', 2);
         // console.log(rsp);
