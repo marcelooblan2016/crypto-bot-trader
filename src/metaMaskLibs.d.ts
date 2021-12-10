@@ -4,4 +4,10 @@ declare global {
         page: Page | null,
         C: any
     }
+
+    interface tokenContractInterface {
+        slug: string,
+        contract: string,
+        decimals: number
+    }
 }

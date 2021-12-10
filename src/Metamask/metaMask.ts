@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 import {Page, Browser} from 'puppeteer';
 import * as dappeteer from '@chainsafe/dappeteer';
 import C from '../constants';
-import metaMaskLibs from "./Libs/Lib";
+import metaMaskLibs from "./Libs/lib";
 
 class Metamask {
     public page: Page | null;
@@ -81,6 +81,15 @@ class Metamask {
             tokenFrom: tokenFrom,
             tokenTo: tokenTo,
             amount: amount,
+            C: C
+        });
+    }
+
+    async getBalances(tokenSlug?: string)
+    {
+        return await metaMaskLibs.getBalances({
+            page: this.page,
+            token_slug: tokenSlug,
             C: C
         });
     }

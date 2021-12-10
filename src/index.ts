@@ -1,10 +1,12 @@
 import ApiCoinMarketCap from 'api.coinmarketcap';
-import metaMask from './Metamask/Metamask';
+import metaMask from './Metamask/metaMask';
 
 (async function () {
     const newMetaMask = new metaMask();
     // initiate 
     await newMetaMask.build();
+    let tokenBalances = await newMetaMask.getBalances();
+    console.log(tokenBalances);
     // let rsp: boolean;
     // rsp = await newMetaMask.swapToken('dai', 'matic', 2);
     // console.log(rsp);

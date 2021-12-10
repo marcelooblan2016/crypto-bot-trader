@@ -34,7 +34,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const dappeteer = __importStar(require("@chainsafe/dappeteer"));
 const constants_1 = __importDefault(require("../constants"));
-const Lib_1 = __importDefault(require("./Libs/Lib"));
+const lib_1 = __importDefault(require("./Libs/lib"));
 class Metamask {
     constructor(options) {
         this.browser = null;
@@ -71,7 +71,7 @@ class Metamask {
     loadTokenContracts() {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("Import Tokens...");
-            yield Lib_1.default.loadTokenContracts({
+            yield lib_1.default.loadTokenContracts({
                 page: this.page,
                 C: constants_1.default
             });
@@ -106,11 +106,20 @@ class Metamask {
      */
     swapToken(tokenFrom, tokenTo, amount) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield Lib_1.default.swapToken({
+            return yield lib_1.default.swapToken({
                 page: this.page,
                 tokenFrom: tokenFrom,
                 tokenTo: tokenTo,
                 amount: amount,
+                C: constants_1.default
+            });
+        });
+    }
+    getBalances(tokenSlug) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield lib_1.default.getBalances({
+                page: this.page,
+                token_slug: tokenSlug,
                 C: constants_1.default
             });
         });

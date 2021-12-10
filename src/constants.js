@@ -56,8 +56,8 @@ module.exports = {
             input_contract_address: "#custom-address",
             input_custom_symbol: "#custom-symbol",
             input_custom_decimals: "#custom-decimals",
-            button_next_xpath: "//button[contains(., 'Next')]",
-            button_add_token_xpath: "//button[contains(., 'Add Tokens')]"
+            button_next_xpath: "//button[contains(text(), 'Next')]",
+            button_add_token_xpath: "//button[contains(text(), 'Add Tokens')]"
         },
         swap_token: {
             div_dropdown_search_list_pair: ".dropdown-input-pair .dropdown-search-list",
