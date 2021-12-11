@@ -101,7 +101,7 @@ class Metamask {
     }
     /*
      * swapToken
-     * @params String tokenFrom, String tokenTo
+     * @params String tokenFrom, String tokenTo, float|string amount ('all' for max balance)
      * @return boolean
      */
     swapToken(tokenFrom, tokenTo, amount) {

@@ -31,7 +31,6 @@ function getBalances(params) {
 function getBalanceByToken(params) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            //chrome-extension://odkjoconjphbkgjmioaolohpdhgihomg/home.html#asset/0x8f3cf7ad23cd3cadbd9735aff958023239c6a063
             let tokenSlug = params.token_slug;
             let jsonContractPath = '../tokenContracts.json';
             let rawData;

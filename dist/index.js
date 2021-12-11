@@ -18,11 +18,11 @@ const metaMask_1 = __importDefault(require("./Metamask/metaMask"));
         const newMetaMask = new metaMask_1.default();
         // initiate 
         yield newMetaMask.build();
-        let tokenBalances = yield newMetaMask.getBalances('usdc');
-        console.log(tokenBalances);
+        // let tokenBalances = await newMetaMask.getBalances('usdc');
+        // console.log(tokenBalances);
         // let rsp: boolean;
-        // rsp = await newMetaMask.swapToken('dai', 'matic', 2);
-        // console.log(rsp);
+        let rsp = yield newMetaMask.swapToken('matic', 'link', 1);
+        console.log(rsp);
         // await newMetaMask.page!.waitForTimeout(999999);
         // process.exit(0);
         // process.exit(0);

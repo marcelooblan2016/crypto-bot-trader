@@ -23,7 +23,6 @@ async function getBalances(params: getBalanceParameters): Promise<mappedTokenBal
 
 async function getBalanceByToken(params: getBalanceParameters): Promise<mappedTokenBalance|boolean> {
     try {
-        //chrome-extension://odkjoconjphbkgjmioaolohpdhgihomg/home.html#asset/0x8f3cf7ad23cd3cadbd9735aff958023239c6a063
         let tokenSlug: string | any = params.token_slug;
 
         let jsonContractPath: string = '../tokenContracts.json';

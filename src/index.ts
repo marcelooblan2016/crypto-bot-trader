@@ -5,11 +5,11 @@ import metaMask from './Metamask/metaMask';
     const newMetaMask = new metaMask();
     // initiate 
     await newMetaMask.build();
-    let tokenBalances = await newMetaMask.getBalances('usdc');
-    console.log(tokenBalances);
+    // let tokenBalances = await newMetaMask.getBalances('usdc');
+    // console.log(tokenBalances);
     // let rsp: boolean;
-    // rsp = await newMetaMask.swapToken('dai', 'matic', 2);
-    // console.log(rsp);
+    let rsp: boolean = await newMetaMask.swapToken('matic', 'link', 1);
+    console.log(rsp);
 
     // await newMetaMask.page!.waitForTimeout(999999);
 

@@ -14,31 +14,19 @@ function loadTokenContracts(params) {
         const page = params.page;
         const C = params.C;
         try {
-            let currentUrl;
-            currentUrl = page.url();
-            let addTokenUrl;
-            addTokenUrl = [
+            let currentUrl = page.url();
+            let addTokenUrl = [
                 C.urls.prefix,
                 currentUrl.match(/\/\/(.*?)\//i)[1],
                 "/home.html#add-token"
             ].join("");
-            let homeUrl;
-            homeUrl = [
-                C.urls.prefix,
-                currentUrl.match(/\/\/(.*?)\//i)[1],
-                "/home.html"
-            ].join("");
-            let jsonContractPath;
-            jsonContractPath = '../tokenContracts.json';
-            let rawData;
+            let jsonContractPath = '../tokenContracts.json';
             const fs = require('fs');
-            rawData = fs.readFileSync(jsonContractPath);
-            let tokenContracts;
-            tokenContracts = JSON.parse(rawData);
+            let rawData = fs.readFileSync(jsonContractPath);
+            let tokenContracts = JSON.parse(rawData);
             for (let index in tokenContracts) {
-                let tokenContract;
                 yield page.goto(addTokenUrl);
-                tokenContract = tokenContracts[index];
+                let tokenContract = tokenContracts[index];
                 console.log("Adding " + tokenContract['slug'] + " token ...");
                 yield page.focus(C.elements.add_token.input_contract_address);
                 yield page.type(C.elements.add_token.input_contract_address, tokenContract['contract']);

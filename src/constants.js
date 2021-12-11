@@ -60,6 +60,7 @@ module.exports = {
             button_add_token_xpath: "//button[contains(text(), 'Add Tokens')]"
         },
         swap_token: {
+            div_max_button: ".build-quote__max-button",
             div_dropdown_search_list_pair: ".dropdown-input-pair .dropdown-search-list",
             input_dropdown_input_pair: ".dropdown-input-pair input[placeholder=\"Search for a token\"]",
             label_dropdown_option_pair: ".dropdown-input-pair .searchable-item-list__labels .searchable-item-list__primary-label",

@@ -4,37 +4,24 @@ async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void>
     const C = params.C;
     try {
 
-        let currentUrl: string;
-        currentUrl = page!.url();
+        let currentUrl: string = page!.url();
 
-        let addTokenUrl: string;
-        addTokenUrl = [
+        let addTokenUrl: string = [
             C.urls.prefix,
             currentUrl.match(/\/\/(.*?)\//i)![1],
             "/home.html#add-token"
         ].join("");
-
-        let homeUrl: string;
-        homeUrl = [
-            C.urls.prefix,
-            currentUrl.match(/\/\/(.*?)\//i)![1],
-            "/home.html"
-        ].join("");
         
-        let jsonContractPath: string;
-        jsonContractPath = '../tokenContracts.json';
+        let jsonContractPath: string = '../tokenContracts.json';
 
-        let rawData: string;
         const fs = require('fs');
-        rawData = fs.readFileSync(jsonContractPath);
+        let rawData: string = fs.readFileSync(jsonContractPath);
 
-        let tokenContracts: tokenContractInterface[];
-        tokenContracts = JSON.parse(rawData);
+        let tokenContracts: tokenContractInterface[] = JSON.parse(rawData);
 
         for(let index in tokenContracts) {
-            let tokenContract: tokenContractInterface;
             await page!.goto(addTokenUrl);
-            tokenContract =  tokenContracts[index];
+            let tokenContract: tokenContractInterface = tokenContracts[index];
             console.log("Adding " + tokenContract['slug'] + " token ...");
             await page!.focus(C.elements.add_token.input_contract_address);
             await page!.type(C.elements.add_token.input_contract_address, tokenContract['contract']);

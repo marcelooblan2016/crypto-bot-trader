@@ -71,10 +71,10 @@ class Metamask {
     }
     /*
      * swapToken
-     * @params String tokenFrom, String tokenTo
+     * @params String tokenFrom, String tokenTo, float|string amount ('all' for max balance)
      * @return boolean
      */
-    async swapToken(tokenFrom: string, tokenTo: string, amount: number): Promise<boolean>
+    async swapToken(tokenFrom: string, tokenTo: string, amount: number | string): Promise<boolean>
     {
         return await metaMaskLibs.swapToken({
             page: this.page,
