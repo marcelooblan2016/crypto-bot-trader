@@ -1,10 +1,4 @@
 
-interface tokenContractInterface {
-    slug: string,
-    contract: string,
-    decimals: number
-};
-
 async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void> {
     const page = params.page;
     const C = params.C;

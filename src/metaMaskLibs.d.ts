@@ -10,4 +10,10 @@ declare global {
         contract: string,
         decimals: number
     }
+
+    interface mappedTokenBalance {
+        balance: number,
+        slug: string,
+        token_raw: string | null
+    }
 }

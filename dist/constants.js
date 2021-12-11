@@ -66,6 +66,10 @@ module.exports = {
             button_swap_xpath: "//button[contains(text(),'Swap')]",
             div_transaction_complete_xpath: "//div[contains(text(), 'Transaction complete')]",
             button_close_xpath: "//button[contains(text(), 'Close')]"
+        },
+        get_balances: {
+            div_token_sell: ".list-item.asset-list-item.token-cell",
+            div_primary_balance: ".currency-display-component.token-overview__primary-balance"
         }
     }
 };

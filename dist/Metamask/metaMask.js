@@ -101,7 +101,7 @@ class Metamask {
     }
     /*
      * swapToken
-     * @params Page page, String tokenFrom, String tokenTo
+     * @params String tokenFrom, String tokenTo
      * @return boolean
      */
     swapToken(tokenFrom, tokenTo, amount) {
@@ -115,6 +115,11 @@ class Metamask {
             });
         });
     }
+    /*
+     * getBalances
+     * @params String tokenSlug (optional)
+     * @return object
+     */
     getBalances(tokenSlug) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield lib_1.default.getBalances({

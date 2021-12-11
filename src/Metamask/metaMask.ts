@@ -71,7 +71,7 @@ class Metamask {
     }
     /*
      * swapToken
-     * @params Page page, String tokenFrom, String tokenTo
+     * @params String tokenFrom, String tokenTo
      * @return boolean
      */
     async swapToken(tokenFrom: string, tokenTo: string, amount: number): Promise<boolean>
@@ -84,8 +84,12 @@ class Metamask {
             C: C
         });
     }
-
-    async getBalances(tokenSlug?: string)
+    /*
+     * getBalances
+     * @params String tokenSlug (optional)
+     * @return object
+     */
+    async getBalances(tokenSlug?: string): Promise<mappedTokenBalance[]|mappedTokenBalance|boolean>
     {
         return await metaMaskLibs.getBalances({
             page: this.page,
