@@ -99,4 +99,4 @@ class Metamask {
     }
 }
 
-export default Metamask
+export default new Metamask

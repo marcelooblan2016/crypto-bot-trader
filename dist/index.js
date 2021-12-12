@@ -12,17 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const metaMask_1 = __importDefault(require("./Metamask/metaMask"));
+const trader_1 = __importDefault(require("./Trader/trader"));
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
-        const newMetaMask = new metaMask_1.default();
-        // initiate 
-        yield newMetaMask.build();
-        // let tokenBalances = await newMetaMask.getBalances('usdc');
+        let response = yield trader_1.default.analyzeMarket();
+        console.log(response);
+        // // initiate 
+        // await metaMask.build();
+        // let tokenBalances = await metaMask.getBalances('matic');
         // console.log(tokenBalances);
+        // process.exit(0);
         // let rsp: boolean;
-        let rsp = yield newMetaMask.swapToken('matic', 'link', 1);
-        console.log(rsp);
+        // let rsp: boolean = await metaMsk.swapToken('matic', 'link', 1);
+        // console.log(rsp);
         // await newMetaMask.page!.waitForTimeout(999999);
         // process.exit(0);
         // process.exit(0);

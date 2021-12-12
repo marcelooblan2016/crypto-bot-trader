@@ -45,7 +45,6 @@ function loadTokenContracts(params) {
         }
         catch (error) {
             console.log(error);
-            yield page.waitForTimeout(999999);
         }
     });
 }

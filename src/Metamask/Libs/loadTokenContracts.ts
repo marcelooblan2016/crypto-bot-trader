@@ -39,7 +39,6 @@ async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void>
         }
     } catch (error) {
         console.log(error)
-        await page!.waitForTimeout(999999);
     }
 }
 

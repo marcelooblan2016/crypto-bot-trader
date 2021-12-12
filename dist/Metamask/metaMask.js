@@ -130,4 +130,4 @@ class Metamask {
         });
     }
 }
-exports.default = Metamask;
+exports.default = new Metamask;

@@ -1,15 +1,18 @@
-import ApiCoinMarketCap from 'api.coinmarketcap';
-import metaMask from './Metamask/metaMask';
 
+import metaMask from './Metamask/metaMask';
+import trader from './Trader/trader';
 (async function () {
-    const newMetaMask = new metaMask();
-    // initiate 
-    await newMetaMask.build();
-    // let tokenBalances = await newMetaMask.getBalances('usdc');
+    let response = await trader.analyzeMarket();
+    console.log(response);
+    
+    // // initiate 
+    // await metaMask.build();
+    // let tokenBalances = await metaMask.getBalances('matic');
     // console.log(tokenBalances);
+    // process.exit(0);
     // let rsp: boolean;
-    let rsp: boolean = await newMetaMask.swapToken('matic', 'link', 1);
-    console.log(rsp);
+    // let rsp: boolean = await metaMsk.swapToken('matic', 'link', 1);
+    // console.log(rsp);
 
     // await newMetaMask.page!.waitForTimeout(999999);
 
