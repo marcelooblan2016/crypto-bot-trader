@@ -57,6 +57,11 @@ class Trader {
             let responseData = yield api_coinmarketcap_1.default.getMarketPrices(1, 150, { tagSlugs: null });
             let mappedData = this.map((responseData));
             // todo
+            /**
+             * Check if usdc (stable coin is empty)
+             * ** If empty, it is ready to buy -> search for good token to buy per condition
+             * ** else check token with balance, watch the token if it is good for sell per condition with a consideration of cutloss
+             */
             // ready to buy
             // ready to sell
         });
