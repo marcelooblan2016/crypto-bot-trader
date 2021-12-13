@@ -2,11 +2,17 @@ import _ from 'lodash';
 import ApiCoinMarketCap from 'api.coinmarketcap';
 
 interface AnalyzeParameters {
-    options?: object
+    metamask_with_build: MetamaskInterface
 }
 
 class Trader {
-    constructor(options? : any) {}
+    protected stableCoin: tokenContractInterface;
+    protected tokenContractList: tokenContractInterface[];
+    
+    constructor(options? : any) {
+        this.tokenContractList = this.tokenContracts();
+        this.stableCoin = this.tokenContractList.filter( contract => contract.stablecoin == true)[0] ?? null;
+    }
     
     private tokenContracts (): tokenContractInterface[] {
         let jsonContractPath: string = '../tokenContracts.json';
@@ -18,7 +24,7 @@ class Trader {
     }
 
     private map (response_raw_data: CoinMarketCap.CryptoListFromRawData): CoinMarketCap.Crypto[] {
-        let tokenContracts: tokenContractInterface[] = this.tokenContracts();
+        let tokenContracts: tokenContractInterface[] = this.tokenContractList;
         let allowedTokens: Array<string> = tokenContracts.map( contract => contract.slug );
 
         let cryptoCurrencyList = response_raw_data.cryptoCurrencyList;
@@ -51,11 +57,12 @@ class Trader {
         return mappedCryptoList;
     }
 
-    async analyzeMarket (params?: AnalyzeParameters) {
+    async analyzeMarket (params: AnalyzeParameters) {
+        const metaMaskWithBuild = params.metamask_with_build;
+        // console.log(this.stableCoin);
+        // let responseData = await ApiCoinMarketCap.getMarketPrices(1, 150, {tagSlugs: null});
 
-        let responseData = await ApiCoinMarketCap.getMarketPrices(1, 150, {tagSlugs: null});
-
-        let mappedData = this.map((responseData) as CoinMarketCap.CryptoListFromRawData);
+        // let mappedData = this.map((responseData) as CoinMarketCap.CryptoListFromRawData);
 
         // todo
         /**

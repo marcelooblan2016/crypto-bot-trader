@@ -4,7 +4,7 @@ import * as dappeteer from '@chainsafe/dappeteer';
 import C from '../constants';
 import metaMaskLibs from "./Libs/lib";
 
-class Metamask {
+class Metamask implements MetamaskInterface {
     public page: Page | null;
     protected browser: Browser | null;
     protected metamask: any;

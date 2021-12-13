@@ -13,9 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __importDefault(require("lodash"));
-const api_coinmarketcap_1 = __importDefault(require("api.coinmarketcap"));
 class Trader {
-    constructor(options) { }
+    constructor(options) {
+        var _a;
+        this.tokenContractList = this.tokenContracts();
+        this.stableCoin = (_a = this.tokenContractList.filter(contract => contract.stablecoin == true)[0]) !== null && _a !== void 0 ? _a : null;
+    }
     tokenContracts() {
         let jsonContractPath = '../tokenContracts.json';
         const fs = require('fs');
@@ -23,7 +26,7 @@ class Trader {
         return (JSON.parse(rawData));
     }
     map(response_raw_data) {
-        let tokenContracts = this.tokenContracts();
+        let tokenContracts = this.tokenContractList;
         let allowedTokens = tokenContracts.map(contract => contract.slug);
         let cryptoCurrencyList = response_raw_data.cryptoCurrencyList;
         let mappedCryptoList = cryptoCurrencyList.map(function (crypto) {
@@ -54,8 +57,10 @@ class Trader {
     }
     analyzeMarket(params) {
         return __awaiter(this, void 0, void 0, function* () {
-            let responseData = yield api_coinmarketcap_1.default.getMarketPrices(1, 150, { tagSlugs: null });
-            let mappedData = this.map((responseData));
+            const metaMaskWithBuild = params.metamask_with_build;
+            // console.log(this.stableCoin);
+            // let responseData = await ApiCoinMarketCap.getMarketPrices(1, 150, {tagSlugs: null});
+            // let mappedData = this.map((responseData) as CoinMarketCap.CryptoListFromRawData);
             // todo
             /**
              * Check if usdc (stable coin is empty)

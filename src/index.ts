@@ -3,10 +3,14 @@ import metaMask from './Metamask/metaMask';
 import trader from './Trader/trader';
 (async function () {
     // // initiate 
-    await metaMask.build();
-    let tokenBalances = await metaMask.getBalances();
-    // let response = await trader.analyzeMarket();
-    
+    // await metaMask.build();
+    // let response = await trader.analyzeMarket({metamask_with_build: metaMask});
+    console.log("METAMASK BUILD");
+
+    setInterval(async () => {
+        await trader.analyzeMarket({metamask_with_build: metaMask})
+    }, 5000);
+    // let tokenBalances = await metaMask.getBalances();
     // console.log(tokenBalances);
     // console.log(response);
 
