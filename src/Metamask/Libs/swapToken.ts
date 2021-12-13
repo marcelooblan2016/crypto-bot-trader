@@ -4,7 +4,7 @@ interface SwapTokenParameters {
     page: Page | null, 
     tokenFrom: string, 
     tokenTo: string, 
-    amount: number, 
+    amount: number | string,
     C: any
 }
 
@@ -12,29 +12,24 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
     try {
         const page = params.page;
         const C = params.C;
-        let tokenFrom: string;
-        tokenFrom = params.tokenFrom;
-        let tokenTo: string;
-        tokenTo = params.tokenTo;
-        let amount: number;
-        amount = params.amount;
-     
-        let currentUrl: string;
-        currentUrl = page!.url();
+        let tokenFrom: string = params.tokenFrom;
+        let tokenTo: string = params.tokenTo;
+        let amount: number | string = params.amount;
 
-        let swapTokenUrl: string;
-        swapTokenUrl = [
+        let currentUrl: string = page!.url();
+        let swapTokenUrl: string = [
             C.urls.prefix,
             (currentUrl.match(/\/\/(.*?)\//i))![1],
             "/home.html#swaps/build-quote"
         ].join("");
+
         await page!.goto(swapTokenUrl);
         // **** TokenFrom
         // click dropdown option
         await page!.click(C.elements.swap_token.div_dropdown_search_list_pair);
         // type tokenFrom
         await page!.type(C.elements.swap_token.input_dropdown_input_pair, tokenFrom, {delay: 20});
-        await page!.waitForTimeout(1000);
+        await page!.waitForTimeout(2000);
         // select tokenFrom
         await page!.evaluate((options) => {
             const C = options['config'];
@@ -44,8 +39,25 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
             'tokenFrom': tokenFrom,
             'config': C
         });
-        // type amount
-        await page!.type(C.elements.swap_token.input_amount_pair, (amount).toString(), {delay: 20});
+        
+        if (typeof amount == 'string') {
+            switch(amount) {
+                case 'all':
+                    // max amount
+                    let isMaxButton: boolean = await page!.evaluate(function (C) {
+                        return document.querySelectorAll(C.elements.swap_token.div_max_button).length >= 1 ? true : false;
+                    }, C);
+                    
+                    if (isMaxButton === true) {await page!.click(C.elements.swap_token.div_max_button);}
+                    else {/* todo .build-quote__balance-message */}
+                break;
+            }
+        }
+        else {
+            // type exact amount 
+            await page!.type(C.elements.swap_token.input_amount_pair, (amount).toString(), {delay: 20});
+        }
+
         // **** TokenTo
         // click dropdown option
         await page!.click(C.elements.swap_token.div_dropdown_search_list_pair_to);

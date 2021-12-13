@@ -2,9 +2,9 @@ import puppeteer from 'puppeteer';
 import {Page, Browser} from 'puppeteer';
 import * as dappeteer from '@chainsafe/dappeteer';
 import C from '../constants';
-import metaMaskLibs from "./Libs/Lib";
+import metaMaskLibs from "./Libs/lib";
 
-class Metamask {
+class Metamask implements MetamaskInterface {
     public page: Page | null;
     protected browser: Browser | null;
     protected metamask: any;
@@ -71,10 +71,10 @@ class Metamask {
     }
     /*
      * swapToken
-     * @params Page page, String tokenFrom, String tokenTo
+     * @params String tokenFrom, String tokenTo, float|string amount ('all' for max balance)
      * @return boolean
      */
-    async swapToken(tokenFrom: string, tokenTo: string, amount: number): Promise<boolean>
+    async swapToken(tokenFrom: string, tokenTo: string, amount: number | string): Promise<boolean>
     {
         return await metaMaskLibs.swapToken({
             page: this.page,
@@ -84,6 +84,19 @@ class Metamask {
             C: C
         });
     }
+    /*
+     * getBalances
+     * @params String tokenSlug (optional)
+     * @return object
+     */
+    async getBalances(tokenSlug?: string): Promise<mappedTokenBalance[]|mappedTokenBalance|boolean>
+    {
+        return await metaMaskLibs.getBalances({
+            page: this.page,
+            token_slug: tokenSlug,
+            C: C
+        });
+    }
 }
 
-export default Metamask
+export default new Metamask

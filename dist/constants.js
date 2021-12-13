@@ -51,10 +51,11 @@ module.exports = {
             input_contract_address: "#custom-address",
             input_custom_symbol: "#custom-symbol",
             input_custom_decimals: "#custom-decimals",
-            button_next_xpath: "//button[contains(., 'Next')]",
-            button_add_token_xpath: "//button[contains(., 'Add Tokens')]"
+            button_next_xpath: "//button[contains(text(), 'Next')]",
+            button_add_token_xpath: "//button[contains(text(), 'Add Tokens')]"
         },
         swap_token: {
+            div_max_button: ".build-quote__max-button",
             div_dropdown_search_list_pair: ".dropdown-input-pair .dropdown-search-list",
             input_dropdown_input_pair: ".dropdown-input-pair input[placeholder=\"Search for a token\"]",
             label_dropdown_option_pair: ".dropdown-input-pair .searchable-item-list__labels .searchable-item-list__primary-label",
@@ -66,6 +67,10 @@ module.exports = {
             button_swap_xpath: "//button[contains(text(),'Swap')]",
             div_transaction_complete_xpath: "//div[contains(text(), 'Transaction complete')]",
             button_close_xpath: "//button[contains(text(), 'Close')]"
+        },
+        get_balances: {
+            div_token_sell: ".list-item.asset-list-item.token-cell",
+            div_primary_balance: ".currency-display-component.token-overview__primary-balance"
         }
     }
 };

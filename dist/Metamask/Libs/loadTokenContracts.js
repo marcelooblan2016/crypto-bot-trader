@@ -9,42 +9,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = require('fs');
-;
 function loadTokenContracts(params) {
     return __awaiter(this, void 0, void 0, function* () {
+        const page = params.page;
+        const C = params.C;
         try {
-            const page = params.page;
-            const C = params.C;
-            let currentUrl;
-            currentUrl = page.url();
-            let addTokenUrl;
-            addTokenUrl = [
+            let currentUrl = page.url();
+            let addTokenUrl = [
                 C.urls.prefix,
                 currentUrl.match(/\/\/(.*?)\//i)[1],
                 "/home.html#add-token"
             ].join("");
-            let jsonContractPath;
-            jsonContractPath = '../tokenContracts.json';
-            let rawData;
-            rawData = fs.readFileSync(jsonContractPath);
-            let tokenContracts;
-            tokenContracts = JSON.parse(rawData);
+            let jsonContractPath = '../tokenContracts.json';
+            const fs = require('fs');
+            let rawData = fs.readFileSync(jsonContractPath);
+            let tokenContracts = JSON.parse(rawData);
             for (let index in tokenContracts) {
-                let tokenContract;
                 yield page.goto(addTokenUrl);
-                tokenContract = tokenContracts[index];
+                let tokenContract = tokenContracts[index];
                 console.log("Adding " + tokenContract['slug'] + " token ...");
+                yield page.focus(C.elements.add_token.input_contract_address);
                 yield page.type(C.elements.add_token.input_contract_address, tokenContract['contract']);
+                yield page.focus(C.elements.add_token.input_custom_symbol);
                 yield page.type(C.elements.add_token.input_custom_symbol, tokenContract['slug']);
+                yield page.waitForTimeout(1000);
+                yield page.focus(C.elements.add_token.input_custom_decimals);
                 yield page.type(C.elements.add_token.input_custom_decimals, (tokenContract['decimals']).toString());
-                yield page.waitForTimeout(2000);
                 const [buttonNext] = yield page.$x(C.elements.add_token.button_next_xpath);
                 buttonNext.click();
-                yield page.waitForTimeout(1000);
+                yield page.waitForNavigation();
                 const [buttonAddTokens] = yield page.$x(C.elements.add_token.button_add_token_xpath);
                 buttonAddTokens.click();
-                yield page.waitForTimeout(2000);
+                yield page.waitForNavigation();
             }
         }
         catch (error) {
