@@ -14,16 +14,11 @@ function swapToken(params) {
         try {
             const page = params.page;
             const C = params.C;
-            let tokenFrom;
-            tokenFrom = params.tokenFrom;
-            let tokenTo;
-            tokenTo = params.tokenTo;
-            let amount;
-            amount = params.amount;
-            let currentUrl;
-            currentUrl = page.url();
-            let swapTokenUrl;
-            swapTokenUrl = [
+            let tokenFrom = params.tokenFrom;
+            let tokenTo = params.tokenTo;
+            let amount = params.amount;
+            let currentUrl = page.url();
+            let swapTokenUrl = [
                 C.urls.prefix,
                 (currentUrl.match(/\/\/(.*?)\//i))[1],
                 "/home.html#swaps/build-quote"
@@ -34,7 +29,7 @@ function swapToken(params) {
             yield page.click(C.elements.swap_token.div_dropdown_search_list_pair);
             // type tokenFrom
             yield page.type(C.elements.swap_token.input_dropdown_input_pair, tokenFrom, { delay: 20 });
-            yield page.waitForTimeout(1000);
+            yield page.waitForTimeout(2000);
             // select tokenFrom
             yield page.evaluate((options) => {
                 const C = options['config'];
@@ -44,8 +39,24 @@ function swapToken(params) {
                 'tokenFrom': tokenFrom,
                 'config': C
             });
-            // type amount
-            yield page.type(C.elements.swap_token.input_amount_pair, (amount).toString(), { delay: 20 });
+            if (typeof amount == 'string') {
+                switch (amount) {
+                    case 'all':
+                        // max amount
+                        let isMaxButton = yield page.evaluate(function (C) {
+                            return document.querySelectorAll(C.elements.swap_token.div_max_button).length >= 1 ? true : false;
+                        }, C);
+                        if (isMaxButton === true) {
+                            yield page.click(C.elements.swap_token.div_max_button);
+                        }
+                        else { /* todo .build-quote__balance-message */ }
+                        break;
+                }
+            }
+            else {
+                // type exact amount 
+                yield page.type(C.elements.swap_token.input_amount_pair, (amount).toString(), { delay: 20 });
+            }
             // **** TokenTo
             // click dropdown option
             yield page.click(C.elements.swap_token.div_dropdown_search_list_pair_to);
