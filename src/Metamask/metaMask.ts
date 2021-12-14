@@ -21,7 +21,7 @@ class Metamask implements MetamaskInterface {
     public async build (): Promise<void>
     {
         console.log("Launching browser...");
-        this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version });
+        this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version});
         console.log("Setup metamask...");
         this.metamask = await dappeteer.setupMetamask(this.browser);
         this.page = this.metamask.page;

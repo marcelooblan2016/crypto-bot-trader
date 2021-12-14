@@ -8,7 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const token_1 = __importDefault(require("../../Records/token"));
 function loadTokenContracts(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const page = params.page;
@@ -20,10 +24,7 @@ function loadTokenContracts(params) {
                 currentUrl.match(/\/\/(.*?)\//i)[1],
                 "/home.html#add-token"
             ].join("");
-            let jsonContractPath = '../tokenContracts.json';
-            const fs = require('fs');
-            let rawData = fs.readFileSync(jsonContractPath);
-            let tokenContracts = JSON.parse(rawData);
+            let tokenContracts = token_1.default.tokenContracts();
             for (let index in tokenContracts) {
                 yield page.goto(addTokenUrl);
                 let tokenContract = tokenContracts[index];

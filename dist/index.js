@@ -14,15 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const metaMask_1 = __importDefault(require("./Metamask/metaMask"));
 const trader_1 = __importDefault(require("./Trader/trader"));
+const token_1 = __importDefault(require("./Records/token"));
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         // // initiate 
-        // await metaMask.build();
-        // let response = await trader.analyzeMarket({metamask_with_build: metaMask});
-        console.log("METAMASK BUILD");
+        yield metaMask_1.default.build();
+        const initiatedTrader = new trader_1.default({ metamask_with_build: metaMask_1.default, token: token_1.default });
         setInterval(() => __awaiter(this, void 0, void 0, function* () {
-            yield trader_1.default.analyzeMarket({ metamask_with_build: metaMask_1.default });
-        }), 5000);
+            yield initiatedTrader.analyzeMarket();
+        }), 20000);
         // let tokenBalances = await metaMask.getBalances();
         // console.log(tokenBalances);
         // console.log(response);
