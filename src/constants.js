@@ -38,6 +38,7 @@ module.exports = {
     metamask_version: 'v10.1.1',
     private_key: config.PRIVATE_KEY,
     network_preferred: config.PREFERRED_NETWORK,
+    headless_browser: Boolean( parseInt(config.HEADLESS_BROWSER ?? 0) ),
     networks: [
         {"slug": "ropsten", "name": "Ropsten Test Network"},
         {"slug": "rinkeby", "name": "Rinkeby Test Network"},
@@ -51,6 +52,12 @@ module.exports = {
             "block_explorer_url": "https://explorer.matic.network"
         }
     ],
+    trading: {
+        options: {
+            sell_cutloss: parseInt(config.SELL_CUTLOSS ?? 10),
+            sell_profit: parseInt(config.SELL_PROFIT ?? 5)
+        }
+    },
     elements: {
         add_token: {
             input_contract_address: "#custom-address",
