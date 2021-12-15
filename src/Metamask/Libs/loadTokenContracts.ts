@@ -1,3 +1,4 @@
+import token from '../../Records/token';
 
 async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void> {
     const page = params.page;
@@ -12,12 +13,8 @@ async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void>
             "/home.html#add-token"
         ].join("");
         
-        let jsonContractPath: string = '../tokenContracts.json';
 
-        const fs = require('fs');
-        let rawData: string = fs.readFileSync(jsonContractPath);
-
-        let tokenContracts: tokenContractInterface[] = JSON.parse(rawData);
+        let tokenContracts: tokenContractInterface[] = token.tokenContracts();
 
         for(let index in tokenContracts) {
             await page!.goto(addTokenUrl);

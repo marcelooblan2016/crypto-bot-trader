@@ -56,7 +56,7 @@ function getBalanceByToken(params) {
             let primaryBalance = yield page.evaluate(function (C) {
                 let rawBalance = document.querySelector(C.elements.get_balances.div_primary_balance).innerText;
                 let splitted = rawBalance.split("\n");
-                return parseFloat(splitted[0]);
+                return Number(splitted[0]);
             }, C);
             return {
                 'balance': primaryBalance,
@@ -99,7 +99,7 @@ function getBalanceAll(params) {
                 let splitted = token.split("\n");
                 let mappedTokens;
                 mappedTokens = {
-                    'balance': parseFloat(splitted[0]),
+                    'balance': Number(splitted[0]),
                     'slug': (splitted[1]).toLocaleLowerCase(),
                     'token_raw': token,
                 };

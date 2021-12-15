@@ -1,4 +1,5 @@
 "use strict";
+var _a, _b, _c;
 const config = (() => {
     let fs = require('fs');
     try {
@@ -33,6 +34,7 @@ module.exports = {
     metamask_version: 'v10.1.1',
     private_key: config.PRIVATE_KEY,
     network_preferred: config.PREFERRED_NETWORK,
+    headless_browser: Boolean(parseInt((_a = config.HEADLESS_BROWSER) !== null && _a !== void 0 ? _a : 0)),
     networks: [
         { "slug": "ropsten", "name": "Ropsten Test Network" },
         { "slug": "rinkeby", "name": "Rinkeby Test Network" },
@@ -46,6 +48,12 @@ module.exports = {
             "block_explorer_url": "https://explorer.matic.network"
         }
     ],
+    trading: {
+        options: {
+            sell_cutloss: parseInt((_b = config.SELL_CUTLOSS) !== null && _b !== void 0 ? _b : 10),
+            sell_profit: parseInt((_c = config.SELL_PROFIT) !== null && _c !== void 0 ? _c : 5)
+        }
+    },
     elements: {
         add_token: {
             input_contract_address: "#custom-address",

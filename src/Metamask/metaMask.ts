@@ -21,7 +21,7 @@ class Metamask implements MetamaskInterface {
     public async build (): Promise<void>
     {
         console.log("Launching browser...");
-        this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version });
+        this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version});
         console.log("Setup metamask...");
         this.metamask = await dappeteer.setupMetamask(this.browser);
         this.page = this.metamask.page;
@@ -74,13 +74,14 @@ class Metamask implements MetamaskInterface {
      * @params String tokenFrom, String tokenTo, float|string amount ('all' for max balance)
      * @return boolean
      */
-    async swapToken(tokenFrom: string, tokenTo: string, amount: number | string): Promise<boolean>
+    async swapToken(tokenFrom: string, tokenTo: string, amount: number | string, current_price: number): Promise<boolean>
     {
         return await metaMaskLibs.swapToken({
             page: this.page,
             tokenFrom: tokenFrom,
             tokenTo: tokenTo,
             amount: amount,
+            current_price: current_price,
             C: C
         });
     }

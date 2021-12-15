@@ -8,7 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const swapHistory_1 = __importDefault(require("../../Records/swapHistory"));
 function swapToken(params) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -57,6 +61,10 @@ function swapToken(params) {
                 // type exact amount 
                 yield page.type(C.elements.swap_token.input_amount_pair, (amount).toString(), { delay: 20 });
             }
+            let amountAcquired = yield page.evaluate(function (C) {
+                let inputAmountPair = document.querySelector(C.elements.swap_token.input_amount_pair).value;
+                return Number(inputAmountPair);
+            }, C);
             // **** TokenTo
             // click dropdown option
             yield page.click(C.elements.swap_token.div_dropdown_search_list_pair_to);
@@ -74,7 +82,7 @@ function swapToken(params) {
             });
             yield page.waitForTimeout(1000);
             // if have confirmation
-            //     -- todo
+            //     -- todo .....
             const [buttonSwapReview] = yield page.$x(C.elements.swap_token.button_swap_review_xpath);
             buttonSwapReview.click();
             yield page.waitForNavigation();
@@ -87,6 +95,12 @@ function swapToken(params) {
             buttonClose.click();
             yield page.waitForNavigation();
             console.log("Swapping token: successful");
+            // save as history amountAcquired, current_price, slug
+            swapHistory_1.default.write({
+                amount: amountAcquired,
+                current_price: params.current_price,
+                slug: tokenTo
+            });
             return true;
         }
         catch (error) {
