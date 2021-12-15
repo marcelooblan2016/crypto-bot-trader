@@ -53,7 +53,7 @@ async function getBalanceByToken(params: getBalanceParameters): Promise<mappedTo
         let primaryBalance: number = await page!.evaluate( function (C) {
             let rawBalance: string | null = (document.querySelector(C.elements.get_balances.div_primary_balance) as HTMLElement).innerText;
             let splitted: Array<string> = rawBalance.split("\n");
-            return parseFloat(splitted[0]);
+            return Number(splitted[0]);
         }, C);
 
         return {
@@ -102,7 +102,7 @@ async function getBalanceAll(params: getBalanceParameters): Promise<boolean|mapp
             let splitted = token.split("\n");
             let mappedTokens: mappedTokenBalance;
             mappedTokens = {
-                'balance': parseFloat(splitted[0]),
+                'balance': Number(splitted[0]),
                 'slug': (splitted[1]).toLocaleLowerCase(),
                 'token_raw': token,
             };

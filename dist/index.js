@@ -17,12 +17,20 @@ const trader_1 = __importDefault(require("./Trader/trader"));
 const token_1 = __importDefault(require("./Records/token"));
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
+        // console.log("INIT");
+        // swapHistory.write({slug: 'avax', current_price: 5, amount: 20});
+        // process.exit(0);
         // // initiate 
         yield metaMask_1.default.build();
+        let rsp = yield metaMask_1.default.swapToken('usdc', 'bat', 2, 1.00);
+        console.log(rsp);
+        // let tokenBalances = await metaMask.getBalances();
+        // console.log(tokenBalances);
         const initiatedTrader = new trader_1.default({ metamask_with_build: metaMask_1.default, token: token_1.default });
-        setInterval(() => __awaiter(this, void 0, void 0, function* () {
-            yield initiatedTrader.analyzeMarket();
-        }), 20000);
+        yield initiatedTrader.analyzeMarket();
+        // setInterval(async () => {
+        //     await initiatedTrader.analyzeMarket()
+        // }, 20000);
         // let tokenBalances = await metaMask.getBalances();
         // console.log(tokenBalances);
         // console.log(response);

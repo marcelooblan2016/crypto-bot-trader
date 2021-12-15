@@ -2,17 +2,27 @@
 import metaMask from './Metamask/metaMask';
 import trader from './Trader/trader';
 import token from './Records/token';
+import swapHistory from './Records/swapHistory';
 
 (async function () {
+    
+    // console.log("INIT");
+    // swapHistory.write({slug: 'avax', current_price: 5, amount: 20});
 
+    // process.exit(0);
     // // initiate 
     await metaMask.build();
+    let rsp: boolean = await metaMask.swapToken('usdc', 'bat', 2, 1.00);
+    console.log(rsp);
+
+    // let tokenBalances = await metaMask.getBalances();
+    // console.log(tokenBalances);
 
     const initiatedTrader = new trader({metamask_with_build: metaMask, token: token});
-
-    setInterval(async () => {
-        await initiatedTrader.analyzeMarket()
-    }, 20000);
+    await initiatedTrader.analyzeMarket()
+    // setInterval(async () => {
+    //     await initiatedTrader.analyzeMarket()
+    // }, 20000);
 
     // let tokenBalances = await metaMask.getBalances();
     // console.log(tokenBalances);

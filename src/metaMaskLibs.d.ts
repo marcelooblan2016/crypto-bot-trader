@@ -6,7 +6,7 @@ declare global {
         build(): Promise<void>,
         loadTokenContracts(): Promise<void>,
         addNewNetworks(): Promise<void>
-        swapToken(tokenFrom: string, tokenTo: string, amount: number | string): Promise<boolean>,
+        swapToken(tokenFrom: string, tokenTo: string, amount: number | string, current_price: number): Promise<boolean>,
         getBalances(tokenSlug?: string): Promise<mappedTokenBalance[]|mappedTokenBalance|boolean>
     }
 
@@ -20,6 +20,7 @@ declare global {
         contract: string,
         decimals: number,
         stablecoin: boolean,
+        minimum_balance: number
     }
 
     interface mappedTokenBalance {
