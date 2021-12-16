@@ -12,7 +12,8 @@ import swapHistory from './Records/swapHistory';
     // process.exit(0);
     // // initiate 
     await metaMask.build();
-    let rsp: boolean = await metaMask.swapToken('usdc', 'bat', 2, 1.00);
+    let rsp: boolean = await metaMask.swapToken('matic', 'bat', 1, 1.16);
+    // let rsp: boolean = await metaMask.swapToken('usdc', 'mana', 'all', 2.97);
     console.log(rsp);
 
     // let tokenBalances = await metaMask.getBalances();

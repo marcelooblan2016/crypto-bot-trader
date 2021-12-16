@@ -22,7 +22,8 @@ const token_1 = __importDefault(require("./Records/token"));
         // process.exit(0);
         // // initiate 
         yield metaMask_1.default.build();
-        let rsp = yield metaMask_1.default.swapToken('usdc', 'bat', 2, 1.00);
+        let rsp = yield metaMask_1.default.swapToken('matic', 'bat', 1, 1.16);
+        // let rsp: boolean = await metaMask.swapToken('usdc', 'mana', 'all', 2.97);
         console.log(rsp);
         // let tokenBalances = await metaMask.getBalances();
         // console.log(tokenBalances);

@@ -82,7 +82,14 @@ function swapToken(params) {
             });
             yield page.waitForTimeout(1000);
             // if have confirmation
-            //     -- todo .....
+            let isButtonDangerContinue = yield page.evaluate((options) => {
+                const C = options['config'];
+                return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
+            }, { 'config': C });
+            if (isButtonDangerContinue == true) {
+                console.log("button continue found.");
+                yield page.click(C.elements.swap_token.button_swap_continue);
+            }
             const [buttonSwapReview] = yield page.$x(C.elements.swap_token.button_swap_review_xpath);
             buttonSwapReview.click();
             yield page.waitForNavigation();
