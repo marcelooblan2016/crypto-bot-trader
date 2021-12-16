@@ -13,7 +13,8 @@ class SwapHistory implements SwapHistoryNs.SwapHistoryInterface {
                 return {
                     slug: token.slug,
                     current_price: 0,
-                    amount: 0
+                    amount_acquired: 0,
+                    amount_from: 0
                 };
             });
             let initialContent: string = JSON.stringify(tokenContracts);
@@ -26,7 +27,8 @@ class SwapHistory implements SwapHistoryNs.SwapHistoryInterface {
         for (let index in swapHistoryData) {
             let currentSwap: SwapHistoryNs.swaps = swapHistoryData[index];
             if (currentSwap.slug == params.slug) {
-                swapHistoryData[index].amount = params.amount;
+                swapHistoryData[index].amount_acquired = params.amount_acquired;
+                swapHistoryData[index].amount_from = params.amount_from;
                 swapHistoryData[index].current_price = params.current_price;
                 break;
             }
