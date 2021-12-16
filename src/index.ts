@@ -7,14 +7,14 @@ import swapHistory from './Records/swapHistory';
 (async function () {
     
     // console.log("INIT");
-    // swapHistory.write({slug: 'avax', current_price: 5, amount: 20});
+    // swapHistory.write({slug: 'avax', current_price: 5, amount_acquired: 20, amount_from: '10 matic'});
 
     // process.exit(0);
     // // initiate 
     await metaMask.build();
-    let rsp: boolean = await metaMask.swapToken('matic', 'bat', 1, 1.16);
+    // let rsp: boolean = await metaMask.swapToken('matic', 'bat', 1, 1.16);
     // let rsp: boolean = await metaMask.swapToken('usdc', 'mana', 'all', 2.97);
-    console.log(rsp);
+    // console.log(rsp);
 
     // let tokenBalances = await metaMask.getBalances();
     // console.log(tokenBalances);

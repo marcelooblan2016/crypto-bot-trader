@@ -104,7 +104,8 @@ function swapToken(params) {
             console.log("Swapping token: successful");
             // save as history amountAcquired, current_price, slug
             swapHistory_1.default.write({
-                amount: amountAcquired,
+                amount_acquired: amountAcquired,
+                amount_from: [amount, tokenFrom].join(" "),
                 current_price: params.current_price,
                 slug: tokenTo
             });

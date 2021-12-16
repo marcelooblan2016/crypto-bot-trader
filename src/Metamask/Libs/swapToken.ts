@@ -109,7 +109,8 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
 
         // save as history amountAcquired, current_price, slug
         swapHistory.write({
-            amount: amountAcquired,
+            amount_acquired: amountAcquired,
+            amount_from: [amount, tokenFrom].join(" "),
             current_price: params.current_price,
             slug: tokenTo
         });
