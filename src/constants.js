@@ -54,7 +54,7 @@ module.exports = {
     ],
     trading: {
         options: {
-            sell_cutloss: parseInt(config.SELL_CUTLOSS ?? 10),
+            sell_cutloss: parseInt(config.SELL_CUTLOSS ?? -10),
             sell_profit: parseInt(config.SELL_PROFIT ?? 5)
         }
     },

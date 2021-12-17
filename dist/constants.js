@@ -50,7 +50,7 @@ module.exports = {
     ],
     trading: {
         options: {
-            sell_cutloss: parseInt((_b = config.SELL_CUTLOSS) !== null && _b !== void 0 ? _b : 10),
+            sell_cutloss: parseInt((_b = config.SELL_CUTLOSS) !== null && _b !== void 0 ? _b : -10),
             sell_profit: parseInt((_c = config.SELL_PROFIT) !== null && _c !== void 0 ? _c : 5)
         }
     },

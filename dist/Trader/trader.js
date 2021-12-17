@@ -12,8 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const lodash_1 = __importDefault(require("lodash"));
 const lib_1 = __importDefault(require("./Libs/lib"));
 const api_coinmarketcap_1 = __importDefault(require("api.coinmarketcap"));
+const swapHistory_1 = __importDefault(require("../Records/swapHistory"));
 class Trader {
     constructor(contructorParams) {
         var _a;
@@ -84,9 +86,44 @@ class Trader {
             }).map(function (token) {
                 var _a;
                 let tokenMarket = (_a = mappedMarketData.filter((tokenMarket) => tokenMarket.symbol == token.slug)[0]) !== null && _a !== void 0 ? _a : {};
-                return Object.assign(Object.assign({}, token), tokenMarket);
+                let swapHistoryDataFound = swapHistory_1.default.read({ slug: token.slug });
+                return Object.assign(Object.assign(Object.assign({}, token), tokenMarket), {
+                    history: swapHistoryDataFound
+                });
             });
             console.log(tokenWithBalanceAndMarketData);
+            let sellCutLoss = lodash_1.default.get(this.metaMaskWithBuild.C, 'trading.options.sell_cutloss');
+            let sellProfit = lodash_1.default.get(this.metaMaskWithBuild.C, 'trading.options.sell_profit');
+            tokenWithBalanceAndMarketData.forEach(function (token) {
+                let tokenBalance = lodash_1.default.get(token, 'balance');
+                let historyCurrentPrice = lodash_1.default.get(token, 'history.current_price', null);
+                let currentPrice = lodash_1.default.get(token, 'current_price');
+                let gainsDecimal = (currentPrice - historyCurrentPrice) / currentPrice;
+                let gainsPercentage = gainsDecimal * 100;
+                let earnings = (tokenBalance * currentPrice) * gainsDecimal;
+                if (gainsPercentage >= sellProfit) {
+                    // sell profit
+                    let msg = [
+                        "Sell Profit: ",
+                        gainsPercentage + "%",
+                        token.slug,
+                        "Earned: " + earnings + " usd",
+                    ].join(" ");
+                    console.log(msg);
+                    //todo swap
+                }
+                else if (gainsPercentage <= sellCutLoss) {
+                    // selling to prevent more loss
+                    let msg = [
+                        "Cut Loss: ",
+                        gainsPercentage + "%",
+                        token.slug,
+                        "Earned: " + earnings + " usd",
+                    ].join(" ");
+                    console.log(msg);
+                    //todo swap
+                }
+            });
             // todo  / check from swapHistory compare -> sell if profit or cutloss
             process.exit(0);
         });

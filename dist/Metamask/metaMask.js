@@ -40,6 +40,7 @@ class Metamask {
         this.browser = null;
         this.page = null;
         this.metamask = null;
+        this.C = constants_1.default;
     }
     /*
      * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens

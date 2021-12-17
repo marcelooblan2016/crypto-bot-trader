@@ -21,8 +21,11 @@ class SwapHistory {
             fs.writeFileSync(this.swapHistoryFilePath, initialContent);
         }
     }
+    historyData() {
+        return JSON.parse(fs.readFileSync(this.swapHistoryFilePath, 'utf8'));
+    }
     write(params) {
-        let swapHistoryData = JSON.parse(fs.readFileSync(this.swapHistoryFilePath, 'utf8'));
+        let swapHistoryData = this.historyData();
         for (let index in swapHistoryData) {
             let currentSwap = swapHistoryData[index];
             if (currentSwap.slug == params.slug) {
@@ -36,7 +39,10 @@ class SwapHistory {
         return true;
     }
     read(params) {
-        return true;
+        var _a;
+        let slug = params.slug;
+        let swapHistoryData = this.historyData();
+        return (_a = swapHistoryData.filter(history => history.slug == slug)[0]) !== null && _a !== void 0 ? _a : null;
     }
 }
 exports.default = new SwapHistory;

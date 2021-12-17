@@ -2,6 +2,7 @@ import {Page, Browser} from 'puppeteer';
 declare global {
 
     interface MetamaskInterface {
+        C: object,
         page: Page | null,
         build(): Promise<void>,
         loadTokenContracts(): Promise<void>,

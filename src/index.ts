@@ -6,6 +6,7 @@ import swapHistory from './Records/swapHistory';
 
 (async function () {
     
+
     // console.log("INIT");
     // swapHistory.write({slug: 'avax', current_price: 5, amount_acquired: 20, amount_from: '10 matic'});
 

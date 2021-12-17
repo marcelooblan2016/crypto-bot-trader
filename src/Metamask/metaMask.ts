@@ -8,11 +8,13 @@ class Metamask implements MetamaskInterface {
     public page: Page | null;
     protected browser: Browser | null;
     protected metamask: any;
+    public C: object;
 
     constructor(options? : any) {
         this.browser = null;
         this.page = null;
         this.metamask = null;
+        this.C = C;
     }
     /*
      * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens
