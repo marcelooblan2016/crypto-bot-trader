@@ -22,8 +22,12 @@ class SwapHistory implements SwapHistoryNs.SwapHistoryInterface {
         }
     }
 
+    protected historyData(): SwapHistoryNs.swaps[] {
+        return JSON.parse(fs.readFileSync(this.swapHistoryFilePath, 'utf8'));
+    }
+
     public write(params: SwapHistoryNs.writeParams): boolean {
-        let swapHistoryData: SwapHistoryNs.swaps[] = JSON.parse(fs.readFileSync(this.swapHistoryFilePath, 'utf8'));
+        let swapHistoryData: SwapHistoryNs.swaps[] = this.historyData();
         for (let index in swapHistoryData) {
             let currentSwap: SwapHistoryNs.swaps = swapHistoryData[index];
             if (currentSwap.slug == params.slug) {
@@ -39,9 +43,11 @@ class SwapHistory implements SwapHistoryNs.SwapHistoryInterface {
         return true;
     }
 
-    public read(params: SwapHistoryNs.readParams): boolean {
-        
-        return true;
+    public read(params: SwapHistoryNs.readParams): SwapHistoryNs.swaps | null {
+        let slug = params.slug;
+        let swapHistoryData: SwapHistoryNs.swaps[] = this.historyData();
+
+        return swapHistoryData.filter( history => history.slug == slug)[0] ?? null;
     }
     
 }
