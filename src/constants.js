@@ -54,11 +54,14 @@ module.exports = {
     ],
     trading: {
         options: {
-            sell_cutloss: parseInt(config.SELL_CUTLOSS ?? 10),
+            sell_cutloss: parseInt(config.SELL_CUTLOSS ?? -10),
             sell_profit: parseInt(config.SELL_PROFIT ?? 5)
         }
     },
     elements: {
+        modals: {
+            home: ".popover-header__button"
+        },
         add_token: {
             input_contract_address: "#custom-address",
             input_custom_symbol: "#custom-symbol",
@@ -76,7 +79,7 @@ module.exports = {
             input_dropdown_input_pair_to: ".dropdown-input-pair.dropdown-input-pair__to input[placeholder=\"Search for a token\"]",
             label_dropdown_option_pair_to: ".dropdown-input-pair.dropdown-input-pair__to .searchable-item-list__labels .searchable-item-list__primary-label",
             button_swap_continue: ".actionable-message__action.actionable-message__action--primary",
-            button_swap_review_xpath: "//button[contains(., 'Review Swap')]",
+            button_swap_review_xpath: "//button[contains(text(), 'Review Swap')]",
             button_swap_xpath: "//button[contains(text(),'Swap')]",
             div_transaction_complete_xpath: "//div[contains(text(), 'Transaction complete')]",
             button_close_xpath: "//button[contains(text(), 'Close')]"

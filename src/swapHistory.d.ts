@@ -5,7 +5,7 @@ declare global {
 
         interface SwapHistoryInterface {
             write(params: SwapHistoryNs.writeParams): boolean,
-            read(params: SwapHistoryNs.readParams): boolean 
+            read(params: SwapHistoryNs.readParams): swaps | null
         }
 
         interface swaps {
@@ -23,7 +23,7 @@ declare global {
         }
 
         interface readParams {
-            slug?: string
+            slug: string
         }
 
     }

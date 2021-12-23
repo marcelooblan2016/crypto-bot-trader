@@ -13,11 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const swapHistory_1 = __importDefault(require("../../Records/swapHistory"));
+const logger_1 = __importDefault(require("../../Records/logger"));
 function swapToken(params) {
     return __awaiter(this, void 0, void 0, function* () {
+        const page = params.page;
+        const C = params.C;
         try {
-            const page = params.page;
-            const C = params.C;
             let tokenFrom = params.tokenFrom;
             let tokenTo = params.tokenTo;
             let amount = params.amount;
@@ -89,11 +90,13 @@ function swapToken(params) {
             if (isButtonDangerContinue == true) {
                 console.log("button continue found.");
                 yield page.click(C.elements.swap_token.button_swap_continue);
+                yield page.waitForTimeout(2000);
             }
+            yield page.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]");
             const [buttonSwapReview] = yield page.$x(C.elements.swap_token.button_swap_review_xpath);
             buttonSwapReview.click();
             yield page.waitForNavigation();
-            yield page.waitForXPath(C.elements.swap_token.button_swap_xpath);
+            yield page.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]");
             const [buttonSwap] = yield page.$x(C.elements.swap_token.button_swap_xpath);
             buttonSwap.click();
             yield page.waitForNavigation();
@@ -101,7 +104,6 @@ function swapToken(params) {
             const [buttonClose] = yield page.$x(C.elements.swap_token.button_close_xpath);
             buttonClose.click();
             yield page.waitForNavigation();
-            console.log("Swapping token: successful");
             // save as history amountAcquired, current_price, slug
             swapHistory_1.default.write({
                 amount_acquired: amountAcquired,
@@ -109,10 +111,20 @@ function swapToken(params) {
                 current_price: params.current_price,
                 slug: tokenTo
             });
+            let msg = [
+                "Swapping token: successful",
+                "Amount Acquired: " + amountAcquired,
+                "Amount From: " + [amount, tokenFrom].join(" "),
+                "Current Price: " + params.current_price,
+                "TokenTo: " + tokenTo,
+            ].join(" ");
+            logger_1.default.write({ content: msg });
             return true;
         }
         catch (error) {
-            console.log("Swapping token: failed");
+            console.log(error);
+            logger_1.default.write({ content: "Swapping token: failed" });
+            logger_1.default.screenshot(page);
         }
         return false;
     });

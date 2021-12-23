@@ -40,6 +40,7 @@ class Metamask {
         this.browser = null;
         this.page = null;
         this.metamask = null;
+        this.C = constants_1.default;
     }
     /*
      * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens
@@ -128,6 +129,20 @@ class Metamask {
                 token_slug: tokenSlug,
                 C: constants_1.default
             });
+        });
+    }
+    clearPopups() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // has Modal home
+            let isHomeModal = yield this.page.evaluate((options) => {
+                const C = options['config'];
+                return document.querySelectorAll(C.elements.modals.home).length >= 1 ? true : false;
+            }, { 'config': constants_1.default });
+            if (isHomeModal == true) {
+                console.log("Home modal found.");
+                yield this.page.click(constants_1.default.elements.modals.home);
+            }
+            return true;
         });
     }
 }

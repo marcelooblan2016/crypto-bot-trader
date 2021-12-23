@@ -1,5 +1,6 @@
 import {Page} from 'puppeteer';
 import swapHistory from '../../Records/swapHistory';
+import logger from '../../Records/logger';
 
 interface SwapTokenParameters {
     page: Page | null, 
@@ -11,9 +12,9 @@ interface SwapTokenParameters {
 }
 
 async function swapToken(params: SwapTokenParameters): Promise<boolean> {
+    const page = params.page;
+    const C = params.C;
     try {
-        const page = params.page;
-        const C = params.C;
         let tokenFrom: string = params.tokenFrom;
         let tokenTo: string = params.tokenTo;
         let amount: number | string = params.amount;
@@ -92,12 +93,14 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         if (isButtonDangerContinue == true) {
             console.log("button continue found.");
             await page!.click(C.elements.swap_token.button_swap_continue)
+            await page!.waitForTimeout(2000);
         }
-
+        
+        await page!.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]");
         const [buttonSwapReview] = await page!.$x(C.elements.swap_token.button_swap_review_xpath);
         buttonSwapReview.click();
         await page!.waitForNavigation();
-        await page!.waitForXPath(C.elements.swap_token.button_swap_xpath)
+        await page!.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]")
         const [buttonSwap] = await page!.$x(C.elements.swap_token.button_swap_xpath);
         buttonSwap.click();
         await page!.waitForNavigation();
@@ -105,7 +108,6 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         const [buttonClose] = await page!.$x(C.elements.swap_token.button_close_xpath);
         buttonClose.click();
         await page!.waitForNavigation();
-        console.log("Swapping token: successful");
 
         // save as history amountAcquired, current_price, slug
         swapHistory.write({
@@ -115,9 +117,20 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
             slug: tokenTo
         });
         
+        let msg = [
+            "Swapping token: successful",
+            "Amount Acquired: " + amountAcquired,
+            "Amount From: " + [amount, tokenFrom].join(" "),
+            "Current Price: " + params.current_price,
+            "TokenTo: " + tokenTo,
+        ].join(" ");
+        logger.write({content: msg});
+        
         return true;
     } catch (error) {
-        console.log("Swapping token: failed");
+        console.log(error);
+        logger.write({content: "Swapping token: failed"});
+        logger.screenshot(page!);
     }
 
     return false;
