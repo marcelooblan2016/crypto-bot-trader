@@ -16,6 +16,7 @@ const lodash_1 = __importDefault(require("lodash"));
 const lib_1 = __importDefault(require("./Libs/lib"));
 const api_coinmarketcap_1 = __importDefault(require("api.coinmarketcap"));
 const swapHistory_1 = __importDefault(require("../Records/swapHistory"));
+const logger_1 = __importDefault(require("../Records/logger"));
 class Trader {
     constructor(contructorParams) {
         var _a;
@@ -40,6 +41,7 @@ class Trader {
             try {
                 // check stable coin balancebalance
                 let tokenBalances = yield this.metaMaskWithBuild.getBalances();
+                this.metaMaskWithBuild.clearPopups();
                 if (typeof tokenBalances == 'boolean') {
                     return false;
                 }
@@ -52,8 +54,6 @@ class Trader {
                 }
                 let responseData = yield api_coinmarketcap_1.default.getMarketPrices(1, 150, { tagSlugs: null });
                 let mappedMarketData = this.map((responseData));
-                // console.log(mappedMarketData);
-                // console.log(tokenBalances);
                 if (sellMode == true) {
                     yield this.sellMode({ mappedMarketData: mappedMarketData, tokenBalances: tokenBalances });
                 }
@@ -77,6 +77,7 @@ class Trader {
         return __awaiter(this, void 0, void 0, function* () {
             let mappedMarketData = params.mappedMarketData;
             let exceptionSlugs = this.exceptionSlugs;
+            console.log(params.tokenBalances);
             // get token with balance except matic
             let tokenWithBalanceAndMarketData = (params.tokenBalances).filter(function (token) {
                 if (!exceptionSlugs.includes(token.slug) && token.balance > 0) {
@@ -91,26 +92,26 @@ class Trader {
                     history: swapHistoryDataFound
                 });
             });
-            console.log(tokenWithBalanceAndMarketData);
             let sellCutLoss = lodash_1.default.get(this.metaMaskWithBuild.C, 'trading.options.sell_cutloss');
             let sellProfit = lodash_1.default.get(this.metaMaskWithBuild.C, 'trading.options.sell_profit');
-            tokenWithBalanceAndMarketData.forEach(function (token) {
+            for (let token of tokenWithBalanceAndMarketData) {
                 let tokenBalance = lodash_1.default.get(token, 'balance');
                 let historyCurrentPrice = lodash_1.default.get(token, 'history.current_price', null);
                 let currentPrice = lodash_1.default.get(token, 'current_price');
                 let gainsDecimal = (currentPrice - historyCurrentPrice) / currentPrice;
                 let gainsPercentage = gainsDecimal * 100;
                 let earnings = (tokenBalance * currentPrice) * gainsDecimal;
+                let isSell = false;
+                let msg = null;
                 if (gainsPercentage >= sellProfit) {
                     // sell profit
-                    let msg = [
+                    msg = [
                         "Sell Profit: ",
                         gainsPercentage + "%",
                         token.slug,
                         "Earned: " + earnings + " usd",
                     ].join(" ");
-                    console.log(msg);
-                    //todo swap
+                    isSell = true;
                 }
                 else if (gainsPercentage <= sellCutLoss) {
                     // selling to prevent more loss
@@ -120,11 +121,15 @@ class Trader {
                         token.slug,
                         "Earned: " + earnings + " usd",
                     ].join(" ");
-                    console.log(msg);
-                    //todo swap
+                    isSell = true;
                 }
-            });
+                if (isSell === true) {
+                    logger_1.default.write({ content: msg });
+                    yield this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice);
+                }
+            }
             // todo  / check from swapHistory compare -> sell if profit or cutloss
+            yield this.metaMaskWithBuild.page.waitForTimeout(999999);
             process.exit(0);
         });
     }

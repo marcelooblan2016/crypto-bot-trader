@@ -27,6 +27,7 @@ class Metamask implements MetamaskInterface {
         console.log("Setup metamask...");
         this.metamask = await dappeteer.setupMetamask(this.browser);
         this.page = this.metamask.page;
+
         // import private key
         await this.metamask.importPK(C.private_key);
         // add new networks
@@ -99,6 +100,22 @@ class Metamask implements MetamaskInterface {
             token_slug: tokenSlug,
             C: C
         });
+    }
+
+    async clearPopups(): Promise<boolean>
+    {
+        // has Modal home
+        let isHomeModal: boolean = await this.page!.evaluate((options) => {
+            const C = options['config'];
+            return document.querySelectorAll(C.elements.modals.home).length >= 1 ? true : false;
+        }, {'config': C});
+
+        if (isHomeModal == true) {
+            console.log("Home modal found.");
+            await this.page!.click(C.elements.modals.home)
+        }
+
+        return true;
     }
 }
 

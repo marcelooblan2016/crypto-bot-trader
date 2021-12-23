@@ -2,6 +2,7 @@ import _ from 'lodash';
 import traderLibs from "./Libs/lib";
 import ApiCoinMarketCap from 'api.coinmarketcap';
 import swapHistory from '../Records/swapHistory';
+import logger from '../Records/logger';
 
 interface contructorParameters {
     metamask_with_build: MetamaskInterface,
@@ -44,6 +45,9 @@ class Trader {
         try {
         // check stable coin balancebalance
         let tokenBalances = await this.metaMaskWithBuild.getBalances();
+
+        this.metaMaskWithBuild.clearPopups();
+
         if (typeof tokenBalances == 'boolean') { return false; }
         tokenBalances = (tokenBalances) as mappedTokenBalance[];
         let stableCoinBalance = tokenBalances.filter( (
@@ -58,8 +62,6 @@ class Trader {
         let responseData = await ApiCoinMarketCap.getMarketPrices(1, 150, {tagSlugs: null});
 
         let mappedMarketData = this.map((responseData) as CoinMarketCap.CryptoListFromRawData);
-        // console.log(mappedMarketData);
-        // console.log(tokenBalances);
 
         if (sellMode == true) {
             await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
@@ -84,6 +86,7 @@ class Trader {
     async sellMode(params: sellModeParameters) {
         let mappedMarketData = params.mappedMarketData;
         let exceptionSlugs = this.exceptionSlugs;
+        console.log(params.tokenBalances);
         // get token with balance except matic
         let tokenWithBalanceAndMarketData = (params.tokenBalances).filter( function (token) {
             if (!exceptionSlugs.includes(token.slug) && token.balance > 0) {
@@ -103,29 +106,28 @@ class Trader {
             };
         });
         
-        console.log(tokenWithBalanceAndMarketData);
         let sellCutLoss = _.get(this.metaMaskWithBuild.C, 'trading.options.sell_cutloss');
         let sellProfit = _.get(this.metaMaskWithBuild.C, 'trading.options.sell_profit');
 
-        tokenWithBalanceAndMarketData.forEach( function (token) {
+        for(let token of tokenWithBalanceAndMarketData) {
             let tokenBalance = _.get(token, 'balance');
             let historyCurrentPrice: number = _.get(token, 'history.current_price', null);
             let currentPrice: number = _.get(token, 'current_price');
             let gainsDecimal: number = (currentPrice - historyCurrentPrice) / currentPrice;
             let gainsPercentage: number = gainsDecimal * 100;
             let earnings = (tokenBalance * currentPrice) * gainsDecimal;
-
+            let isSell: boolean = false;
+            let msg: string | null = null;
             if (gainsPercentage >= sellProfit) {
                 // sell profit
-                let msg = [
+                msg = [
                     "Sell Profit: ",
                     gainsPercentage + "%",
                     token.slug,
                     "Earned: " + earnings + " usd",
                 ].join(" ");
-                
-                console.log(msg);
-                //todo swap
+
+                isSell = true;
             }
             else if (gainsPercentage <= sellCutLoss) {
                 // selling to prevent more loss
@@ -136,12 +138,17 @@ class Trader {
                     "Earned: " + earnings + " usd",
                 ].join(" ");
 
-                console.log(msg);
-                //todo swap
+                isSell = true;
             }
-        });
+
+            if (isSell === true) {
+                logger.write({content: msg!});
+                await this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice);
+            }
+        }
         
         // todo  / check from swapHistory compare -> sell if profit or cutloss
+        await this.metaMaskWithBuild.page!.waitForTimeout(999999);
         process.exit(0);
     }
 

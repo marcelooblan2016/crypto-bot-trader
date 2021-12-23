@@ -131,5 +131,19 @@ class Metamask {
             });
         });
     }
+    clearPopups() {
+        return __awaiter(this, void 0, void 0, function* () {
+            // has Modal home
+            let isHomeModal = yield this.page.evaluate((options) => {
+                const C = options['config'];
+                return document.querySelectorAll(C.elements.modals.home).length >= 1 ? true : false;
+            }, { 'config': constants_1.default });
+            if (isHomeModal == true) {
+                console.log("Home modal found.");
+                yield this.page.click(constants_1.default.elements.modals.home);
+            }
+            return true;
+        });
+    }
 }
 exports.default = new Metamask;

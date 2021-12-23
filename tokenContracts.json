@@ -130,5 +130,16 @@
         "site": null,
         "network_url": "https://polygonscan.com/token/0x2c89bbc92bd86f8075d1decc58c7f4e0107f286b",
         "minimum_balance": 0
+    },
+    {
+        "network_slug": "matic-mainnet",
+        "name": "Wrapped Matic",
+        "slug": "wmatic",
+        "stablecoin": false,
+        "contract": "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+        "decimals": 18,
+        "site": "https://polygon.technology/",
+        "network_url": "https://polygonscan.com/token/0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+        "minimum_balance": 0
     }
 ]
