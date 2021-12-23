@@ -24,4 +24,4 @@ Homestead.json
 toBeConvertedFiles
 
 swapHistory.json
-./logs/*
+logs/*.*
