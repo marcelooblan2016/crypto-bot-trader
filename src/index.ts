@@ -4,7 +4,6 @@ import trader from './Trader/trader';
 import token from './Records/token';
 
 (async function () {
-
     // // initiate 
     await metaMask.build();
 
@@ -13,5 +12,7 @@ import token from './Records/token';
     // setInterval(async () => {
     //     await initiatedTrader.analyzeMarket()
     // }, 20000);
+
+
 
 })();
