@@ -54,20 +54,13 @@ class Trader {
             token: mappedTokenBalance) => token.slug == this.stableCoin.slug
         ).map( token => Number(token.balance))[0] ?? null;
         // check if will sell or buy
-        let sellMode: boolean = false;
-        if (stableCoinBalance <= 0) {
-            sellMode = true;
-        }
 
         let responseData = await ApiCoinMarketCap.getMarketPrices(1, 150, {tagSlugs: null});
 
         let mappedMarketData = this.map((responseData) as CoinMarketCap.CryptoListFromRawData);
-
-        if (sellMode == true) {
-            await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
-        }
-        else {await this.buyMode();}
-
+        // check token ready for sell
+        await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
+        // await this.buyMode();
 
         // todo
         /**
@@ -83,12 +76,10 @@ class Trader {
         return false;
     }
 
-    async sellMode(params: sellModeParameters) {
-        let mappedMarketData = params.mappedMarketData;
+    private tokenWithBalanceAndMarketData (tokenBalances: mappedTokenBalance[], mappedMarketData: CoinMarketCap.Crypto[]) {
         let exceptionSlugs = this.exceptionSlugs;
-        console.log(params.tokenBalances);
-        // get token with balance except matic
-        let tokenWithBalanceAndMarketData = (params.tokenBalances).filter( function (token) {
+
+        return (tokenBalances).filter( function (token) {
             if (!exceptionSlugs.includes(token.slug) && token.balance > 0) {
                 return true;
             }
@@ -96,20 +87,39 @@ class Trader {
         }).map( function (token) {
             let tokenMarket = mappedMarketData.filter( (tokenMarket) => tokenMarket.symbol == token.slug)[0] ?? {};
             let swapHistoryDataFound = swapHistory.read({slug: token.slug});
+            let balanceInUSD: number = tokenMarket.current_price * token.balance;
 
             return {
                 ...token,
                 ...tokenMarket,
                 ...{
                     history: swapHistoryDataFound
+                },
+                ...{
+                    balance_in_usd: balanceInUSD,
+                    balance_nearest_a_usd: Math.round(balanceInUSD)
                 }
             };
         });
+    }
+
+    async sellMode(params: sellModeParameters): Promise<boolean> {
+        let mappedMarketData = params.mappedMarketData;
+        let exceptionSlugs = this.exceptionSlugs;
+        console.log(params.tokenBalances);
+        // get token with balance except matic
+        let tokenWithBalanceAndMarketData = this.tokenWithBalanceAndMarketData(params.tokenBalances, mappedMarketData);
         
         let sellCutLoss = _.get(this.metaMaskWithBuild.C, 'trading.options.sell_cutloss');
         let sellProfit = _.get(this.metaMaskWithBuild.C, 'trading.options.sell_profit');
+        let filteredTokenWithProfitableBalance = tokenWithBalanceAndMarketData.filter((token) => token.balance_nearest_a_usd > 0);
+        console.log(filteredTokenWithProfitableBalance);
 
-        for(let token of tokenWithBalanceAndMarketData) {
+        if (filteredTokenWithProfitableBalance.length < 1) {
+            return false;
+        }
+
+        for(let token of filteredTokenWithProfitableBalance) {
             let tokenBalance = _.get(token, 'balance');
             let historyCurrentPrice: number = _.get(token, 'history.current_price', null);
             let currentPrice: number = _.get(token, 'current_price');
@@ -147,9 +157,7 @@ class Trader {
             }
         }
         
-        // todo  / check from swapHistory compare -> sell if profit or cutloss
-        await this.metaMaskWithBuild.page!.waitForTimeout(999999);
-        process.exit(0);
+        return true;
     }
 
     async buyMode() {

@@ -13,6 +13,4 @@ import token from './Records/token';
     //     await initiatedTrader.analyzeMarket()
     // }, 20000);
 
-
-
 })();
