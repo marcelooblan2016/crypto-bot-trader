@@ -14,6 +14,11 @@ interface sellModeParameters {
     tokenBalances: mappedTokenBalance[]
 }
 
+interface buyModeParameters {
+    mappedMarketData: CoinMarketCap.Crypto[],
+    tokenBalances: mappedTokenBalance[]
+}
+
 class Trader {
 
     protected metaMaskWithBuild: MetamaskInterface;
@@ -59,16 +64,8 @@ class Trader {
 
         let mappedMarketData = this.map((responseData) as CoinMarketCap.CryptoListFromRawData);
         // check token ready for sell
-        await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
-        // await this.buyMode();
-
-        // todo
-        /**
-         * Check if usdc (stable coin is empty)
-         * ** If empty, it is ready to buy -> search for good token to buy per condition
-         * ** else check token with balance, watch the token if it is good for sell per condition with a consideration of cutloss
-         * ******* * Check if cutloss reached the max, or if profit to sell
-         */
+        // await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
+        await this.buyMode({tokenBalances: tokenBalances, mappedMarketData: mappedMarketData});
         
             return true;
         } catch (error) {}
@@ -76,10 +73,14 @@ class Trader {
         return false;
     }
 
-    private tokenWithBalanceAndMarketData (tokenBalances: mappedTokenBalance[], mappedMarketData: CoinMarketCap.Crypto[]) {
+    private tokenWithBalanceAndMarketData (tokenBalances: mappedTokenBalance[], mappedMarketData: CoinMarketCap.Crypto[], noExceptions: boolean = false) {
         let exceptionSlugs = this.exceptionSlugs;
 
         return (tokenBalances).filter( function (token) {
+            if (!exceptionSlugs.includes(token.slug) && noExceptions == true) {
+                return true;
+            }
+
             if (!exceptionSlugs.includes(token.slug) && token.balance > 0) {
                 return true;
             }
@@ -105,15 +106,12 @@ class Trader {
 
     async sellMode(params: sellModeParameters): Promise<boolean> {
         let mappedMarketData = params.mappedMarketData;
-        let exceptionSlugs = this.exceptionSlugs;
-        console.log(params.tokenBalances);
         // get token with balance except matic
         let tokenWithBalanceAndMarketData = this.tokenWithBalanceAndMarketData(params.tokenBalances, mappedMarketData);
         
         let sellCutLoss = _.get(this.metaMaskWithBuild.C, 'trading.options.sell_cutloss');
         let sellProfit = _.get(this.metaMaskWithBuild.C, 'trading.options.sell_profit');
         let filteredTokenWithProfitableBalance = tokenWithBalanceAndMarketData.filter((token) => token.balance_nearest_a_usd > 0);
-        console.log(filteredTokenWithProfitableBalance);
 
         if (filteredTokenWithProfitableBalance.length < 1) {
             return false;
@@ -160,8 +158,43 @@ class Trader {
         return true;
     }
 
-    async buyMode() {
-        // todo
+    async buyMode(params: buyModeParameters): Promise <boolean> {
+        let tokenBalances = params.tokenBalances;
+        let mappedMarketData = params.mappedMarketData;
+
+        let stableCoinWithBalance = tokenBalances.filter( (tokenBalance) => tokenBalance.slug == this.stableCoin.slug)[0];
+        
+        // ready to buy - select profitable tokens
+        if (stableCoinWithBalance.balance >= 1) {
+            let tokenWithBalanceAndMarketDataExceptStableCoin = this.tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, true)
+            .filter( (token) => token.slug != this.stableCoin.slug);
+
+            let percentList = [
+                {key: 'percent_change_1_hour', down: -1},
+                {key: 'percent_change_1_day', down: -3},
+                {key: 'percent_change_1_week', down: -5}
+            ];
+            
+            let buyTokens = null;
+            for(let percentDown of percentList) {
+                let downBy: number = percentDown.down;
+                let downByTokens = _.orderBy(tokenWithBalanceAndMarketDataExceptStableCoin.filter( function (token) {
+                    return Number(token.percent_change_1_hour) <= downBy; 
+                }), [percentDown.key], ['desc']);
+
+                if (downByTokens.length >= 1) {
+                    buyTokens = downByTokens[0];
+                    break;
+                }
+            }
+
+            if (buyTokens != null) {
+                // buy / swap here todo...
+            }
+        }
+        
+
+        return true;
     }
 }
 
