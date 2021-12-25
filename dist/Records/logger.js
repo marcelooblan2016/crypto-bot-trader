@@ -13,6 +13,9 @@ const fs = require('fs');
 class Logger {
     constructor(options) {
         this.directory = '../logs';
+        if (!fs.existsSync(this.directory)) {
+            fs.mkdirSync(this.directory);
+        }
     }
     getName(type) {
         const d = new Date();

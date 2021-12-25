@@ -48,53 +48,52 @@ class Trader {
                 tokenBalances = (tokenBalances);
                 let stableCoinBalance = (_a = tokenBalances.filter((token) => token.slug == this.stableCoin.slug).map(token => Number(token.balance))[0]) !== null && _a !== void 0 ? _a : null;
                 // check if will sell or buy
-                let sellMode = false;
-                if (stableCoinBalance <= 0) {
-                    sellMode = true;
-                }
                 let responseData = yield api_coinmarketcap_1.default.getMarketPrices(1, 150, { tagSlugs: null });
                 let mappedMarketData = this.map((responseData));
-                if (sellMode == true) {
-                    yield this.sellMode({ mappedMarketData: mappedMarketData, tokenBalances: tokenBalances });
-                }
-                else {
-                    yield this.buyMode();
-                }
-                // todo
-                /**
-                 * Check if usdc (stable coin is empty)
-                 * ** If empty, it is ready to buy -> search for good token to buy per condition
-                 * ** else check token with balance, watch the token if it is good for sell per condition with a consideration of cutloss
-                 * ******* * Check if cutloss reached the max, or if profit to sell
-                 */
+                // check token ready for sell
+                // await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
+                yield this.buyMode({ tokenBalances: tokenBalances, mappedMarketData: mappedMarketData });
                 return true;
             }
             catch (error) { }
             return false;
         });
     }
+    tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, noExceptions = false) {
+        let exceptionSlugs = this.exceptionSlugs;
+        return (tokenBalances).filter(function (token) {
+            if (!exceptionSlugs.includes(token.slug) && noExceptions == true) {
+                return true;
+            }
+            if (!exceptionSlugs.includes(token.slug) && token.balance > 0) {
+                return true;
+            }
+            return false;
+        }).map(function (token) {
+            var _a;
+            let tokenMarket = (_a = mappedMarketData.filter((tokenMarket) => tokenMarket.symbol == token.slug)[0]) !== null && _a !== void 0 ? _a : {};
+            let swapHistoryDataFound = swapHistory_1.default.read({ slug: token.slug });
+            let balanceInUSD = tokenMarket.current_price * token.balance;
+            return Object.assign(Object.assign(Object.assign(Object.assign({}, token), tokenMarket), {
+                history: swapHistoryDataFound
+            }), {
+                balance_in_usd: balanceInUSD,
+                balance_nearest_a_usd: Math.round(balanceInUSD)
+            });
+        });
+    }
     sellMode(params) {
         return __awaiter(this, void 0, void 0, function* () {
             let mappedMarketData = params.mappedMarketData;
-            let exceptionSlugs = this.exceptionSlugs;
-            console.log(params.tokenBalances);
             // get token with balance except matic
-            let tokenWithBalanceAndMarketData = (params.tokenBalances).filter(function (token) {
-                if (!exceptionSlugs.includes(token.slug) && token.balance > 0) {
-                    return true;
-                }
-                return false;
-            }).map(function (token) {
-                var _a;
-                let tokenMarket = (_a = mappedMarketData.filter((tokenMarket) => tokenMarket.symbol == token.slug)[0]) !== null && _a !== void 0 ? _a : {};
-                let swapHistoryDataFound = swapHistory_1.default.read({ slug: token.slug });
-                return Object.assign(Object.assign(Object.assign({}, token), tokenMarket), {
-                    history: swapHistoryDataFound
-                });
-            });
+            let tokenWithBalanceAndMarketData = this.tokenWithBalanceAndMarketData(params.tokenBalances, mappedMarketData);
             let sellCutLoss = lodash_1.default.get(this.metaMaskWithBuild.C, 'trading.options.sell_cutloss');
             let sellProfit = lodash_1.default.get(this.metaMaskWithBuild.C, 'trading.options.sell_profit');
-            for (let token of tokenWithBalanceAndMarketData) {
+            let filteredTokenWithProfitableBalance = tokenWithBalanceAndMarketData.filter((token) => token.balance_nearest_a_usd > 0);
+            if (filteredTokenWithProfitableBalance.length < 1) {
+                return false;
+            }
+            for (let token of filteredTokenWithProfitableBalance) {
                 let tokenBalance = lodash_1.default.get(token, 'balance');
                 let historyCurrentPrice = lodash_1.default.get(token, 'history.current_price', null);
                 let currentPrice = lodash_1.default.get(token, 'current_price');
@@ -128,14 +127,39 @@ class Trader {
                     yield this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice);
                 }
             }
-            // todo  / check from swapHistory compare -> sell if profit or cutloss
-            yield this.metaMaskWithBuild.page.waitForTimeout(999999);
-            process.exit(0);
+            return true;
         });
     }
-    buyMode() {
+    buyMode(params) {
         return __awaiter(this, void 0, void 0, function* () {
-            // todo
+            let tokenBalances = params.tokenBalances;
+            let mappedMarketData = params.mappedMarketData;
+            let stableCoinWithBalance = tokenBalances.filter((tokenBalance) => tokenBalance.slug == this.stableCoin.slug)[0];
+            // ready to buy - select profitable tokens
+            if (stableCoinWithBalance.balance >= 1) {
+                let tokenWithBalanceAndMarketDataExceptStableCoin = this.tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, true)
+                    .filter((token) => token.slug != this.stableCoin.slug);
+                let percentList = [
+                    { key: 'percent_change_1_hour', down: -1 },
+                    { key: 'percent_change_1_day', down: -3 },
+                    { key: 'percent_change_1_week', down: -5 }
+                ];
+                let buyTokens = null;
+                for (let percentDown of percentList) {
+                    let downBy = percentDown.down;
+                    let downByTokens = lodash_1.default.orderBy(tokenWithBalanceAndMarketDataExceptStableCoin.filter(function (token) {
+                        return Number(token.percent_change_1_hour) <= downBy;
+                    }), [percentDown.key], ['desc']);
+                    if (downByTokens.length >= 1) {
+                        buyTokens = downByTokens[0];
+                        break;
+                    }
+                }
+                if (buyTokens != null) {
+                    // buy / swap here todo...
+                }
+            }
+            return true;
         });
     }
 }
