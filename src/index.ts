@@ -4,7 +4,6 @@ import trader from './Trader/trader';
 import token from './Records/token';
 
 (async function () {
-
     // // initiate 
     await metaMask.build();
 

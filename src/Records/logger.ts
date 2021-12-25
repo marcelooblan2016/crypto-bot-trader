@@ -7,7 +7,11 @@ interface writeParams {
 
 class Logger {
     protected directory = '../logs';
-    constructor(options? : any) {}
+    constructor(options? : any) {
+        if (!fs.existsSync(this.directory)){
+            fs.mkdirSync(this.directory);
+        }
+    }
 
     private getName(type: number): string {
         const d = new Date();
