@@ -39,6 +39,7 @@ class Trader {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("Analyzing market...");
                 // check stable coin balancebalance
                 let tokenBalances = yield this.metaMaskWithBuild.getBalances();
                 this.metaMaskWithBuild.clearPopups();
@@ -51,8 +52,9 @@ class Trader {
                 let responseData = yield api_coinmarketcap_1.default.getMarketPrices(1, 150, { tagSlugs: null });
                 let mappedMarketData = this.map((responseData));
                 // check token ready for sell
-                // await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
+                yield this.sellMode({ mappedMarketData: mappedMarketData, tokenBalances: tokenBalances });
                 yield this.buyMode({ tokenBalances: tokenBalances, mappedMarketData: mappedMarketData });
+                console.log("Market Analyzed.");
                 return true;
             }
             catch (error) { }
