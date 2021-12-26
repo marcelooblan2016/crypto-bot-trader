@@ -8,9 +8,9 @@ import token from './Records/token';
     await metaMask.build();
 
     const initiatedTrader = new trader({metamask_with_build: metaMask, token: token});
-    await initiatedTrader.analyzeMarket()
-    // setInterval(async () => {
-    //     await initiatedTrader.analyzeMarket()
-    // }, 20000);
+
+    setInterval(async () => {
+        await initiatedTrader.analyzeMarket()
+    }, 60000);
 
 })();

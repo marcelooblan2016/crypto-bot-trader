@@ -59,19 +59,28 @@ class Trader {
             return false;
         });
     }
-    tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, noExceptions = false) {
+    tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, filterType = 1) {
         let exceptionSlugs = this.exceptionSlugs;
         return (tokenBalances).filter(function (token) {
-            if (!exceptionSlugs.includes(token.slug) && noExceptions == true) {
-                return true;
+            if (filterType == 2) {
+                if (!['matic'].includes(token.slug)) {
+                    return true;
+                }
             }
-            if (!exceptionSlugs.includes(token.slug) && token.balance > 0) {
-                return true;
+            else {
+                if (!exceptionSlugs.includes(token.slug) && token.balance > 0) {
+                    return true;
+                }
             }
             return false;
         }).map(function (token) {
             var _a;
-            let tokenMarket = (_a = mappedMarketData.filter((tokenMarket) => tokenMarket.symbol == token.slug)[0]) !== null && _a !== void 0 ? _a : {};
+            let tokenMarket = (_a = mappedMarketData.filter((tokenMarket) => {
+                if (token.slug == 'wmatic') {
+                    return tokenMarket.symbol == 'matic';
+                }
+                return tokenMarket.symbol == token.slug;
+            })[0]) !== null && _a !== void 0 ? _a : {};
             let swapHistoryDataFound = swapHistory_1.default.read({ slug: token.slug });
             let balanceInUSD = tokenMarket.current_price * token.balance;
             return Object.assign(Object.assign(Object.assign(Object.assign({}, token), tokenMarket), {
@@ -94,7 +103,7 @@ class Trader {
                 return false;
             }
             for (let token of filteredTokenWithProfitableBalance) {
-                let tokenBalance = lodash_1.default.get(token, 'balance');
+                let tokenBalance = Number(lodash_1.default.get(token, 'balance'));
                 let historyCurrentPrice = lodash_1.default.get(token, 'history.current_price', null);
                 let currentPrice = lodash_1.default.get(token, 'current_price');
                 let gainsDecimal = (currentPrice - historyCurrentPrice) / currentPrice;
@@ -114,7 +123,7 @@ class Trader {
                 }
                 else if (gainsPercentage <= sellCutLoss) {
                     // selling to prevent more loss
-                    let msg = [
+                    msg = [
                         "Cut Loss: ",
                         gainsPercentage + "%",
                         token.slug,
@@ -137,8 +146,11 @@ class Trader {
             let stableCoinWithBalance = tokenBalances.filter((tokenBalance) => tokenBalance.slug == this.stableCoin.slug)[0];
             // ready to buy - select profitable tokens
             if (stableCoinWithBalance.balance >= 1) {
-                let tokenWithBalanceAndMarketDataExceptStableCoin = this.tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, true)
+                let tokenWithBalanceAndMarketData = this.tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, 2);
+                let tokenWithBalanceAndMarketDataExceptStableCoin = tokenWithBalanceAndMarketData
                     .filter((token) => token.slug != this.stableCoin.slug);
+                stableCoinWithBalance = tokenWithBalanceAndMarketData
+                    .filter((token) => token.slug == this.stableCoin.slug)[0];
                 let percentList = [
                     { key: 'percent_change_1_hour', down: -1 },
                     { key: 'percent_change_1_day', down: -3 },
@@ -147,8 +159,8 @@ class Trader {
                 let buyTokens = null;
                 for (let percentDown of percentList) {
                     let downBy = percentDown.down;
-                    let downByTokens = lodash_1.default.orderBy(tokenWithBalanceAndMarketDataExceptStableCoin.filter(function (token) {
-                        return Number(token.percent_change_1_hour) <= downBy;
+                    let downByTokens = lodash_1.default.orderBy((tokenWithBalanceAndMarketDataExceptStableCoin).filter(function (token) {
+                        return Number(token[percentDown.key]) <= downBy;
                     }), [percentDown.key], ['desc']);
                     if (downByTokens.length >= 1) {
                         buyTokens = downByTokens[0];
@@ -156,7 +168,10 @@ class Trader {
                     }
                 }
                 if (buyTokens != null) {
-                    // buy / swap here todo...
+                    // buy / swap
+                    logger_1.default.write({ content: "Buy/Swap: " + JSON.stringify(buyTokens) });
+                    // await this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, 'all', buyTokens.current_price);
+                    yield this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, Number(stableCoinWithBalance.balance), buyTokens.current_price);
                 }
             }
             return true;
