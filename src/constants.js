@@ -80,6 +80,7 @@ module.exports = {
             label_dropdown_option_pair_to: ".dropdown-input-pair.dropdown-input-pair__to .searchable-item-list__labels .searchable-item-list__primary-label",
             button_swap_continue: ".actionable-message__action.actionable-message__action--primary",
             button_swap_review_xpath: "//button[contains(text(), 'Review Swap')]",
+            button_swap_overview_xpath: "//button[contains(.,'Swap')]",
             button_swap_xpath: "//button[contains(text(),'Swap')]",
             div_transaction_complete_xpath: "//div[contains(text(), 'Transaction complete')]",
             button_close_xpath: "//button[contains(text(), 'Close')]"

@@ -20,9 +20,8 @@ const token_1 = __importDefault(require("./Records/token"));
         // // initiate 
         yield metaMask_1.default.build();
         const initiatedTrader = new trader_1.default({ metamask_with_build: metaMask_1.default, token: token_1.default });
-        yield initiatedTrader.analyzeMarket();
-        // setInterval(async () => {
-        //     await initiatedTrader.analyzeMarket()
-        // }, 20000);
+        setInterval(() => __awaiter(this, void 0, void 0, function* () {
+            yield initiatedTrader.analyzeMarket();
+        }), 60000);
     });
 })();

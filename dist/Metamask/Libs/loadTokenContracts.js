@@ -36,11 +36,12 @@ function loadTokenContracts(params) {
                 yield page.waitForTimeout(1000);
                 yield page.focus(C.elements.add_token.input_custom_decimals);
                 yield page.type(C.elements.add_token.input_custom_decimals, (tokenContract['decimals']).toString());
+                yield page.waitForXPath(C.elements.add_token.button_next_xpath + "[not(@disabled)]");
                 const [buttonNext] = yield page.$x(C.elements.add_token.button_next_xpath);
-                buttonNext.click();
-                yield page.waitForNavigation();
+                yield buttonNext.click();
+                yield page.waitForXPath(C.elements.add_token.button_add_token_xpath + "[not(@disabled)]");
                 const [buttonAddTokens] = yield page.$x(C.elements.add_token.button_add_token_xpath);
-                buttonAddTokens.click();
+                yield buttonAddTokens.click();
                 yield page.waitForNavigation();
             }
         }
