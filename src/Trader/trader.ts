@@ -47,7 +47,10 @@ class Trader {
      * @return boolean
      */
     async analyzeMarket (params?: any): Promise<boolean> {
+
         try {
+        console.log("Analyzing market...");
+
         // check stable coin balancebalance
         let tokenBalances = await this.metaMaskWithBuild.getBalances();
 
@@ -64,8 +67,10 @@ class Trader {
 
         let mappedMarketData = this.map((responseData) as CoinMarketCap.CryptoListFromRawData);
         // check token ready for sell
-        // await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
+        await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
         await this.buyMode({tokenBalances: tokenBalances, mappedMarketData: mappedMarketData});
+        
+        console.log("Market Analyzed.");
         
             return true;
         } catch (error) {}
