@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const swapHistory_1 = __importDefault(require("../../Records/swapHistory"));
 const logger_1 = __importDefault(require("../../Records/logger"));
+const token_1 = __importDefault(require("../../Records/token"));
 function swapToken(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const page = params.page;
@@ -22,13 +23,28 @@ function swapToken(params) {
             let tokenFrom = params.tokenFrom;
             let tokenTo = params.tokenTo;
             let amount = params.amount;
+            let msgInit = [
+                "Swapping token: in progress...",
+                "Amount From: " + [amount, tokenFrom].join(" "),
+                "Current Price: " + params.current_price,
+                "TokenTo: " + tokenTo,
+            ].join(" ");
+            logger_1.default.write({ content: msgInit });
             let currentUrl = page.url();
-            let swapTokenUrl = [
+            let tokenContracts = token_1.default.tokenContracts();
+            let tokenFromContract = tokenContracts.filter((token) => token.slug == tokenFrom)[0];
+            // chrome-extension://odkjoconjphbkgjmioaolohpdhgihomg/home.html#asset/0x2791bca1f2de4661ed88a30c99a7a9449aa84174
+            let tokenFromBaseUrl = [
                 C.urls.prefix,
                 (currentUrl.match(/\/\/(.*?)\//i))[1],
-                "/home.html#swaps/build-quote"
+                `/home.html#asset/${tokenFromContract.contract}`
             ].join("");
-            yield page.goto(swapTokenUrl);
+            yield page.goto(tokenFromBaseUrl, { waitUntil: 'domcontentloaded' });
+            yield page.waitForXPath(C.elements.swap_token.button_swap_overview_xpath + "[not(@disabled)]", { visible: true });
+            const [buttonSwapOverview] = yield page.$x(C.elements.swap_token.button_swap_overview_xpath);
+            yield buttonSwapOverview.click();
+            yield page.waitForTimeout(1000);
+            // click swap from overview
             // **** TokenFrom
             // click dropdown option
             yield page.click(C.elements.swap_token.div_dropdown_search_list_pair);
@@ -92,17 +108,20 @@ function swapToken(params) {
                 yield page.click(C.elements.swap_token.button_swap_continue);
                 yield page.waitForTimeout(2000);
             }
-            yield page.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]");
+            yield page.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
             const [buttonSwapReview] = yield page.$x(C.elements.swap_token.button_swap_review_xpath);
-            buttonSwapReview.click();
+            // await buttonSwapReview.screenshot({path: 'button-swap-review.png'});
+            // await buttonSwapReview.click();
+            yield buttonSwapReview.click();
             yield page.waitForNavigation();
-            yield page.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]");
+            yield page.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]", { visible: true });
             const [buttonSwap] = yield page.$x(C.elements.swap_token.button_swap_xpath);
-            buttonSwap.click();
+            // buttonSwap.screenshot({path: 'button-swap.png'});
+            yield buttonSwap.click();
             yield page.waitForNavigation();
-            yield page.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath);
+            yield page.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true });
             const [buttonClose] = yield page.$x(C.elements.swap_token.button_close_xpath);
-            buttonClose.click();
+            yield buttonClose.click();
             yield page.waitForNavigation();
             // save as history amountAcquired, current_price, slug
             swapHistory_1.default.write({

@@ -73,20 +73,30 @@ class Trader {
         return false;
     }
 
-    private tokenWithBalanceAndMarketData (tokenBalances: mappedTokenBalance[], mappedMarketData: CoinMarketCap.Crypto[], noExceptions: boolean = false) {
+    private tokenWithBalanceAndMarketData (tokenBalances: mappedTokenBalance[], mappedMarketData: CoinMarketCap.Crypto[], filterType: number = 1) {
         let exceptionSlugs = this.exceptionSlugs;
 
         return (tokenBalances).filter( function (token) {
-            if (!exceptionSlugs.includes(token.slug) && noExceptions == true) {
-                return true;
+
+            if (filterType == 2) {
+                if (!['matic'].includes(token.slug)) {
+                    return true;
+                }
+            }
+            else {
+                if (!exceptionSlugs.includes(token.slug) && token.balance > 0) {
+                    return true;
+                }
             }
 
-            if (!exceptionSlugs.includes(token.slug) && token.balance > 0) {
-                return true;
-            }
             return false;
         }).map( function (token) {
-            let tokenMarket = mappedMarketData.filter( (tokenMarket) => tokenMarket.symbol == token.slug)[0] ?? {};
+            let tokenMarket = mappedMarketData.filter( (tokenMarket) => {
+                if (token.slug == 'wmatic') {
+                    return tokenMarket.symbol == 'matic';
+                }
+                return tokenMarket.symbol == token.slug;
+            })[0] ?? {};
             let swapHistoryDataFound = swapHistory.read({slug: token.slug});
             let balanceInUSD: number = tokenMarket.current_price * token.balance;
 
@@ -118,7 +128,7 @@ class Trader {
         }
 
         for(let token of filteredTokenWithProfitableBalance) {
-            let tokenBalance = _.get(token, 'balance');
+            let tokenBalance = Number(_.get(token, 'balance'));
             let historyCurrentPrice: number = _.get(token, 'history.current_price', null);
             let currentPrice: number = _.get(token, 'current_price');
             let gainsDecimal: number = (currentPrice - historyCurrentPrice) / currentPrice;
@@ -139,7 +149,7 @@ class Trader {
             }
             else if (gainsPercentage <= sellCutLoss) {
                 // selling to prevent more loss
-                let msg = [
+                msg = [
                     "Cut Loss: ",
                     gainsPercentage + "%",
                     token.slug,
@@ -166,20 +176,24 @@ class Trader {
         
         // ready to buy - select profitable tokens
         if (stableCoinWithBalance.balance >= 1) {
-            let tokenWithBalanceAndMarketDataExceptStableCoin = this.tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, true)
+            let tokenWithBalanceAndMarketData = this.tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, 2);
+            let tokenWithBalanceAndMarketDataExceptStableCoin = tokenWithBalanceAndMarketData
             .filter( (token) => token.slug != this.stableCoin.slug);
-
+            stableCoinWithBalance = tokenWithBalanceAndMarketData
+            .filter( (token) => token.slug == this.stableCoin.slug)[0];
+        
             let percentList = [
                 {key: 'percent_change_1_hour', down: -1},
                 {key: 'percent_change_1_day', down: -3},
                 {key: 'percent_change_1_week', down: -5}
             ];
-            
+
             let buyTokens = null;
             for(let percentDown of percentList) {
                 let downBy: number = percentDown.down;
-                let downByTokens = _.orderBy(tokenWithBalanceAndMarketDataExceptStableCoin.filter( function (token) {
-                    return Number(token.percent_change_1_hour) <= downBy; 
+                let downByTokens = _.orderBy( (tokenWithBalanceAndMarketDataExceptStableCoin).filter( function (token: any) {
+
+                    return Number(token[percentDown.key]) <= downBy;
                 }), [percentDown.key], ['desc']);
 
                 if (downByTokens.length >= 1) {
@@ -189,7 +203,10 @@ class Trader {
             }
 
             if (buyTokens != null) {
-                // buy / swap here todo...
+                // buy / swap
+                logger.write({content: "Buy/Swap: " + JSON.stringify(buyTokens)});
+                // await this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, 'all', buyTokens.current_price);
+                await this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, Number(stableCoinWithBalance.balance), buyTokens.current_price);
             }
         }
         

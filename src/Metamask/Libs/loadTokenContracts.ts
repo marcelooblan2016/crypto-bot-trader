@@ -27,11 +27,12 @@ async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void>
             await page!.waitForTimeout(1000);
             await page!.focus(C.elements.add_token.input_custom_decimals);
             await page!.type(C.elements.add_token.input_custom_decimals, (tokenContract['decimals']).toString());
+            await page!.waitForXPath(C.elements.add_token.button_next_xpath + "[not(@disabled)]");
             const [buttonNext] = await page!.$x(C.elements.add_token.button_next_xpath);
-            buttonNext.click();
-            await page!.waitForNavigation();
+            await buttonNext.click();
+            await page!.waitForXPath(C.elements.add_token.button_add_token_xpath + "[not(@disabled)]");
             const [buttonAddTokens] = await page!.$x(C.elements.add_token.button_add_token_xpath);
-            buttonAddTokens.click();
+            await buttonAddTokens.click();
             await page!.waitForNavigation();
         }
     } catch (error) {
