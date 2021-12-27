@@ -1,12 +1,13 @@
 "use strict";
 var _a, _b, _c;
+const envMigrations = require("./Records/Migrations/env");
 const config = (() => {
     let fs = require('fs');
     try {
-        let envFilePath = '../.env';
+        let envFilePath = './.env';
         console.log("Env File: Loading...");
         if (!fs.existsSync(envFilePath)) {
-            throw new Error('Env missing.');
+            fs.appendFileSync(envFilePath, envMigrations.default.join("\n"));
         }
         console.log("Env File: Loaded.");
         let rawData = fs.readFileSync(envFilePath, 'utf8');

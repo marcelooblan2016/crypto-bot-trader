@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require('fs');
 class Logger {
     constructor(options) {
-        this.directory = '../logs';
+        this.directory = './logs';
         if (!fs.existsSync(this.directory)) {
             fs.mkdirSync(this.directory);
         }
