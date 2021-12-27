@@ -190,7 +190,6 @@ class Trader {
             let percentList = [
                 {key: 'percent_change_1_hour', down: -1},
                 {key: 'percent_change_1_day', down: -3},
-                {key: 'percent_change_1_week', down: -5}
             ];
 
             let buyTokens = null;

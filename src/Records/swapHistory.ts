@@ -4,7 +4,7 @@ const fs = require('fs');
 
 class SwapHistory implements SwapHistoryNs.SwapHistoryInterface {
     
-    private swapHistoryFilePath: string = '../swapHistory.json';
+    private swapHistoryFilePath: string = './swapHistory.json';
 
     constructor(options? : any) {
 

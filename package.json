@@ -1,4 +1,18 @@
 {
+  "name": "crypto-bot-trader",
+  "description": "swapping of ERC-20 Tokens (buy/sell) based on the market health with bot strategy (condition) - by utilizing metamask & pupeteer",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcelooblan2016/crypto-bot-trader.git"
+  },
+  "author": "marx",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marcelooblan2016/crypto-bot-trader.git/issues"
+  },
+  "homepage": "https://github.com/marcelooblan2016/crypto-bot-trader.git#readme",
   "dependencies": {
     "@chainsafe/dappeteer": "^2.3.0",
     "api.coinmarketcap": "^1.0.1",

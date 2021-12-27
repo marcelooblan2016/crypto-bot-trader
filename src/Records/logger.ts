@@ -6,7 +6,7 @@ interface writeParams {
 }
 
 class Logger {
-    protected directory = '../logs';
+    protected directory = './logs';
     constructor(options? : any) {
         if (!fs.existsSync(this.directory)){
             fs.mkdirSync(this.directory);

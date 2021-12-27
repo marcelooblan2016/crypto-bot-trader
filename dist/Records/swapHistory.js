@@ -7,7 +7,7 @@ const token_1 = __importDefault(require("./token"));
 const fs = require('fs');
 class SwapHistory {
     constructor(options) {
-        this.swapHistoryFilePath = '../swapHistory.json';
+        this.swapHistoryFilePath = './swapHistory.json';
         if (!fs.existsSync(this.swapHistoryFilePath)) {
             let tokenContracts = token_1.default.tokenContracts().map(function (token) {
                 return {
