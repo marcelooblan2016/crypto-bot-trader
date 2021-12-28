@@ -1,5 +1,20 @@
-# CryptoCurrency Bot Trader 
+# CryptoCurrency Bot Trader
 swapping of [ERC-20 Tokens][erc20] (buy/sell) based on the market health with bot strategy (condition) - by utilizing MetaMask &amp; Puppeteer
+
+## List of ERC-20 Tokens Included
+- ChainLink Token, Decentraland, Uniswap, Graph Token, Aave, Basic Authentication Token (BAT), Curve (CRV), Sushi Token, Sand, Avalanche, Wrapped Matic
+- [Full Details][erc20List] 
+## Compatible Networks
+- Polygon
+
+## Important token/coin
+- usdc (for trading)
+- matic (for gas fees)
+
+## Notes
+- Always makes sure to have a balance in usdc (used for trading) & matic (for gas fees)
+- One trade at a time (for now)
+- Compound trading
 
 ## Installation
 
@@ -45,3 +60,5 @@ node {jsFile}
 
 
 [erc20]: https://etherscan.io/tokens
+[erc20List]: https://github.com/marcelooblan2016/crypto-bot-trader/blob/main/src/Records/Migrations/tokenContracts.js
+
