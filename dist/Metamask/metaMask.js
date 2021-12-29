@@ -35,12 +35,14 @@ const puppeteer_1 = __importDefault(require("puppeteer"));
 const dappeteer = __importStar(require("@chainsafe/dappeteer"));
 const constants_1 = __importDefault(require("../constants"));
 const lib_1 = __importDefault(require("./Libs/lib"));
+const config_1 = __importDefault(require("../Records/config"));
 class Metamask {
     constructor(options) {
         this.browser = null;
         this.page = null;
         this.metamask = null;
         this.C = constants_1.default;
+        this.processId = process.pid;
     }
     /*
      * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens
@@ -49,10 +51,12 @@ class Metamask {
     build() {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("Launching browser...");
-            this.browser = yield dappeteer.launch(puppeteer_1.default, { metamaskVersion: constants_1.default.metamask_version });
+            this.browser = yield dappeteer.launch(puppeteer_1.default, { metamaskVersion: constants_1.default.metamask_version, args: ['--no-sandbox'] });
             console.log("Setup metamask...");
             this.metamask = yield dappeteer.setupMetamask(this.browser);
             this.page = this.metamask.page;
+            // log process id
+            config_1.default.update({ key: "PROCESS_ID", value: process.pid });
             // import private key
             yield this.metamask.importPK(constants_1.default.private_key);
             // add new networks

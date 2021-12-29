@@ -3,18 +3,22 @@ import {Page, Browser} from 'puppeteer';
 import * as dappeteer from '@chainsafe/dappeteer';
 import C from '../constants';
 import metaMaskLibs from "./Libs/lib";
+import config from '../Records/config';
+
 
 class Metamask implements MetamaskInterface {
     public page: Page | null;
     protected browser: Browser | null;
     protected metamask: any;
     public C: object;
+    public processId: number | string;
 
     constructor(options? : any) {
         this.browser = null;
         this.page = null;
         this.metamask = null;
         this.C = C;
+        this.processId = process.pid;
     }
     /*
      * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens
@@ -23,11 +27,12 @@ class Metamask implements MetamaskInterface {
     public async build (): Promise<void>
     {
         console.log("Launching browser...");
-        this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version});
+        this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version, args: ['--no-sandbox']});
         console.log("Setup metamask...");
         this.metamask = await dappeteer.setupMetamask(this.browser);
         this.page = this.metamask.page;
-
+        // log process id
+        config.update({key: "PROCESS_ID", value: process.pid});
         // import private key
         await this.metamask.importPK(C.private_key);
         // add new networks
