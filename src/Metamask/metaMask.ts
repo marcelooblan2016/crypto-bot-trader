@@ -4,7 +4,7 @@ import * as dappeteer from '@chainsafe/dappeteer';
 import C from '../constants';
 import metaMaskLibs from "./Libs/lib";
 import config from '../Records/config';
-
+import logger from '../Records/logger';
 
 class Metamask implements MetamaskInterface {
     public page: Page | null;
@@ -26,19 +26,25 @@ class Metamask implements MetamaskInterface {
      */
     public async build (): Promise<void>
     {
-        console.log("Launching browser...");
-        this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version, args: ['--no-sandbox']});
-        console.log("Setup metamask...");
-        this.metamask = await dappeteer.setupMetamask(this.browser);
-        this.page = this.metamask.page;
+        // check if fresh start
+        let envValues = config.envValues();
+        if (typeof envValues['PROCESS_ID'] == 'undefined') {
+            logger.write({content: "Fresh start, it may take at least a minute."});
+        }
         // log process id
         config.update({key: "PROCESS_ID", value: process.pid});
+        // launch browser
+        logger.write({content: "Launching browser..."});
+        this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version, args: ['--no-sandbox']});
+        logger.write({content: "Setup metamask..."});
+        this.metamask = await dappeteer.setupMetamask(this.browser);
+        this.page = this.metamask.page;
         // import private key
         await this.metamask.importPK(C.private_key);
         // add new networks
         await this.addNewNetworks();
         // switch to preferred network
-        console.log("Switch network: " + C.network_preferred);
+        logger.write({content: `Switch network: ${C.network_preferred}`});
         await this.metamask.switchNetwork(C.network_preferred);
         // load tokens
         await this.loadTokenContracts();
@@ -50,7 +56,7 @@ class Metamask implements MetamaskInterface {
      */
     async loadTokenContracts (): Promise<void>
     {
-        console.log("Import Tokens...");
+        logger.write({content: `Import Tokens...`});
         await metaMaskLibs.loadTokenContracts({
             page: this.page,
             C: C
@@ -62,12 +68,12 @@ class Metamask implements MetamaskInterface {
      */
     async addNewNetworks (): Promise<void>
     {
-        console.log("Adding new networks...");
+        logger.write({content: `Adding new networks...`});
         let networks = C.networks;
         let newNetworks = networks.filter( (network) => typeof network['new'] != 'undefined' && network['new'] == true);
         for (let index in newNetworks) {
             let network = newNetworks[index];
-            console.log("Adding network: " + network.slug);
+            logger.write({content: `Adding network: ${network.slug}`});
             await this.metamask.addNetwork({
                 networkName: network.slug,
                 rpc: network.rpc_url,
@@ -116,8 +122,8 @@ class Metamask implements MetamaskInterface {
         }, {'config': C});
 
         if (isHomeModal == true) {
-            console.log("Home modal found.");
-            await this.page!.click(C.elements.modals.home)
+            logger.write({content: `Home modal found.`});
+            await this.page!.click(C.elements.modals.home);
         }
 
         return true;

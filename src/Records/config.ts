@@ -17,7 +17,7 @@ class config {
         return false;
     }
     
-    private envValues(): any {
+    public envValues(): any {
         let envValues: any = {};
         let envContent = fs.readFileSync(this.envFile, 'utf8');
         let data = envContent.split("\n")

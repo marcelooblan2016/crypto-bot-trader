@@ -12,7 +12,7 @@ swapping of [ERC-20 Tokens][erc20] (buy/sell) based on the market health with bo
 - matic (for gas fees)
 
 ## Notes
-- Always makes sure to have a balance in usdc (used for trading) & matic (for gas fees)
+- Always make sure to have a balance in usdc (used for trading) & matic (for gas fees)
 - One trade at a time (for now)
 - Compound trading
 
