@@ -141,7 +141,7 @@ function swapToken(params) {
             return true;
         }
         catch (error) {
-            console.log(error);
+            // console.log(error);
             logger_1.default.write({ content: "Swapping token: failed" });
             logger_1.default.screenshot(page);
         }

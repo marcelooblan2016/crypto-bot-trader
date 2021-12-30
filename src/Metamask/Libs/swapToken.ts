@@ -151,7 +151,7 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         
         return true;
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         logger.write({content: "Swapping token: failed"});
         logger.screenshot(page!);
     }
