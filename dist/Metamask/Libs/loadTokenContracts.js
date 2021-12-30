@@ -26,24 +26,28 @@ function loadTokenContracts(params) {
             ].join("");
             let tokenContracts = token_1.default.tokenContracts();
             for (let index in tokenContracts) {
-                yield page.goto(addTokenUrl);
+                yield page.goto(addTokenUrl, { waitUntil: 'networkidle0' });
+                yield page.waitForTimeout(1000);
                 // check if <button>Search</button> <button>Custom Token</button> (Usually happens in windows 10 as per testing)
                 let isSearchAndCustomToken = yield page.evaluate((options) => {
                     const C = options['config'];
                     return document.querySelectorAll(C.elements.add_token.button_search_and_add_token).length >= 2 ? true : false;
                 }, { 'config': C });
                 if (isSearchAndCustomToken === true) {
-                    yield page.waitForXPath(C.elements.add_token.button_custom_token_xpath + "[not(@disabled)]");
+                    yield page.waitForXPath(C.elements.add_token.button_custom_token_xpath);
                     const [buttonCustomAddToken] = yield page.$x(C.elements.add_token.button_custom_token_xpath);
                     yield buttonCustomAddToken.click();
                 }
                 let tokenContract = tokenContracts[index];
                 console.log("Adding " + tokenContract['slug'] + " token ...");
+                yield page.waitForSelector(C.elements.add_token.input_contract_address);
                 yield page.focus(C.elements.add_token.input_contract_address);
                 yield page.type(C.elements.add_token.input_contract_address, tokenContract['contract']);
+                yield page.waitForSelector(C.elements.add_token.input_custom_symbol);
                 yield page.focus(C.elements.add_token.input_custom_symbol);
                 yield page.type(C.elements.add_token.input_custom_symbol, tokenContract['slug']);
                 yield page.waitForTimeout(1000);
+                yield page.waitForSelector(C.elements.add_token.input_custom_decimals);
                 yield page.focus(C.elements.add_token.input_custom_decimals);
                 yield page.type(C.elements.add_token.input_custom_decimals, (tokenContract['decimals']).toString());
                 yield page.waitForXPath(C.elements.add_token.button_next_xpath + "[not(@disabled)]");
