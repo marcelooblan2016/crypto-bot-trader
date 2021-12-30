@@ -61,7 +61,7 @@ module.exports = {
         },
         add_token: {
             button_search_and_add_token: "ul.page-container__tabs li button",
-            button_custom_token_xpath: "//ul/li[1]/button[contains(text(), 'Custom Token')]",
+            button_custom_token_xpath: "//button[contains(text(), 'Custom Token')]",
             input_contract_address: "#custom-address",
             input_custom_symbol: "#custom-symbol",
             input_custom_decimals: "#custom-decimals",
