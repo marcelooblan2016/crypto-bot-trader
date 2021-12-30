@@ -29,4 +29,5 @@ logs/*.*
 test/.env
 test/swapHistory.json
 test/tokenContracts.json
+test/log/*.*
 test/logs/*.*

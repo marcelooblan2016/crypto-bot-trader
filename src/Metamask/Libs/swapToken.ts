@@ -118,8 +118,6 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         
         await page!.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
         const [buttonSwapReview] = await page!.$x(C.elements.swap_token.button_swap_review_xpath);
-        // await buttonSwapReview.screenshot({path: 'button-swap-review.png'});
-        // await buttonSwapReview.click();
         await buttonSwapReview.click();
         await page!.waitForNavigation();
         await page!.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]", { visible: true });
