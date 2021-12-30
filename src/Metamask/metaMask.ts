@@ -26,6 +26,14 @@ class Metamask implements MetamaskInterface {
      */
     public async build (): Promise<void>
     {
+        let args: any = process.argv.slice(2);
+        let validArguments: any = {};
+        if (args.length >= 1) {
+            args = args.forEach( function (argument: string) {
+                let splittedArgument = argument.replace("--", "").split("=");
+                validArguments[splittedArgument[0]] = (splittedArgument[1] ?? null);
+            });
+        }
         // check if fresh start
         let envValues = config.envValues();
         if (typeof envValues['PROCESS_ID'] == 'undefined') {
@@ -40,7 +48,12 @@ class Metamask implements MetamaskInterface {
         this.metamask = await dappeteer.setupMetamask(this.browser);
         this.page = this.metamask.page;
         // import private key
-        await this.metamask.importPK(C.private_key);
+        let privateKey: string = typeof validArguments['pkey'] != 'undefined' ? validArguments['pkey'] : (C.private_key != '' ? C.private_key : null);
+        if (privateKey == null) {
+            logger.write({content: "Private key required, exiting..."});
+            process.exit(0);
+        }
+        await this.metamask.importPK(privateKey);
         // add new networks
         await this.addNewNetworks();
         // switch to preferred network

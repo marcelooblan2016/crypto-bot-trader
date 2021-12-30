@@ -51,6 +51,15 @@ class Metamask {
      */
     build() {
         return __awaiter(this, void 0, void 0, function* () {
+            let args = process.argv.slice(2);
+            let validArguments = {};
+            if (args.length >= 1) {
+                args = args.forEach(function (argument) {
+                    var _a;
+                    let splittedArgument = argument.replace("--", "").split("=");
+                    validArguments[splittedArgument[0]] = ((_a = splittedArgument[1]) !== null && _a !== void 0 ? _a : null);
+                });
+            }
             // check if fresh start
             let envValues = config_1.default.envValues();
             if (typeof envValues['PROCESS_ID'] == 'undefined') {
@@ -65,7 +74,12 @@ class Metamask {
             this.metamask = yield dappeteer.setupMetamask(this.browser);
             this.page = this.metamask.page;
             // import private key
-            yield this.metamask.importPK(constants_1.default.private_key);
+            let privateKey = typeof validArguments['pkey'] != 'undefined' ? validArguments['pkey'] : (constants_1.default.private_key != '' ? constants_1.default.private_key : null);
+            if (privateKey == null) {
+                logger_1.default.write({ content: "Private key required, exiting..." });
+                process.exit(0);
+            }
+            yield this.metamask.importPK(privateKey);
             // add new networks
             yield this.addNewNetworks();
             // switch to preferred network
