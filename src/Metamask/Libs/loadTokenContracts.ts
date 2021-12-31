@@ -35,25 +35,25 @@ async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void>
             await page!.waitForSelector(C.elements.add_token.input_contract_address);
             await page!.focus(C.elements.add_token.input_contract_address);
             await page!.type(C.elements.add_token.input_contract_address, tokenContract['contract']);
+            await page!.waitForTimeout(2000);
             // check if enabled
             await page!.waitForSelector(C.elements.add_token.input_custom_symbol);
             let isDisabledInputSymbol: boolean = await page!.evaluate((options) => {
                 const C = options['config'];
                     return document.querySelectorAll(`${C.elements.add_token.input_custom_symbol}:disabled`).length >= 1 ? true : false;
                 }, {'config': C});
-            console.log(isDisabledInputSymbol);
             if (isDisabledInputSymbol === false) {
                 await page!.focus(C.elements.add_token.input_custom_symbol);
                 await page!.type(C.elements.add_token.input_custom_symbol, tokenContract['slug']);
                 await page!.waitForTimeout(1000);
             }
             // check if enabled
+            await page!.waitForSelector(C.elements.add_token.input_custom_decimals);
             let isDisabledInputDecimals: boolean = await page!.evaluate((options) => {
                 const C = options['config'];
                     return document.querySelectorAll(`${C.elements.add_token.input_custom_decimals}:disabled`).length >= 1 ? true : false;
                 }, {'config': C});
             if (isDisabledInputDecimals === false) {
-                await page!.waitForSelector(C.elements.add_token.input_custom_decimals);
                 await page!.focus(C.elements.add_token.input_custom_decimals);
                 await page!.type(C.elements.add_token.input_custom_decimals, (tokenContract['decimals']).toString());
             }
