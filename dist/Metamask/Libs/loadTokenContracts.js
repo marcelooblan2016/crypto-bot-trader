@@ -43,13 +43,28 @@ function loadTokenContracts(params) {
                 yield page.waitForSelector(C.elements.add_token.input_contract_address);
                 yield page.focus(C.elements.add_token.input_contract_address);
                 yield page.type(C.elements.add_token.input_contract_address, tokenContract['contract']);
+                // check if enabled
                 yield page.waitForSelector(C.elements.add_token.input_custom_symbol);
-                yield page.focus(C.elements.add_token.input_custom_symbol);
-                yield page.type(C.elements.add_token.input_custom_symbol, tokenContract['slug']);
-                yield page.waitForTimeout(1000);
-                yield page.waitForSelector(C.elements.add_token.input_custom_decimals);
-                yield page.focus(C.elements.add_token.input_custom_decimals);
-                yield page.type(C.elements.add_token.input_custom_decimals, (tokenContract['decimals']).toString());
+                let isDisabledInputSymbol = yield page.evaluate((options) => {
+                    const C = options['config'];
+                    return document.querySelectorAll(`${C.elements.add_token.input_custom_symbol}:disabled`).length >= 1 ? true : false;
+                }, { 'config': C });
+                console.log(isDisabledInputSymbol);
+                if (isDisabledInputSymbol === false) {
+                    yield page.focus(C.elements.add_token.input_custom_symbol);
+                    yield page.type(C.elements.add_token.input_custom_symbol, tokenContract['slug']);
+                    yield page.waitForTimeout(1000);
+                }
+                // check if enabled
+                let isDisabledInputDecimals = yield page.evaluate((options) => {
+                    const C = options['config'];
+                    return document.querySelectorAll(`${C.elements.add_token.input_custom_decimals}:disabled`).length >= 1 ? true : false;
+                }, { 'config': C });
+                if (isDisabledInputDecimals === false) {
+                    yield page.waitForSelector(C.elements.add_token.input_custom_decimals);
+                    yield page.focus(C.elements.add_token.input_custom_decimals);
+                    yield page.type(C.elements.add_token.input_custom_decimals, (tokenContract['decimals']).toString());
+                }
                 yield page.waitForXPath(C.elements.add_token.button_next_xpath + "[not(@disabled)]");
                 const [buttonNext] = yield page.$x(C.elements.add_token.button_next_xpath);
                 yield buttonNext.click();
