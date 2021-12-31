@@ -27,7 +27,6 @@ class Metamask implements MetamaskInterface {
         console.log("Setup metamask...");
         this.metamask = await dappeteer.setupMetamask(this.browser);
         this.page = this.metamask.page;
-
         // import private key
         await this.metamask.importPK(C.private_key);
         // add new networks
