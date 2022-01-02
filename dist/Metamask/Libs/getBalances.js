@@ -48,7 +48,7 @@ function getBalanceByToken(params) {
                 currentUrl.match(/\/\/(.*?)\//i)[1],
                 `/home.html#asset/${tokenContract.contract}`
             ].join("");
-            yield page.goto(assetUrl);
+            yield page.goto(assetUrl, { waitUntil: 'domcontentloaded' });
             yield page.waitForTimeout(1000);
             yield page.waitForSelector(C.elements.get_balances.div_primary_balance, {
                 timeout: 15000
@@ -81,11 +81,30 @@ function getBalanceAll(params) {
                 currentUrl.match(/\/\/(.*?)\//i)[1],
                 "/home.html"
             ].join("");
-            yield page.goto(homeUrl);
+            yield page.goto(homeUrl, { waitUntil: 'domcontentloaded' });
             yield page.waitForTimeout(1000);
-            yield page.waitForXPath(C.elements.get_balances.button_assets + "[not(@disabled)]", { visible: true });
-            const [buttonAssets] = yield page.$x(C.elements.get_balances.button_assets);
-            yield buttonAssets.click();
+            yield page.evaluate((options) => __awaiter(this, void 0, void 0, function* () {
+                const C = options['config'];
+                let listPopup = [
+                    C.elements.modals.home,
+                    C.elements.modals.home_popover
+                ];
+                for (let list of listPopup) {
+                    let elements = document.querySelectorAll(list);
+                    if (elements.length >= 1) {
+                        yield elements[0].click();
+                    }
+                }
+            }), { 'config': C });
+            let isClickButtonAssets = yield page.evaluate(function (C) {
+                return document.querySelector(".tab--active").textContent == 'Assets' ? false : true;
+            }, C);
+            console.log("isClickButtonAssets: " + isClickButtonAssets);
+            if (isClickButtonAssets == true) {
+                yield page.waitForXPath(C.elements.get_balances.button_assets_xpath, { visible: true });
+                const [buttonAssets] = yield page.$x(C.elements.get_balances.button_assets_xpath);
+                yield buttonAssets.click();
+            }
             yield page.waitForSelector(C.elements.get_balances.div_token_sell, {
                 timeout: 15000
             });

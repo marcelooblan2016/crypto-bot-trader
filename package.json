@@ -1,7 +1,7 @@
 {
   "name": "crypto-bot-trader",
   "description": "swapping of ERC-20 Tokens (buy/sell) based on the market health with bot strategy (condition) - by utilizing metamask & pupeteer",
-  "version": "1.0.45.beta",
+  "version": "1.0.45",
   "main": "./dist/index.js",
   "repository": {
     "type": "git",

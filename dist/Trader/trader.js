@@ -40,9 +40,9 @@ class Trader {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log("Analyzing market...");
+                yield this.metaMaskWithBuild.clearPopups();
                 // check stable coin balancebalance
                 let tokenBalances = yield this.metaMaskWithBuild.getBalances();
-                this.metaMaskWithBuild.clearPopups();
                 if (typeof tokenBalances == 'boolean') {
                     return false;
                 }

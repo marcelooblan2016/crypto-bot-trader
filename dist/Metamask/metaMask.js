@@ -60,7 +60,8 @@ class Metamask {
             yield this.addNewNetworks();
             // switch to preferred network
             logger_1.default.write({ content: `Switch network: ${constants_1.default.network_preferred}` });
-            yield this.switchNetwork(constants_1.default.network_preferred);
+            // await this.switchNetwork(C.network_preferred);
+            yield this.page.waitForTimeout(2000);
             // load tokens
             yield this.loadTokenContracts();
         });

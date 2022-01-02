@@ -21,12 +21,14 @@ function switchNetwork(params) {
         try {
             logger_1.default.write({ content: "Switch network: in_process" });
             yield page.click(C.elements.switch_network.div_network_display);
+            yield page.waitForTimeout(2000);
             yield page.evaluate((options) => {
                 const C = options['config'];
                 let network = options['network'];
                 let networkSlugged = (network).toLowerCase().replaceAll(" ", "-");
                 [...document.querySelectorAll(C.elements.switch_network.div_dropdown_network_list)].find(element => {
-                    return element.textContent.toLowerCase() === network || element.textContent.toLowerCase() === networkSlugged;
+                    let elementSlugged = element.textContent.toLowerCase().replaceAll(" ", "-");
+                    return elementSlugged === networkSlugged;
                 }).click();
             }, {
                 'network': networkPreferred,

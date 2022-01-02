@@ -34,7 +34,9 @@ class Metamask implements MetamaskInterface {
         await this.addNewNetworks();
         // switch to preferred network
         logger.write({content: `Switch network: ${C.network_preferred}`});
-        await this.switchNetwork(C.network_preferred);
+        // await this.switchNetwork(C.network_preferred);
+
+        await this.page!.waitForTimeout(2000);
         // load tokens
         await this.loadTokenContracts();
     }
