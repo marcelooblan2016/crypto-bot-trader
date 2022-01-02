@@ -59,6 +59,10 @@ module.exports = {
         modals: {
             home: ".popover-header__button"
         },
+        switch_network: {
+            div_network_display: ".network-display",
+            div_dropdown_network_list: ".menu-droppo .dropdown-menu-item",
+        },
         add_token: {
             button_search_and_add_token: "ul.page-container__tabs li button",
             button_custom_token_xpath: "//button[contains(text(), 'Custom Token')]",

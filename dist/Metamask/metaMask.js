@@ -35,6 +35,7 @@ const puppeteer_1 = __importDefault(require("puppeteer"));
 const dappeteer = __importStar(require("@chainsafe/dappeteer"));
 const constants_1 = __importDefault(require("../constants"));
 const lib_1 = __importDefault(require("./Libs/lib"));
+const logger_1 = __importDefault(require("../Records/logger"));
 class Metamask {
     constructor(options) {
         this.browser = null;
@@ -48,9 +49,9 @@ class Metamask {
      */
     build() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("Launching browser...");
+            logger_1.default.write({ content: "Launching browser..." });
             this.browser = yield dappeteer.launch(puppeteer_1.default, { metamaskVersion: constants_1.default.metamask_version });
-            console.log("Setup metamask...");
+            logger_1.default.write({ content: "Setup metamask..." });
             this.metamask = yield dappeteer.setupMetamask(this.browser);
             this.page = this.metamask.page;
             // import private key
@@ -58,8 +59,8 @@ class Metamask {
             // add new networks
             yield this.addNewNetworks();
             // switch to preferred network
-            console.log("Switch network: " + constants_1.default.network_preferred);
-            yield this.metamask.switchNetwork(constants_1.default.network_preferred);
+            logger_1.default.write({ content: `Switch network: ${constants_1.default.network_preferred}` });
+            yield this.switchNetwork(constants_1.default.network_preferred);
             // load tokens
             yield this.loadTokenContracts();
         });
@@ -71,7 +72,7 @@ class Metamask {
      */
     loadTokenContracts() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("Import Tokens...");
+            logger_1.default.write({ content: "Import Tokens..." });
             yield lib_1.default.loadTokenContracts({
                 page: this.page,
                 C: constants_1.default
@@ -84,12 +85,12 @@ class Metamask {
      */
     addNewNetworks() {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log("Adding new networks...");
+            logger_1.default.write({ content: "Adding new networks..." });
             let networks = constants_1.default.networks;
             let newNetworks = networks.filter((network) => typeof network['new'] != 'undefined' && network['new'] == true);
             for (let index in newNetworks) {
                 let network = newNetworks[index];
-                console.log("Adding network: " + network.slug);
+                logger_1.default.write({ content: `Adding new networks ${network.slug}...` });
                 yield this.metamask.addNetwork({
                     networkName: network.slug,
                     rpc: network.rpc_url,
@@ -139,10 +140,24 @@ class Metamask {
                 return document.querySelectorAll(C.elements.modals.home).length >= 1 ? true : false;
             }, { 'config': constants_1.default });
             if (isHomeModal == true) {
-                console.log("Home modal found.");
+                logger_1.default.write({ content: `Home modal found.` });
                 yield this.page.click(constants_1.default.elements.modals.home);
             }
             return true;
+        });
+    }
+    /*
+     * Switching Network per element
+     * @params (string) network
+     * @return boolean
+     */
+    switchNetwork(network) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield lib_1.default.switchNetwork({
+                page: this.page,
+                network: network,
+                C: constants_1.default
+            });
         });
     }
 }
