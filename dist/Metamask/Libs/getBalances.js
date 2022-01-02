@@ -83,6 +83,9 @@ function getBalanceAll(params) {
             ].join("");
             yield page.goto(homeUrl);
             yield page.waitForTimeout(1000);
+            yield page.waitForXPath(C.elements.get_balances.button_assets + "[not(@disabled)]", { visible: true });
+            const [buttonAssets] = yield page.$x(C.elements.get_balances.button_assets);
+            yield buttonAssets.click();
             yield page.waitForSelector(C.elements.get_balances.div_token_sell, {
                 timeout: 15000
             });

@@ -83,6 +83,9 @@ async function getBalanceAll(params: getBalanceParameters): Promise<boolean|mapp
 
         await page!.goto(homeUrl);
         await page!.waitForTimeout(1000);
+        await page!.waitForXPath(C.elements.get_balances.button_assets + "[not(@disabled)]", { visible: true });
+        const [buttonAssets] = await page!.$x(C.elements.get_balances.button_assets);
+        await buttonAssets.click();
         
         await page!.waitForSelector(C.elements.get_balances.div_token_sell , {
             timeout: 15000

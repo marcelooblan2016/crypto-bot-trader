@@ -89,6 +89,7 @@ module.exports = {
             button_close_xpath: "//button[contains(text(), 'Close')]"
         },
         get_balances: {
+            button_assets: "//button[contains(text(), 'Assets')]",
             div_token_sell: ".list-item.asset-list-item.token-cell",
             div_primary_balance: ".currency-display-component.token-overview__primary-balance"
         }
