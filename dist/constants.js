@@ -57,7 +57,12 @@ module.exports = {
     },
     elements: {
         modals: {
-            home: ".popover-header__button"
+            home: ".pover-header__button",
+            home_popover: ".popover-header__button",
+        },
+        switch_network: {
+            div_network_display: ".network-display",
+            div_dropdown_network_list: ".menu-droppo .dropdown-menu-item",
         },
         add_token: {
             button_search_and_add_token: "ul.page-container__tabs li button",
@@ -85,6 +90,7 @@ module.exports = {
             button_close_xpath: "//button[contains(text(), 'Close')]"
         },
         get_balances: {
+            button_assets_xpath: "//button[contains(text(), 'Assets')]",
             div_token_sell: ".list-item.asset-list-item.token-cell",
             div_primary_balance: ".currency-display-component.token-overview__primary-balance"
         }
