@@ -44,8 +44,9 @@ async function getBalanceByToken(params: getBalanceParameters): Promise<mappedTo
             currentUrl.match(/\/\/(.*?)\//i)![1],
             `/home.html#asset/${tokenContract.contract}`
         ].join("");
-        await page!.goto(assetUrl);
+        await page!.goto(assetUrl, { waitUntil: 'domcontentloaded' });
         await page!.waitForTimeout(1000);
+
         await page!.waitForSelector(C.elements.get_balances.div_primary_balance , {
             timeout: 15000
         });
@@ -81,9 +82,37 @@ async function getBalanceAll(params: getBalanceParameters): Promise<boolean|mapp
             "/home.html"
         ].join("")
 
-        await page!.goto(homeUrl);
+        await page!.goto(homeUrl, { waitUntil: 'domcontentloaded' });
         await page!.waitForTimeout(1000);
+
+        await page!.evaluate( async (options) => {
+            const C = options['config'];
+            let listPopup = [
+                C.elements.modals.home,
+                C.elements.modals.home_popover
+            ];
+
+            for(let list of listPopup) {
+                let elements = document.querySelectorAll(list);
+                if (elements.length >= 1) {
+                    await elements[0].click();
+                }
+            }
+        }, {'config': C});
+
+        let isClickButtonAssets = await page!.evaluate( function (C) {
+            
+            return (document.querySelector(".tab--active") as Element).textContent == 'Assets' ? false : true;
+        }, C);
+
+        console.log("isClickButtonAssets: " + isClickButtonAssets);
         
+        if (isClickButtonAssets == true) {
+            await page!.waitForXPath(C.elements.get_balances.button_assets_xpath, { visible: true });
+            const [buttonAssets] = await page!.$x(C.elements.get_balances.button_assets_xpath);
+            await buttonAssets.click();
+        }
+
         await page!.waitForSelector(C.elements.get_balances.div_token_sell , {
             timeout: 15000
         });

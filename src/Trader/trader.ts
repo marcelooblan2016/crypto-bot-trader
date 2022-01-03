@@ -50,11 +50,9 @@ class Trader {
 
         try {
         console.log("Analyzing market...");
-
+        await this.metaMaskWithBuild.clearPopups();
         // check stable coin balancebalance
         let tokenBalances = await this.metaMaskWithBuild.getBalances();
-
-        this.metaMaskWithBuild.clearPopups();
 
         if (typeof tokenBalances == 'boolean') { return false; }
         tokenBalances = (tokenBalances) as mappedTokenBalance[];

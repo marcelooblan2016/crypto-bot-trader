@@ -6,8 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const getBalances_1 = __importDefault(require("./getBalances"));
 const loadTokenContracts_1 = __importDefault(require("./loadTokenContracts"));
 const swapToken_1 = __importDefault(require("./swapToken"));
+const switchNetwork_1 = __importDefault(require("./switchNetwork"));
 exports.default = {
     getBalances: getBalances_1.default,
     loadTokenContracts: loadTokenContracts_1.default,
-    swapToken: swapToken_1.default
+    swapToken: swapToken_1.default,
+    switchNetwork: switchNetwork_1.default
 };

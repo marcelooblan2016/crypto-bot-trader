@@ -44,6 +44,7 @@ class Metamask implements MetamaskInterface {
         // launch browser
         logger.write({content: "Launching browser..."});
         this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version, args: ['--no-sandbox']});
+
         logger.write({content: "Setup metamask..."});
         this.metamask = await dappeteer.setupMetamask(this.browser);
         this.page = this.metamask.page;
@@ -58,7 +59,8 @@ class Metamask implements MetamaskInterface {
         await this.addNewNetworks();
         // switch to preferred network
         logger.write({content: `Switch network: ${C.network_preferred}`});
-        await this.metamask.switchNetwork(C.network_preferred);
+        // await this.switchNetwork(C.network_preferred);
+        await this.page!.waitForTimeout(2000);
         // load tokens
         await this.loadTokenContracts();
     }
@@ -82,11 +84,14 @@ class Metamask implements MetamaskInterface {
     async addNewNetworks (): Promise<void>
     {
         logger.write({content: `Adding new networks...`});
+
         let networks = C.networks;
         let newNetworks = networks.filter( (network) => typeof network['new'] != 'undefined' && network['new'] == true);
         for (let index in newNetworks) {
             let network = newNetworks[index];
-            logger.write({content: `Adding network: ${network.slug}`});
+
+            logger.write({content: `Adding new networks ${network.slug}...`});
+
             await this.metamask.addNetwork({
                 networkName: network.slug,
                 rpc: network.rpc_url,
@@ -140,6 +145,20 @@ class Metamask implements MetamaskInterface {
         }
 
         return true;
+    }
+
+    /*
+     * Switching Network per element
+     * @params (string) network
+     * @return boolean
+     */
+    async switchNetwork(network: string): Promise<boolean>
+    {
+        return await metaMaskLibs.switchNetwork({
+            page: this.page,
+            network: network,
+            C: C
+        })
     }
 }
 

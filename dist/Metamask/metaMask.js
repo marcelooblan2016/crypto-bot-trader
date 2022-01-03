@@ -84,7 +84,8 @@ class Metamask {
             yield this.addNewNetworks();
             // switch to preferred network
             logger_1.default.write({ content: `Switch network: ${constants_1.default.network_preferred}` });
-            yield this.metamask.switchNetwork(constants_1.default.network_preferred);
+            // await this.switchNetwork(C.network_preferred);
+            yield this.page.waitForTimeout(2000);
             // load tokens
             yield this.loadTokenContracts();
         });
@@ -114,7 +115,7 @@ class Metamask {
             let newNetworks = networks.filter((network) => typeof network['new'] != 'undefined' && network['new'] == true);
             for (let index in newNetworks) {
                 let network = newNetworks[index];
-                logger_1.default.write({ content: `Adding network: ${network.slug}` });
+                logger_1.default.write({ content: `Adding new networks ${network.slug}...` });
                 yield this.metamask.addNetwork({
                     networkName: network.slug,
                     rpc: network.rpc_url,
@@ -168,6 +169,20 @@ class Metamask {
                 yield this.page.click(constants_1.default.elements.modals.home);
             }
             return true;
+        });
+    }
+    /*
+     * Switching Network per element
+     * @params (string) network
+     * @return boolean
+     */
+    switchNetwork(network) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield lib_1.default.switchNetwork({
+                page: this.page,
+                network: network,
+                C: constants_1.default
+            });
         });
     }
 }
