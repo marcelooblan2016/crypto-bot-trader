@@ -1,8 +1,10 @@
 import _ from 'lodash';
+import moment from 'moment';
 import traderLibs from "./Libs/lib";
 import ApiCoinMarketCap from 'api.coinmarketcap';
 import swapHistory from '../Records/swapHistory';
 import logger from '../Records/logger';
+import config from '../Records/config';
 
 interface contructorParameters {
     metamask_with_build: MetamaskInterface,
@@ -49,24 +51,28 @@ class Trader {
     async analyzeMarket (params?: any): Promise<boolean> {
 
         try {
-        console.log("Analyzing market...");
-        await this.metaMaskWithBuild.clearPopups();
-        // check stable coin balancebalance
-        let tokenBalances = await this.metaMaskWithBuild.getBalances();
+            this.checkpoint();
+            
+            console.log("Analyzing market...");
+            process.exit(0);
+            
+            await this.metaMaskWithBuild.clearPopups();
+            // check stable coin balancebalance
+            let tokenBalances = await this.metaMaskWithBuild.getBalances();
 
-        if (typeof tokenBalances == 'boolean') { return false; }
-        tokenBalances = (tokenBalances) as mappedTokenBalance[];
-        let stableCoinBalance = tokenBalances.filter( (
-            token: mappedTokenBalance) => token.slug == this.stableCoin.slug
-        ).map( token => Number(token.balance))[0] ?? null;
-        // check if will sell or buy
+            if (typeof tokenBalances == 'boolean') { return false; }
+            tokenBalances = (tokenBalances) as mappedTokenBalance[];
+            let stableCoinBalance = tokenBalances.filter( (
+                token: mappedTokenBalance) => token.slug == this.stableCoin.slug
+            ).map( token => Number(token.balance))[0] ?? null;
+            // check if will sell or buy
 
-        let responseData = await ApiCoinMarketCap.getMarketPrices(1, 150, {tagSlugs: null});
+            let responseData = await ApiCoinMarketCap.getMarketPrices(1, 150, {tagSlugs: null});
 
-        let mappedMarketData = this.map((responseData) as CoinMarketCap.CryptoListFromRawData);
-        // check token ready for sell
-        await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
-        await this.buyMode({tokenBalances: tokenBalances, mappedMarketData: mappedMarketData});
+            let mappedMarketData = this.map((responseData) as CoinMarketCap.CryptoListFromRawData);
+            // check token ready for sell
+            await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
+            await this.buyMode({tokenBalances: tokenBalances, mappedMarketData: mappedMarketData});
         
         console.log("Market Analyzed.");
         
@@ -214,6 +220,18 @@ class Trader {
         
 
         return true;
+    }
+
+    private checkpoint() {
+        //CHECKPOINT_DATE
+        let envValues = config.envValues();
+        if (typeof envValues['CHECKPOINT_DATE'] == 'undefined') { return false;}
+        
+        let checkpointDate: string = envValues['CHECKPOINT_DATE'];
+        console.log("checkpointDate: " + checkpointDate);
+        let formattedMomentDate: string = moment(checkpointDate).format('YYYYMMDDhhmmss');
+        console.log(formattedMomentDate);
+        // check if todays date >= checkpoint date then exit
     }
 }
 

@@ -13,10 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __importDefault(require("lodash"));
+const moment_1 = __importDefault(require("moment"));
 const lib_1 = __importDefault(require("./Libs/lib"));
 const api_coinmarketcap_1 = __importDefault(require("api.coinmarketcap"));
 const swapHistory_1 = __importDefault(require("../Records/swapHistory"));
 const logger_1 = __importDefault(require("../Records/logger"));
+const config_1 = __importDefault(require("../Records/config"));
 class Trader {
     constructor(contructorParams) {
         var _a;
@@ -39,7 +41,9 @@ class Trader {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                this.checkpoint();
                 console.log("Analyzing market...");
+                process.exit(0);
                 yield this.metaMaskWithBuild.clearPopups();
                 // check stable coin balancebalance
                 let tokenBalances = yield this.metaMaskWithBuild.getBalances();
@@ -177,6 +181,18 @@ class Trader {
             }
             return true;
         });
+    }
+    checkpoint() {
+        //CHECKPOINT_DATE
+        let envValues = config_1.default.envValues();
+        if (typeof envValues['CHECKPOINT_DATE'] == 'undefined') {
+            return false;
+        }
+        let checkpointDate = envValues['CHECKPOINT_DATE'];
+        console.log("checkpointDate: " + checkpointDate);
+        let formattedMomentDate = (0, moment_1.default)(checkpointDate).format('YYYYMMDDhhmmss');
+        console.log(formattedMomentDate);
+        // check if todays date >= checkpoint date then exit
     }
 }
 exports.default = Trader;
