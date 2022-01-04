@@ -16,6 +16,8 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
     
     const page = params.page;
     const C = params.C;
+    let currentUrl: string = page!.url();
+
     try {
         let tokenFrom: string = params.tokenFrom;
         let tokenTo: string = params.tokenTo;
@@ -29,8 +31,6 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         ].join(" ");
 
         logger.write({content: msgInit});
-
-        let currentUrl: string = page!.url();
 
         let tokenContracts = tokenLibs.tokenContracts();
         let tokenFromContract: tokenContractInterface = tokenContracts.filter( (token) => token.slug == tokenFrom)[0];
@@ -125,7 +125,7 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         // buttonSwap.screenshot({path: 'button-swap.png'});
         await buttonSwap.click();
         await page!.waitForNavigation();
-        await page!.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true });
+        await page!.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 60000 });
         const [buttonClose] = await page!.$x(C.elements.swap_token.button_close_xpath);
         await buttonClose.click();
         await page!.waitForNavigation();
@@ -152,6 +152,13 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         // console.log(error);
         logger.write({content: "Swapping token: failed"});
         logger.screenshot(page!);
+
+        let baseUrl: string = [
+            C.urls.prefix,
+            (currentUrl.match(/\/\/(.*?)\//i))![1],
+            `/home.html`
+        ].join("");
+        await page!.goto(baseUrl);
     }
 
     return false;
