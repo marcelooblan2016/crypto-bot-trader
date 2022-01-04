@@ -37,6 +37,7 @@ class Logger {
     screenshot(page) {
         return __awaiter(this, void 0, void 0, function* () {
             let pathFileName = `${this.directory}/${this.getName(2)}.png`;
+            this.write({ content: `An error occurred: ${pathFileName}` });
             yield page.screenshot({ path: pathFileName });
             return true;
         });

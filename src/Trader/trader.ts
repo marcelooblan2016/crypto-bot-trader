@@ -54,7 +54,6 @@ class Trader {
             this.checkpoint();
             
             console.log("Analyzing market...");
-            process.exit(0);
             
             await this.metaMaskWithBuild.clearPopups();
             // check stable coin balancebalance
@@ -122,7 +121,11 @@ class Trader {
             };
         });
     }
-
+    /*
+     * sellMode : Check a profitable trades/losing trades do a necessary action with it.
+     * @params Any
+     * @return boolean
+     */
     async sellMode(params: sellModeParameters): Promise<boolean> {
         let mappedMarketData = params.mappedMarketData;
         // get token with balance except matic
@@ -176,7 +179,11 @@ class Trader {
         
         return true;
     }
-
+    /*
+     * buyMode : Check if there are tokens with dip within an hour or a day
+     * @params Any
+     * @return boolean
+     */
     async buyMode(params: buyModeParameters): Promise <boolean> {
         let tokenBalances = params.tokenBalances;
         let mappedMarketData = params.mappedMarketData;
@@ -221,17 +228,24 @@ class Trader {
 
         return true;
     }
-
-    private checkpoint() {
+    /*
+     * checkpoint : Stop trading at a certain point
+     * @return void | boolean
+     */
+    private checkpoint(): void | boolean {
         //CHECKPOINT_DATE
         let envValues = config.envValues();
         if (typeof envValues['CHECKPOINT_DATE'] == 'undefined') { return false;}
         
         let checkpointDate: string = envValues['CHECKPOINT_DATE'];
         console.log("checkpointDate: " + checkpointDate);
-        let formattedMomentDate: string = moment(checkpointDate).format('YYYYMMDDhhmmss');
-        console.log(formattedMomentDate);
+        let formattedMomentCheckPointDate: number = Number(moment(checkpointDate).format('YYYYMMDDhhmmss'));
+        let formattedMomentCurrentDate: number = Number(moment().format('YYYYMMDDhhmmss'));
         // check if todays date >= checkpoint date then exit
+        if (formattedMomentCurrentDate >= formattedMomentCheckPointDate) {
+            logger.write({content: `Checkpoint reached at: ${formattedMomentCheckPointDate}`});
+            process.exit(0);
+        }
     }
 }
 

@@ -58,6 +58,14 @@ const {metaMask, trader, token} = require('crypto-bot-trader');
 node {jsFile}
 ```
 
+## Extras
+You can also stop your trading bot on a certain date; This is quite ideal on cloud server <Which im currently working-on>
+
+On Env File: Add the following key
+```bash
+CHECKPOINT_DATE="{YOUR_DATE_HERE-> Format: MMMM-Do-YYYY h:mm:ss a}"
+```
+
 
 [erc20]: https://etherscan.io/tokens
 [erc20List]: https://github.com/marcelooblan2016/crypto-bot-trader/blob/main/src/Records/Migrations/tokenContracts.js
