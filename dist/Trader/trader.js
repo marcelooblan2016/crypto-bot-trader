@@ -13,10 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __importDefault(require("lodash"));
+const moment_1 = __importDefault(require("moment"));
 const lib_1 = __importDefault(require("./Libs/lib"));
 const api_coinmarketcap_1 = __importDefault(require("api.coinmarketcap"));
 const swapHistory_1 = __importDefault(require("../Records/swapHistory"));
 const logger_1 = __importDefault(require("../Records/logger"));
+const config_1 = __importDefault(require("../Records/config"));
 class Trader {
     constructor(contructorParams) {
         var _a;
@@ -39,6 +41,7 @@ class Trader {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                this.checkpoint();
                 console.log("Analyzing market...");
                 yield this.metaMaskWithBuild.clearPopups();
                 // check stable coin balancebalance
@@ -93,6 +96,11 @@ class Trader {
             });
         });
     }
+    /*
+     * sellMode : Check a profitable trades/losing trades do a necessary action with it.
+     * @params Any
+     * @return boolean
+     */
     sellMode(params) {
         return __awaiter(this, void 0, void 0, function* () {
             let mappedMarketData = params.mappedMarketData;
@@ -141,6 +149,11 @@ class Trader {
             return true;
         });
     }
+    /*
+     * buyMode : Check if there are tokens with dip within an hour or a day
+     * @params Any
+     * @return boolean
+     */
     buyMode(params) {
         return __awaiter(this, void 0, void 0, function* () {
             let tokenBalances = params.tokenBalances;
@@ -177,6 +190,26 @@ class Trader {
             }
             return true;
         });
+    }
+    /*
+     * checkpoint : Stop trading at a certain point
+     * @return void | boolean
+     */
+    checkpoint() {
+        //CHECKPOINT_DATE
+        let envValues = config_1.default.envValues();
+        if (typeof envValues['CHECKPOINT_DATE'] == 'undefined') {
+            return false;
+        }
+        let checkpointDate = envValues['CHECKPOINT_DATE'];
+        console.log("checkpointDate: " + checkpointDate);
+        let formattedMomentCheckPointDate = Number((0, moment_1.default)(checkpointDate).format('YYYYMMDDhhmmss'));
+        let formattedMomentCurrentDate = Number((0, moment_1.default)().format('YYYYMMDDhhmmss'));
+        // check if todays date >= checkpoint date then exit
+        if (formattedMomentCurrentDate >= formattedMomentCheckPointDate) {
+            logger_1.default.write({ content: `Checkpoint reached at: ${formattedMomentCheckPointDate}` });
+            process.exit(0);
+        }
     }
 }
 exports.default = Trader;
