@@ -19,6 +19,7 @@ function swapToken(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const page = params.page;
         const C = params.C;
+        let currentUrl = page.url();
         try {
             let tokenFrom = params.tokenFrom;
             let tokenTo = params.tokenTo;
@@ -30,7 +31,6 @@ function swapToken(params) {
                 "TokenTo: " + tokenTo,
             ].join(" ");
             logger_1.default.write({ content: msgInit });
-            let currentUrl = page.url();
             let tokenContracts = token_1.default.tokenContracts();
             let tokenFromContract = tokenContracts.filter((token) => token.slug == tokenFrom)[0];
             // chrome-extension://odkjoconjphbkgjmioaolohpdhgihomg/home.html#asset/0x2791bca1f2de4661ed88a30c99a7a9449aa84174
@@ -117,7 +117,7 @@ function swapToken(params) {
             // buttonSwap.screenshot({path: 'button-swap.png'});
             yield buttonSwap.click();
             yield page.waitForNavigation();
-            yield page.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true });
+            yield page.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 60000 });
             const [buttonClose] = yield page.$x(C.elements.swap_token.button_close_xpath);
             yield buttonClose.click();
             yield page.waitForNavigation();
@@ -139,9 +139,11 @@ function swapToken(params) {
             return true;
         }
         catch (error) {
-            console.log(error);
+            // console.log(error);
             logger_1.default.write({ content: "Swapping token: failed" });
             logger_1.default.screenshot(page);
+            const [buttonSwapCancel] = yield page.$x(C.elements.swap_token.button_swap_cancel_xpath);
+            yield buttonSwapCancel.click();
         }
         return false;
     });

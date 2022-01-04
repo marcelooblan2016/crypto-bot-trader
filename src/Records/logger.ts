@@ -40,6 +40,7 @@ class Logger {
     public async screenshot(page: Page): Promise<boolean> {
 
         let pathFileName: string = `${this.directory}/${this.getName(2)}.png`;
+        this.write({content: `An error occurred: ${pathFileName}`});
         await page.screenshot({path: pathFileName});
 
         return true;

@@ -87,7 +87,8 @@ module.exports = {
             button_swap_overview_xpath: "//button[contains(.,'Swap')]",
             button_swap_xpath: "//button[contains(text(),'Swap')]",
             div_transaction_complete_xpath: "//div[contains(text(), 'Transaction complete')]",
-            button_close_xpath: "//button[contains(text(), 'Close')]"
+            button_close_xpath: "//button[contains(text(), 'Close')]",
+            button_swap_cancel_xpath: "//div[contains(text(), 'Cancel')]",
         },
         get_balances: {
             button_assets_xpath: "//button[contains(text(), 'Assets')]",

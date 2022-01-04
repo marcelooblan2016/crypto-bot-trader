@@ -12,7 +12,7 @@ swapping of [ERC-20 Tokens][erc20] (buy/sell) based on the market health with bo
 - matic (for gas fees)
 
 ## Notes
-- Always makes sure to have a balance in usdc (used for trading) & matic (for gas fees)
+- Always make sure to have a balance in usdc (used for trading) & matic (for gas fees)
 - One trade at a time (for now)
 - Compound trading
 
@@ -56,6 +56,14 @@ const {metaMask, trader, token} = require('crypto-bot-trader');
 
 ```bash
 node {jsFile}
+```
+
+## Extras
+You can also stop your trading bot on a certain date; This is quite ideal on cloud server <Which im currently working-on>
+
+On Env File: Add the following key
+```bash
+CHECKPOINT_DATE="{YOUR_DATE_HERE-> Format: MMMM-Do-YYYY h:mm:ss a}"
 ```
 
 
