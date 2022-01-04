@@ -153,12 +153,8 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         logger.write({content: "Swapping token: failed"});
         logger.screenshot(page!);
 
-        let baseUrl: string = [
-            C.urls.prefix,
-            (currentUrl.match(/\/\/(.*?)\//i))![1],
-            `/home.html`
-        ].join("");
-        await page!.goto(baseUrl);
+        const [buttonSwapCancel] = await page!.$x(C.elements.swap_token.button_swap_cancel_xpath);
+        await buttonSwapCancel.click();
     }
 
     return false;

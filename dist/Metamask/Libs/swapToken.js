@@ -142,12 +142,8 @@ function swapToken(params) {
             // console.log(error);
             logger_1.default.write({ content: "Swapping token: failed" });
             logger_1.default.screenshot(page);
-            let baseUrl = [
-                C.urls.prefix,
-                (currentUrl.match(/\/\/(.*?)\//i))[1],
-                `/home.html`
-            ].join("");
-            yield page.goto(baseUrl);
+            const [buttonSwapCancel] = yield page.$x(C.elements.swap_token.button_swap_cancel_xpath);
+            yield buttonSwapCancel.click();
         }
         return false;
     });
