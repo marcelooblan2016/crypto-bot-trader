@@ -51,43 +51,48 @@ class Metamask {
      */
     build() {
         return __awaiter(this, void 0, void 0, function* () {
-            let args = process.argv.slice(2);
-            let validArguments = {};
-            if (args.length >= 1) {
-                args = args.forEach(function (argument) {
-                    var _a;
-                    let splittedArgument = argument.replace("--", "").split("=");
-                    validArguments[splittedArgument[0]] = ((_a = splittedArgument[1]) !== null && _a !== void 0 ? _a : null);
-                });
+            try {
+                let args = process.argv.slice(2);
+                let validArguments = {};
+                if (args.length >= 1) {
+                    args = args.forEach(function (argument) {
+                        var _a;
+                        let splittedArgument = argument.replace("--", "").split("=");
+                        validArguments[splittedArgument[0]] = ((_a = splittedArgument[1]) !== null && _a !== void 0 ? _a : null);
+                    });
+                }
+                // check if fresh start
+                let envValues = config_1.default.envValues();
+                if (typeof envValues['PROCESS_ID'] == 'undefined') {
+                    logger_1.default.write({ content: "Fresh start, it may take at least a minute." });
+                }
+                // log process id
+                config_1.default.update({ key: "PROCESS_ID", value: process.pid });
+                // launch browser
+                logger_1.default.write({ content: "Launching browser..." });
+                this.browser = yield dappeteer.launch(puppeteer_1.default, { metamaskVersion: constants_1.default.metamask_version, args: ['--no-sandbox'] });
+                logger_1.default.write({ content: "Setup metamask..." });
+                this.metamask = yield dappeteer.setupMetamask(this.browser);
+                this.page = this.metamask.page;
+                // import private key
+                let privateKey = typeof validArguments['pkey'] != 'undefined' ? validArguments['pkey'] : (constants_1.default.private_key != '' ? constants_1.default.private_key : null);
+                if (privateKey == null) {
+                    logger_1.default.write({ content: "Private key required, exiting..." });
+                    process.exit(0);
+                }
+                yield this.metamask.importPK(privateKey);
+                // add new networks
+                yield this.addNewNetworks();
+                // switch to preferred network
+                logger_1.default.write({ content: `Switch network: ${constants_1.default.network_preferred}` });
+                // await this.switchNetwork(C.network_preferred);
+                yield this.page.waitForTimeout(2000);
+                // load tokens
+                yield this.loadTokenContracts();
             }
-            // check if fresh start
-            let envValues = config_1.default.envValues();
-            if (typeof envValues['PROCESS_ID'] == 'undefined') {
-                logger_1.default.write({ content: "Fresh start, it may take at least a minute." });
+            catch (error) {
+                console.log(error);
             }
-            // log process id
-            config_1.default.update({ key: "PROCESS_ID", value: process.pid });
-            // launch browser
-            logger_1.default.write({ content: "Launching browser..." });
-            this.browser = yield dappeteer.launch(puppeteer_1.default, { metamaskVersion: constants_1.default.metamask_version, args: ['--no-sandbox'] });
-            logger_1.default.write({ content: "Setup metamask..." });
-            this.metamask = yield dappeteer.setupMetamask(this.browser);
-            this.page = this.metamask.page;
-            // import private key
-            let privateKey = typeof validArguments['pkey'] != 'undefined' ? validArguments['pkey'] : (constants_1.default.private_key != '' ? constants_1.default.private_key : null);
-            if (privateKey == null) {
-                logger_1.default.write({ content: "Private key required, exiting..." });
-                process.exit(0);
-            }
-            yield this.metamask.importPK(privateKey);
-            // add new networks
-            yield this.addNewNetworks();
-            // switch to preferred network
-            logger_1.default.write({ content: `Switch network: ${constants_1.default.network_preferred}` });
-            // await this.switchNetwork(C.network_preferred);
-            yield this.page.waitForTimeout(2000);
-            // load tokens
-            yield this.loadTokenContracts();
         });
     }
     /*
