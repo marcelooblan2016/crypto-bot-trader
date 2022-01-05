@@ -112,9 +112,18 @@ function swapToken(params) {
             const [buttonSwapReview] = yield page.$x(C.elements.swap_token.button_swap_review_xpath);
             yield buttonSwapReview.click();
             yield page.waitForNavigation();
+            // if have confirmation
+            let isActionableMessageButton = yield page.evaluate((options) => {
+                const C = options['config'];
+                return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
+            }, { 'config': C });
+            if (isActionableMessageButton == true) {
+                console.log("actionable message found.");
+                yield page.click(C.elements.swap_token.button_swap_continue);
+                yield page.waitForTimeout(2000);
+            }
             yield page.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]", { visible: true });
             const [buttonSwap] = yield page.$x(C.elements.swap_token.button_swap_xpath);
-            // buttonSwap.screenshot({path: 'button-swap.png'});
             yield buttonSwap.click();
             yield page.waitForNavigation();
             yield page.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 60000 });
