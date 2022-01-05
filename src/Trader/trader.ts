@@ -239,8 +239,9 @@ class Trader {
         
         let checkpointDate: string = envValues['CHECKPOINT_DATE'];
         console.log("checkpointDate: " + checkpointDate);
-        let formattedMomentCheckPointDate: number = Number(moment(checkpointDate).format('YYYYMMDDhhmmss'));
-        let formattedMomentCurrentDate: number = Number(moment().format('YYYYMMDDhhmmss'));
+        let formattedMomentCheckPointDate: number = Number(moment(checkpointDate).format('YYYYMMDDHHmmss'));
+        let formattedMomentCurrentDate: number = Number(moment().format('YYYYMMDDHHmmss'));
+        console.log("formattedMomentCurrentDate: " + formattedMomentCurrentDate);
         // check if todays date >= checkpoint date then exit
         if (formattedMomentCurrentDate >= formattedMomentCheckPointDate) {
             logger.write({content: `Checkpoint reached at: ${formattedMomentCheckPointDate}`});
