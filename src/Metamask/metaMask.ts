@@ -59,7 +59,7 @@ class Metamask implements MetamaskInterface {
             // add new networks
             await this.addNewNetworks();
             // switch to preferred network
-            logger.write({content: `Switch network: ${C.network_preferred}`});
+            //logger.write({content: `Switch network: ${C.network_preferred}`});
             // await this.switchNetwork(C.network_preferred);
             await this.page!.waitForTimeout(2000);
             // load tokens
@@ -88,20 +88,31 @@ class Metamask implements MetamaskInterface {
     async addNewNetworks (): Promise<void>
     {
         logger.write({content: `Adding new networks...`});
-
         let networks = C.networks;
         let newNetworks = networks.filter( (network) => typeof network['new'] != 'undefined' && network['new'] == true);
         for (let index in newNetworks) {
             let network = newNetworks[index];
 
             logger.write({content: `Adding new networks ${network.slug}...`});
-
+            /*
+             * Disabled
             await this.metamask.addNetwork({
                 networkName: network.slug,
                 rpc: network.rpc_url,
                 chainId: network.chain_id,
                 symbol: network.currency_symbol,
                 explorer: network.block_explorer_url,
+            });
+             */
+
+            await metaMaskLibs.addNewNetwork({
+                page: this.page,
+                C: C,
+                networkName: network.slug,
+                rpc: network.rpc_url ?? '',
+                chainId: Number(network.chain_id),
+                symbol: network.currency_symbol ?? null,
+                explorer: network.block_explorer_url ?? null,
             });
         }
     }

@@ -84,7 +84,7 @@ class Metamask {
                 // add new networks
                 yield this.addNewNetworks();
                 // switch to preferred network
-                logger_1.default.write({ content: `Switch network: ${constants_1.default.network_preferred}` });
+                //logger.write({content: `Switch network: ${C.network_preferred}`});
                 // await this.switchNetwork(C.network_preferred);
                 yield this.page.waitForTimeout(2000);
                 // load tokens
@@ -114,6 +114,7 @@ class Metamask {
      * @return void
      */
     addNewNetworks() {
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             logger_1.default.write({ content: `Adding new networks...` });
             let networks = constants_1.default.networks;
@@ -121,12 +122,24 @@ class Metamask {
             for (let index in newNetworks) {
                 let network = newNetworks[index];
                 logger_1.default.write({ content: `Adding new networks ${network.slug}...` });
-                yield this.metamask.addNetwork({
+                /*
+                 * Disabled
+                await this.metamask.addNetwork({
                     networkName: network.slug,
                     rpc: network.rpc_url,
                     chainId: network.chain_id,
                     symbol: network.currency_symbol,
                     explorer: network.block_explorer_url,
+                });
+                 */
+                yield lib_1.default.addNewNetwork({
+                    page: this.page,
+                    C: constants_1.default,
+                    networkName: network.slug,
+                    rpc: (_a = network.rpc_url) !== null && _a !== void 0 ? _a : '',
+                    chainId: Number(network.chain_id),
+                    symbol: (_b = network.currency_symbol) !== null && _b !== void 0 ? _b : null,
+                    explorer: (_c = network.block_explorer_url) !== null && _c !== void 0 ? _c : null,
                 });
             }
         });
