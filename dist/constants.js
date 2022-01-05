@@ -43,10 +43,10 @@ module.exports = {
             "slug": "matic-mainnet",
             "name": "Matic Mainnet",
             "new": true,
-            "rpc_url": "https://rpc-mainnet.maticvigil.com",
+            "rpc_url": "https://polygon-rpc.com",
             "chain_id": 137,
             "currency_symbol": "MATIC",
-            "block_explorer_url": "https://explorer.matic.network"
+            "block_explorer_url": "https://polygonscan.com/"
         }
     ],
     trading: {
