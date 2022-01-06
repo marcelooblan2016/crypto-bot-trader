@@ -66,6 +66,28 @@ On Env File: Add the following key
 CHECKPOINT_DATE="{YOUR_DATE_HERE-> Format: MMMM-Do-YYYY h:mm:ss a}"
 ```
 
+## Headless / Deploy in cloud server
+Typical headless in puppeteer with extension of metamask will not work. Alternatively, you can use X Virtual Frame Buffer (xvfb).
+
+```js
+const {metaMask, trader, token} = require('../dist/index');
+const Xvfb = require('xvfb');
+
+(async function() {
+    let xvfb = new Xvfb();
+    xvfb.startSync();
+    // // initiate 
+    await metaMask.build();
+    const initiatedTrader = new trader({metamask_with_build: metaMask, token: token});
+    
+    await initiatedTrader.analyzeMarket()
+    setInterval(async () => {
+        await initiatedTrader.analyzeMarket()
+    }, 300000);
+    // every 5 minutes
+
+})();
+```
 
 [erc20]: https://etherscan.io/tokens
 [erc20List]: https://github.com/marcelooblan2016/crypto-bot-trader/blob/main/src/Records/Migrations/tokenContracts.js
