@@ -115,14 +115,26 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
             await page!.click(C.elements.swap_token.button_swap_continue)
             await page!.waitForTimeout(2000);
         }
-        
+
         await page!.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
         const [buttonSwapReview] = await page!.$x(C.elements.swap_token.button_swap_review_xpath);
         await buttonSwapReview.click();
         await page!.waitForNavigation();
+        
+        // if have confirmation
+        let isActionableMessageButton: boolean = await page!.evaluate((options) => {
+            const C = options['config'];
+            return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
+        }, {'config': C});
+
+        if (isActionableMessageButton == true) {
+            console.log("actionable message found.");
+            await page!.click(C.elements.swap_token.button_swap_continue)
+            await page!.waitForTimeout(2000);
+        }
+
         await page!.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]", { visible: true });
         const [buttonSwap] = await page!.$x(C.elements.swap_token.button_swap_xpath);
-        // buttonSwap.screenshot({path: 'button-swap.png'});
         await buttonSwap.click();
         await page!.waitForNavigation();
         await page!.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 60000 });

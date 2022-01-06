@@ -70,6 +70,15 @@ module.exports = {
             div_network_display: ".network-display",
             div_dropdown_network_list: ".menu-droppo .dropdown-menu-item",
         },
+        add_new_network: {
+            input_network_name: "#network-name",
+            input_rpc_url: "#rpc-url",
+            input_chain_id: "#chainId",
+            input_currency_symbol: "#network-ticker",
+            input_block_explorer_url: "#block-explorer-url",
+            div_close_button: ".settings-page__close-button",
+            button_save_xpath: "//button[contains(text(), 'Save')]",
+        },
         add_token: {
             button_search_and_add_token: "ul.page-container__tabs li button",
             button_custom_token_xpath: "//button[contains(text(), 'Custom Token')]",

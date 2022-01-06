@@ -63,7 +63,7 @@ You can also stop your trading bot on a certain date; This is quite ideal on clo
 
 On Env File: Add the following key
 ```bash
-CHECKPOINT_DATE="{YOUR_DATE_HERE-> Format: MMMM-Do-YYYY h:mm:ss a}"
+CHECKPOINT_DATE="{YOUR_DATE_HERE-> Format: YYYY-MM-DD HH:mm} (24-hour)"
 ```
 
 ## Headless / Deploy in cloud server
