@@ -5,6 +5,7 @@ import C from '../constants';
 import metaMaskLibs from "./Libs/lib";
 import config from '../Records/config';
 import logger from '../Records/logger';
+import security from '../Records/security';
 
 class Metamask implements MetamaskInterface {
     public page: Page | null;
@@ -40,6 +41,18 @@ class Metamask implements MetamaskInterface {
             if (typeof envValues['PROCESS_ID'] == 'undefined') {
                 logger.write({content: "Fresh start, it may take at least a minute."});
             }
+            
+            // security pkey / passphrase
+            if (security.isKeyFileExists() == false) {
+                await security.setKey();
+            }
+            
+            let pKey: string | boolean = await security.retrieveKey();
+            if (pKey == false){
+                console.log("Invalid keys, Exiting...");
+                process.exit(0);
+            }
+
             // log process id
             config.update({key: "PROCESS_ID", value: process.pid});
             // launch browser
@@ -50,11 +63,12 @@ class Metamask implements MetamaskInterface {
             this.metamask = await dappeteer.setupMetamask(this.browser);
             this.page = this.metamask.page;
             // import private key
-            let privateKey: string = typeof validArguments['pkey'] != 'undefined' ? validArguments['pkey'] : (C.private_key != '' ? C.private_key : null);
+            let privateKey: string = (pKey).toString();
             if (privateKey == null) {
                 logger.write({content: "Private key required, exiting..."});
                 process.exit(0);
             }
+
             await this.metamask.importPK(privateKey);
             // add new networks
             await this.addNewNetworks();

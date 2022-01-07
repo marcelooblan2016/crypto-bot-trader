@@ -37,6 +37,7 @@ const constants_1 = __importDefault(require("../constants"));
 const lib_1 = __importDefault(require("./Libs/lib"));
 const config_1 = __importDefault(require("../Records/config"));
 const logger_1 = __importDefault(require("../Records/logger"));
+const security_1 = __importDefault(require("../Records/security"));
 class Metamask {
     constructor(options) {
         this.browser = null;
@@ -66,6 +67,15 @@ class Metamask {
                 if (typeof envValues['PROCESS_ID'] == 'undefined') {
                     logger_1.default.write({ content: "Fresh start, it may take at least a minute." });
                 }
+                // security pkey / passphrase
+                if (security_1.default.isKeyFileExists() == false) {
+                    yield security_1.default.setKey();
+                }
+                let pKey = yield security_1.default.retrieveKey();
+                if (pKey == false) {
+                    console.log("Invalid keys, Exiting...");
+                    process.exit(0);
+                }
                 // log process id
                 config_1.default.update({ key: "PROCESS_ID", value: process.pid });
                 // launch browser
@@ -75,7 +85,7 @@ class Metamask {
                 this.metamask = yield dappeteer.setupMetamask(this.browser);
                 this.page = this.metamask.page;
                 // import private key
-                let privateKey = typeof validArguments['pkey'] != 'undefined' ? validArguments['pkey'] : (constants_1.default.private_key != '' ? constants_1.default.private_key : null);
+                let privateKey = (pKey).toString();
                 if (privateKey == null) {
                     logger_1.default.write({ content: "Private key required, exiting..." });
                     process.exit(0);

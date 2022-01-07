@@ -39,7 +39,6 @@ module.exports = {
         "prefix": "chrome-extension://",
     },
     metamask_version: 'v10.1.1',
-    private_key: config.PRIVATE_KEY,
     network_preferred: config.PREFERRED_NETWORK,
     headless_browser: Boolean( parseInt(config.HEADLESS_BROWSER ?? 0) ),
     networks: [
