@@ -42,7 +42,7 @@ class Trader {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 this.checkpoint();
-                console.log("Analyzing market...");
+                logger_1.default.write({ content: "Analyzing market..." });
                 yield this.metaMaskWithBuild.clearPopups();
                 // check stable coin balancebalance
                 let tokenBalances = yield this.metaMaskWithBuild.getBalances();
@@ -57,7 +57,7 @@ class Trader {
                 // check token ready for sell
                 yield this.sellMode({ mappedMarketData: mappedMarketData, tokenBalances: tokenBalances });
                 yield this.buyMode({ tokenBalances: tokenBalances, mappedMarketData: mappedMarketData });
-                console.log("Market Analyzed.");
+                logger_1.default.write({ content: "Market Analyzed." });
                 return true;
             }
             catch (error) { }
@@ -203,8 +203,9 @@ class Trader {
         }
         let checkpointDate = envValues['CHECKPOINT_DATE'];
         console.log("checkpointDate: " + checkpointDate);
-        let formattedMomentCheckPointDate = Number((0, moment_1.default)(checkpointDate).format('YYYYMMDDhhmmss'));
-        let formattedMomentCurrentDate = Number((0, moment_1.default)().format('YYYYMMDDhhmmss'));
+        let formattedMomentCheckPointDate = Number((0, moment_1.default)(checkpointDate).format('YYYYMMDDHHmmss'));
+        let formattedMomentCurrentDate = Number((0, moment_1.default)().format('YYYYMMDDHHmmss'));
+        console.log("formattedMomentCurrentDate: " + formattedMomentCurrentDate);
         // check if todays date >= checkpoint date then exit
         if (formattedMomentCurrentDate >= formattedMomentCheckPointDate) {
             logger_1.default.write({ content: `Checkpoint reached at: ${formattedMomentCheckPointDate}` });

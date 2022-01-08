@@ -37,6 +37,7 @@ const constants_1 = __importDefault(require("../constants"));
 const lib_1 = __importDefault(require("./Libs/lib"));
 const config_1 = __importDefault(require("../Records/config"));
 const logger_1 = __importDefault(require("../Records/logger"));
+const security_1 = __importDefault(require("../Records/security"));
 class Metamask {
     constructor(options) {
         this.browser = null;
@@ -45,49 +46,82 @@ class Metamask {
         this.C = constants_1.default;
         this.processId = process.pid;
     }
+    // public retrieveSecurityPassword(): string | null
+    // {
+    //     return security.password;
+    // }
+    /*
+     * initializeSecurity : retrieve / set private key & encrypt it with passphrase
+     */
+    initializeSecurity(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let pwd = params.pwd;
+            let isSetup = typeof params['is_setup'] != 'undefined' ? params['is_setup'] : false;
+            if (security_1.default.isKeyFileExists() == false) {
+                yield security_1.default.setKey();
+            }
+            let pKey = yield security_1.default.retrieveKey(pwd, isSetup);
+            if (pKey == false) {
+                logger_1.default.write({ content: "Invalid keys, Exiting..." });
+                process.exit(0);
+            }
+            return (pKey).toString();
+        });
+    }
     /*
      * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens
      * @return void
      */
     build() {
         return __awaiter(this, void 0, void 0, function* () {
-            let args = process.argv.slice(2);
-            let validArguments = {};
-            if (args.length >= 1) {
-                args = args.forEach(function (argument) {
-                    var _a;
-                    let splittedArgument = argument.replace("--", "").split("=");
-                    validArguments[splittedArgument[0]] = ((_a = splittedArgument[1]) !== null && _a !== void 0 ? _a : null);
+            try {
+                let args = process.argv.slice(2);
+                let validArguments = {};
+                if (args.length >= 1) {
+                    args = args.forEach(function (argument) {
+                        var _a;
+                        let splittedArgument = argument.replace("--", "").split("=");
+                        validArguments[splittedArgument[0]] = ((_a = splittedArgument[1]) !== null && _a !== void 0 ? _a : null);
+                    });
+                }
+                // security pkey / passphrase
+                let pwd = typeof validArguments['pwd'] != 'undefined' ? validArguments['pwd'] : null;
+                let pKey = yield this.initializeSecurity({ pwd: pwd });
+                // check if fresh start
+                let envValues = config_1.default.envValues();
+                if (typeof envValues['PROCESS_ID'] == 'undefined') {
+                    logger_1.default.write({ content: "Fresh start, it may take at least a minute." });
+                }
+                // log process id
+                config_1.default.update({ key: "PROCESS_ID", value: process.pid });
+                // launch browser
+                logger_1.default.write({ content: "Launching browser..." });
+                this.browser = yield dappeteer.launch(puppeteer_1.default, {
+                    metamaskVersion: constants_1.default.metamask_version,
+                    args: ['--no-sandbox']
                 });
+                logger_1.default.write({ content: "Setup metamask..." });
+                this.metamask = yield dappeteer.setupMetamask(this.browser, {});
+                this.page = this.metamask.page;
+                // import private key
+                let privateKey = pKey;
+                if (privateKey == null) {
+                    logger_1.default.write({ content: "Private key required, exiting..." });
+                    process.exit(0);
+                }
+                yield this.metamask.importPK(privateKey);
+                // add new networks
+                yield this.addNewNetworks();
+                // switch to preferred network
+                //logger.write({content: `Switch network: ${C.network_preferred}`});
+                // await this.switchNetwork(C.network_preferred);
+                yield this.page.waitForTimeout(2000);
+                // load tokens
+                yield this.loadTokenContracts();
             }
-            // check if fresh start
-            let envValues = config_1.default.envValues();
-            if (typeof envValues['PROCESS_ID'] == 'undefined') {
-                logger_1.default.write({ content: "Fresh start, it may take at least a minute." });
+            catch (error) {
+                console.log(error);
             }
-            // log process id
-            config_1.default.update({ key: "PROCESS_ID", value: process.pid });
-            // launch browser
-            logger_1.default.write({ content: "Launching browser..." });
-            this.browser = yield dappeteer.launch(puppeteer_1.default, { metamaskVersion: constants_1.default.metamask_version, args: ['--no-sandbox'] });
-            logger_1.default.write({ content: "Setup metamask..." });
-            this.metamask = yield dappeteer.setupMetamask(this.browser);
-            this.page = this.metamask.page;
-            // import private key
-            let privateKey = typeof validArguments['pkey'] != 'undefined' ? validArguments['pkey'] : (constants_1.default.private_key != '' ? constants_1.default.private_key : null);
-            if (privateKey == null) {
-                logger_1.default.write({ content: "Private key required, exiting..." });
-                process.exit(0);
-            }
-            yield this.metamask.importPK(privateKey);
-            // add new networks
-            yield this.addNewNetworks();
-            // switch to preferred network
-            logger_1.default.write({ content: `Switch network: ${constants_1.default.network_preferred}` });
-            // await this.switchNetwork(C.network_preferred);
-            yield this.page.waitForTimeout(2000);
-            // load tokens
-            yield this.loadTokenContracts();
         });
     }
     /*
@@ -109,6 +143,7 @@ class Metamask {
      * @return void
      */
     addNewNetworks() {
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             logger_1.default.write({ content: `Adding new networks...` });
             let networks = constants_1.default.networks;
@@ -116,12 +151,24 @@ class Metamask {
             for (let index in newNetworks) {
                 let network = newNetworks[index];
                 logger_1.default.write({ content: `Adding new networks ${network.slug}...` });
-                yield this.metamask.addNetwork({
+                /*
+                 * Disabled
+                await this.metamask.addNetwork({
                     networkName: network.slug,
                     rpc: network.rpc_url,
                     chainId: network.chain_id,
                     symbol: network.currency_symbol,
                     explorer: network.block_explorer_url,
+                });
+                 */
+                yield lib_1.default.addNewNetwork({
+                    page: this.page,
+                    C: constants_1.default,
+                    networkName: network.slug,
+                    rpc: (_a = network.rpc_url) !== null && _a !== void 0 ? _a : '',
+                    chainId: Number(network.chain_id),
+                    symbol: (_b = network.currency_symbol) !== null && _b !== void 0 ? _b : null,
+                    explorer: (_c = network.block_explorer_url) !== null && _c !== void 0 ? _c : null,
                 });
             }
         });

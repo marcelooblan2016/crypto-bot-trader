@@ -33,7 +33,6 @@ module.exports = {
         "prefix": "chrome-extension://",
     },
     metamask_version: 'v10.1.1',
-    private_key: config.PRIVATE_KEY,
     network_preferred: config.PREFERRED_NETWORK,
     headless_browser: Boolean(parseInt((_a = config.HEADLESS_BROWSER) !== null && _a !== void 0 ? _a : 0)),
     networks: [
@@ -43,10 +42,10 @@ module.exports = {
             "slug": "matic-mainnet",
             "name": "Matic Mainnet",
             "new": true,
-            "rpc_url": "https://rpc-mainnet.maticvigil.com",
+            "rpc_url": "https://polygon-rpc.com",
             "chain_id": 137,
             "currency_symbol": "MATIC",
-            "block_explorer_url": "https://explorer.matic.network"
+            "block_explorer_url": "https://polygonscan.com/"
         }
     ],
     trading: {
@@ -63,6 +62,15 @@ module.exports = {
         switch_network: {
             div_network_display: ".network-display",
             div_dropdown_network_list: ".menu-droppo .dropdown-menu-item",
+        },
+        add_new_network: {
+            input_network_name: "#network-name",
+            input_rpc_url: "#rpc-url",
+            input_chain_id: "#chainId",
+            input_currency_symbol: "#network-ticker",
+            input_block_explorer_url: "#block-explorer-url",
+            div_close_button: ".settings-page__close-button",
+            button_save_xpath: "//button[contains(text(), 'Save')]",
         },
         add_token: {
             button_search_and_add_token: "ul.page-container__tabs li button",
