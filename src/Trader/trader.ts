@@ -52,9 +52,8 @@ class Trader {
 
         try {
             this.checkpoint();
-            
-            console.log("Analyzing market...");
-            
+            logger.write({content: "Analyzing market..."});
+
             await this.metaMaskWithBuild.clearPopups();
             // check stable coin balancebalance
             let tokenBalances = await this.metaMaskWithBuild.getBalances();
@@ -73,8 +72,8 @@ class Trader {
             await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
             await this.buyMode({tokenBalances: tokenBalances, mappedMarketData: mappedMarketData});
         
-        console.log("Market Analyzed.");
-        
+            logger.write({content: "Market Analyzed."});
+
             return true;
         } catch (error) {}
 

@@ -31,3 +31,4 @@ test/swapHistory.json
 test/tokenContracts.json
 test/log/*.*
 test/logs/*.*
+test/keys

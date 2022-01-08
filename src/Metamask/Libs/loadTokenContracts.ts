@@ -1,4 +1,5 @@
 import token from '../../Records/token';
+import logger from '../../Records/logger';
 
 async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void> {
     const page = params.page;
@@ -31,7 +32,7 @@ async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void>
             }
 
             let tokenContract: tokenContractInterface = tokenContracts[index];
-            console.log("Adding " + tokenContract['slug'] + " token ...");
+            logger.write({content: "Adding " + tokenContract['slug'] + " token ..."});
             await page!.waitForSelector(C.elements.add_token.input_contract_address);
             await page!.focus(C.elements.add_token.input_contract_address);
             await page!.type(C.elements.add_token.input_contract_address, tokenContract['contract']);
@@ -67,7 +68,7 @@ async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void>
             await page!.waitForNavigation();
         }
     } catch (error) {
-        console.log(error)
+        logger.write({content: JSON.stringify(error)});
     }
 }
 
