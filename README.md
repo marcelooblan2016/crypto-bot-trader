@@ -1,6 +1,8 @@
 # CryptoCurrency Bot Trader
 swapping of [ERC-20 Tokens][erc20] (buy/sell) based on the market health with bot strategy (condition) - by utilizing MetaMask &amp; Puppeteer
 
+![image](https://drive.google.com/uc?export=view&id=1IzFTRLwAVSPK3j1h2AkwkqbOBOq6VzeC)
+
 ## List of ERC-20 Tokens Included
 - ChainLink Token, Decentraland, Uniswap, Graph Token, Aave, Basic Authentication Token (BAT), Curve (CRV), Sushi Token, Sand, Avalanche, Wrapped Matic
 - [Full Details][erc20List] 
@@ -24,7 +26,6 @@ npm i crypto-bot-trader
 ## Usage
 Filename as .env in {root}
 ```bash
-PRIVATE_KEY="{Wallet privateKey}"
 PREFERRED_NETWORK="matic-mainnet"
 # Default: 0
 HEADLESS_BROWSER=1
@@ -34,6 +35,10 @@ SELL_CUTLOSS=-5
 # Default: 5 (percent as unit)
 SELL_PROFIT=1
 ```
+
+## Security
+As for initial setup will require you to input your PrivateKey & password (required upon encryption of your data)
+![image](https://drive.google.com/uc?export=view&id=1a7fPmue1yNcsjbS9_pQvgAUBIpifCTkW)
 
 Filename as {jsFile} in {root}
 
@@ -67,10 +72,10 @@ CHECKPOINT_DATE="{YOUR_DATE_HERE-> Format: YYYY-MM-DD HH:mm} (24-hour)"
 ```
 
 ## Headless
-Typical headless in puppeteer with extension of metamask will not work. Alternatively, you can use X Virtual Frame Buffer (xvfb).
+Typical headless in puppeteer with extension of metamask will not work. Alternatively, you can use X Virtual Frame Buffer (xvfb) [See Details][npmforever] 
 
 ```js
-const {metaMask, trader, token} = require('../dist/index');
+const {metaMask, trader, token} = require('crypto-bot-trader');
 const Xvfb = require('xvfb');
 
 (async function() {
@@ -90,9 +95,20 @@ const Xvfb = require('xvfb');
 ```
 
 ## Deploy in cloud server
-Setup keys todo...
-Run forever start ...
+Setup in cloud server, A simple CLI tool for ensuring that a given script runs continuously/in-background called (forever) [See Details][npmforever] 
+
+```js
+const {metaMask, trader, token} = require('crypto-bot-trader');
+const { exec } = require("child_process");
+
+(async function() {
+    await metaMask.initializeSecurity({pwd: null, is_setup: true});
+    exec(`forever start headless.js --pwd=1`, (error, stdout, stderr) => {});
+
+})();
+```
 
 [erc20]: https://etherscan.io/tokens
 [erc20List]: https://github.com/marcelooblan2016/crypto-bot-trader/blob/main/src/Records/Migrations/tokenContracts.js
-
+[npmforever]: https://www.npmjs.com/package/forever
+[npmxvfb]: https://www.npmjs.com/package/xvfb
