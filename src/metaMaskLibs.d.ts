@@ -4,6 +4,7 @@ declare global {
     interface MetamaskInterface {
         C: object,
         page: Page | null,
+        initializeSecurity (params: initializeSecurityParameters): Promise<string>,
         build(): Promise<void>,
         loadTokenContracts(): Promise<void>,
         addNewNetworks(): Promise<void>
@@ -15,6 +16,11 @@ declare global {
     interface MetamaskLibsParameters {
         page: Page | null,
         C: any
+    }
+
+    interface initializeSecurityParameters {
+        pwd: string | null,
+        is_setup?: boolean
     }
 
     interface tokenContractInterface {

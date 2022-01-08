@@ -1,5 +1,4 @@
 export default [
-    "PRIVATE_KEY=",
     "PREFERRED_NETWORK=\"matic-mainnet\"",
     "# Default: 0",
     "HEADLESS_BROWSER=1",

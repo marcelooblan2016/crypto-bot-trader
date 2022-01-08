@@ -46,6 +46,28 @@ class Metamask {
         this.C = constants_1.default;
         this.processId = process.pid;
     }
+    // public retrieveSecurityPassword(): string | null
+    // {
+    //     return security.password;
+    // }
+    /*
+     * initializeSecurity : retrieve / set private key & encrypt it with passphrase
+     */
+    initializeSecurity(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let pwd = params.pwd;
+            let isSetup = typeof params['is_setup'] != 'undefined' ? params['is_setup'] : false;
+            if (security_1.default.isKeyFileExists() == false) {
+                yield security_1.default.setKey();
+            }
+            let pKey = yield security_1.default.retrieveKey(pwd, isSetup);
+            if (pKey == false) {
+                logger_1.default.write({ content: "Invalid keys, Exiting..." });
+                process.exit(0);
+            }
+            return (pKey).toString();
+        });
+    }
     /*
      * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens
      * @return void
@@ -62,30 +84,27 @@ class Metamask {
                         validArguments[splittedArgument[0]] = ((_a = splittedArgument[1]) !== null && _a !== void 0 ? _a : null);
                     });
                 }
+                // security pkey / passphrase
+                let pwd = typeof validArguments['pwd'] != 'undefined' ? validArguments['pwd'] : null;
+                let pKey = yield this.initializeSecurity({ pwd: pwd });
                 // check if fresh start
                 let envValues = config_1.default.envValues();
                 if (typeof envValues['PROCESS_ID'] == 'undefined') {
                     logger_1.default.write({ content: "Fresh start, it may take at least a minute." });
                 }
-                // security pkey / passphrase
-                if (security_1.default.isKeyFileExists() == false) {
-                    yield security_1.default.setKey();
-                }
-                let pKey = yield security_1.default.retrieveKey();
-                if (pKey == false) {
-                    console.log("Invalid keys, Exiting...");
-                    process.exit(0);
-                }
                 // log process id
                 config_1.default.update({ key: "PROCESS_ID", value: process.pid });
                 // launch browser
                 logger_1.default.write({ content: "Launching browser..." });
-                this.browser = yield dappeteer.launch(puppeteer_1.default, { metamaskVersion: constants_1.default.metamask_version, args: ['--no-sandbox'] });
+                this.browser = yield dappeteer.launch(puppeteer_1.default, {
+                    metamaskVersion: constants_1.default.metamask_version,
+                    args: ['--no-sandbox']
+                });
                 logger_1.default.write({ content: "Setup metamask..." });
-                this.metamask = yield dappeteer.setupMetamask(this.browser);
+                this.metamask = yield dappeteer.setupMetamask(this.browser, {});
                 this.page = this.metamask.page;
                 // import private key
-                let privateKey = (pKey).toString();
+                let privateKey = pKey;
                 if (privateKey == null) {
                     logger_1.default.write({ content: "Private key required, exiting..." });
                     process.exit(0);

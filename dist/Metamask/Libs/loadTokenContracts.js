@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const token_1 = __importDefault(require("../../Records/token"));
+const logger_1 = __importDefault(require("../../Records/logger"));
 function loadTokenContracts(params) {
     return __awaiter(this, void 0, void 0, function* () {
         const page = params.page;
@@ -39,7 +40,7 @@ function loadTokenContracts(params) {
                     yield buttonCustomAddToken.click();
                 }
                 let tokenContract = tokenContracts[index];
-                console.log("Adding " + tokenContract['slug'] + " token ...");
+                logger_1.default.write({ content: "Adding " + tokenContract['slug'] + " token ..." });
                 yield page.waitForSelector(C.elements.add_token.input_contract_address);
                 yield page.focus(C.elements.add_token.input_contract_address);
                 yield page.type(C.elements.add_token.input_contract_address, tokenContract['contract']);
@@ -75,7 +76,7 @@ function loadTokenContracts(params) {
             }
         }
         catch (error) {
-            console.log(error);
+            logger_1.default.write({ content: JSON.stringify(error) });
         }
     });
 }

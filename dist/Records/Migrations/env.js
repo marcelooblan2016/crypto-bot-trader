@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = [
-    "PRIVATE_KEY=",
     "PREFERRED_NETWORK=\"matic-mainnet\"",
     "# Default: 0",
     "HEADLESS_BROWSER=1",

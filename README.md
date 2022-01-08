@@ -66,7 +66,7 @@ On Env File: Add the following key
 CHECKPOINT_DATE="{YOUR_DATE_HERE-> Format: YYYY-MM-DD HH:mm} (24-hour)"
 ```
 
-## Headless / Deploy in cloud server
+## Headless
 Typical headless in puppeteer with extension of metamask will not work. Alternatively, you can use X Virtual Frame Buffer (xvfb).
 
 ```js
@@ -88,6 +88,10 @@ const Xvfb = require('xvfb');
 
 })();
 ```
+
+## Deploy in cloud server
+Setup keys todo...
+Run forever start ...
 
 [erc20]: https://etherscan.io/tokens
 [erc20List]: https://github.com/marcelooblan2016/crypto-bot-trader/blob/main/src/Records/Migrations/tokenContracts.js

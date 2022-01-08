@@ -15,13 +15,20 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const readline_sync_1 = __importDefault(require("readline-sync"));
 const cryptr_1 = __importDefault(require("cryptr"));
 const logger_1 = __importDefault(require("./logger"));
+const constants_1 = __importDefault(require("../constants"));
 const fs = require('fs');
 class Security {
     constructor(options) {
         this.keyFile = './keys';
+        this.pwdTmp = './p.tmp';
+        this.defaultKey = null;
+        this.defaultKey = constants_1.default.network_preferred;
     }
     isKeyFileExists() {
         return fs.existsSync(this.keyFile);
+    }
+    isPwdTmpExists() {
+        return fs.existsSync(this.pwdTmp);
     }
     setKey() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -33,7 +40,7 @@ class Security {
             let confirmPassword = '';
             let isMatched = false;
             do {
-                password = readline_sync_1.default.question('Password: ', {
+                password = readline_sync_1.default.question('New Password: ', {
                     hideEchoBack: true,
                     mask: '*'
                 });
@@ -56,13 +63,31 @@ class Security {
             }
         });
     }
-    retrieveKey() {
+    retrieveKey(pwd, is_setup) {
         return __awaiter(this, void 0, void 0, function* () {
+            let isPwd = Boolean(pwd);
+            const pwdCrypt = new cryptr_1.default(this.defaultKey);
             try {
-                let password = readline_sync_1.default.question('Password: ', {
-                    hideEchoBack: true,
-                    mask: '*'
-                });
+                let password = null;
+                if (isPwd === false) {
+                    password = readline_sync_1.default.question('Password: ', {
+                        hideEchoBack: true,
+                        mask: '*'
+                    });
+                }
+                let encryptedPwdString = null;
+                if (is_setup === true) {
+                    let encryptedPwdString = pwdCrypt.encrypt(password);
+                    yield fs.writeFileSync(this.pwdTmp, encryptedPwdString);
+                }
+                if (isPwd === true) {
+                    if (this.isPwdTmpExists() == true) {
+                        encryptedPwdString = yield fs.readFileSync(this.pwdTmp, 'utf8');
+                        password = pwdCrypt.decrypt(encryptedPwdString);
+                        // delete file
+                        yield fs.unlinkSync(this.pwdTmp);
+                    }
+                }
                 const cryptr = new cryptr_1.default(password);
                 let encryptedString = yield fs.readFileSync(this.keyFile, 'utf8');
                 return cryptr.decrypt(encryptedString);

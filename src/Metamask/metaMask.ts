@@ -21,6 +21,31 @@ class Metamask implements MetamaskInterface {
         this.C = C;
         this.processId = process.pid;
     }
+
+    // public retrieveSecurityPassword(): string | null
+    // {
+    //     return security.password;
+    // }
+    /*
+     * initializeSecurity : retrieve / set private key & encrypt it with passphrase
+     */
+    public async initializeSecurity(params: initializeSecurityParameters): Promise<string>
+    {
+        let pwd = params.pwd;
+        let isSetup = typeof params['is_setup'] != 'undefined' ? params['is_setup'] : false;
+
+        if (security.isKeyFileExists() == false) {
+            await security.setKey();
+        }
+        
+        let pKey: string | boolean = await security.retrieveKey(pwd, isSetup);
+        if (pKey == false){
+            logger.write({content: "Invalid keys, Exiting..."});
+            process.exit(0);
+        }
+
+        return (pKey).toString();
+    }
     /*
      * build : opens chromium, install metamask extensions, restore wallet, add new network, import preferred tokens
      * @return void
@@ -36,34 +61,33 @@ class Metamask implements MetamaskInterface {
                     validArguments[splittedArgument[0]] = (splittedArgument[1] ?? null);
                 });
             }
+            
+            // security pkey / passphrase
+            let pwd: string | null = typeof validArguments['pwd'] != 'undefined' ? validArguments['pwd'] : null;
+
+            let pKey: string = await this.initializeSecurity({pwd: pwd});
+
             // check if fresh start
             let envValues = config.envValues();
             if (typeof envValues['PROCESS_ID'] == 'undefined') {
                 logger.write({content: "Fresh start, it may take at least a minute."});
-            }
-            
-            // security pkey / passphrase
-            if (security.isKeyFileExists() == false) {
-                await security.setKey();
-            }
-            
-            let pKey: string | boolean = await security.retrieveKey();
-            if (pKey == false){
-                console.log("Invalid keys, Exiting...");
-                process.exit(0);
             }
 
             // log process id
             config.update({key: "PROCESS_ID", value: process.pid});
             // launch browser
             logger.write({content: "Launching browser..."});
-            this.browser = await dappeteer.launch(puppeteer, {metamaskVersion: C.metamask_version, args: ['--no-sandbox']});
+            this.browser = await dappeteer.launch(puppeteer, {
+                metamaskVersion: C.metamask_version,
+                args: ['--no-sandbox']
+            });
     
             logger.write({content: "Setup metamask..."});
-            this.metamask = await dappeteer.setupMetamask(this.browser);
+            this.metamask = await dappeteer.setupMetamask(this.browser, {});
+
             this.page = this.metamask.page;
             // import private key
-            let privateKey: string = (pKey).toString();
+            let privateKey: string = pKey;
             if (privateKey == null) {
                 logger.write({content: "Private key required, exiting..."});
                 process.exit(0);
