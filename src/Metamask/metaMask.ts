@@ -6,6 +6,7 @@ import metaMaskLibs from "./Libs/lib";
 import config from '../Records/config';
 import logger from '../Records/logger';
 import security from '../Records/security';
+import token from '../Records/token';
 
 class Metamask implements MetamaskInterface {
     public page: Page | null;
@@ -13,6 +14,9 @@ class Metamask implements MetamaskInterface {
     protected metamask: any;
     public C: object;
     public processId: number | string;
+    public focus: string | null = null;
+    public tokenContracts: tokenContractInterface[];
+    public selectedTokenContracts: tokenContractInterface[];
 
     constructor(options? : any) {
         this.browser = null;
@@ -20,12 +24,9 @@ class Metamask implements MetamaskInterface {
         this.metamask = null;
         this.C = C;
         this.processId = process.pid;
+        this.tokenContracts = token.tokenContracts();
+        this.selectedTokenContracts = this.tokenContracts;
     }
-
-    // public retrieveSecurityPassword(): string | null
-    // {
-    //     return security.password;
-    // }
     /*
      * initializeSecurity : retrieve / set private key & encrypt it with passphrase
      */
@@ -67,6 +68,16 @@ class Metamask implements MetamaskInterface {
 
             let pKey: string = await this.initializeSecurity({pwd: pwd});
 
+            // check if focus_only
+            this.focus = typeof validArguments['focus'] != 'undefined' ? validArguments['focus'] : null;
+
+            if (this.focus != null) {
+                this.selectedTokenContracts = this.selectedTokenContracts.filter( (t) => [this.focus, 'usdc'].includes(t.slug) );
+                if (this.selectedTokenContracts.length == 1) {
+                    logger.write({content: `${this.focus} doesn't exists.`});
+                    process.exit(0);
+                }
+            }
             // check if fresh start
             let envValues = config.envValues();
             if (typeof envValues['PROCESS_ID'] == 'undefined') {
@@ -102,6 +113,7 @@ class Metamask implements MetamaskInterface {
             await this.page!.waitForTimeout(2000);
             // load tokens
             await this.loadTokenContracts();
+
         } catch (error) {
             console.log(error);
         }
@@ -115,6 +127,7 @@ class Metamask implements MetamaskInterface {
     {
         logger.write({content: `Import Tokens...`});
         await metaMaskLibs.loadTokenContracts({
+            tokenContracts: this.selectedTokenContracts,
             page: this.page,
             C: C
         });

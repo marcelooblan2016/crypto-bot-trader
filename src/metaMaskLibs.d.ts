@@ -4,6 +4,7 @@ declare global {
     interface MetamaskInterface {
         C: object,
         page: Page | null,
+        selectedTokenContracts: tokenContractInterface[],
         initializeSecurity (params: initializeSecurityParameters): Promise<string>,
         build(): Promise<void>,
         loadTokenContracts(): Promise<void>,
@@ -14,6 +15,12 @@ declare global {
     }
 
     interface MetamaskLibsParameters {
+        page: Page | null,
+        C: any
+    }
+
+    interface MetamaskLibLoadTokenContractsParameters {
+        tokenContracts: tokenContractInterface[],
         page: Page | null,
         C: any
     }

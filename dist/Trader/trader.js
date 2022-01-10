@@ -29,7 +29,7 @@ class Trader {
         this.stableCoin = (_a = this.tokenContractList.filter(contract => contract.stablecoin == true)[0]) !== null && _a !== void 0 ? _a : null;
     }
     map(response_raw_data) {
-        let tokenContracts = this.tokenContractList;
+        let tokenContracts = this.metaMaskWithBuild.selectedTokenContracts;
         return lib_1.default.map(response_raw_data, tokenContracts);
     }
     /*

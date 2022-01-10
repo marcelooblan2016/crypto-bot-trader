@@ -2,7 +2,14 @@ import _ from 'lodash';
 
 function map (response_raw_data: CoinMarketCap.CryptoListFromRawData, tokenContractList: tokenContractInterface[]): CoinMarketCap.Crypto[] {
     let tokenContracts: tokenContractInterface[] = tokenContractList;
-    let allowedTokens: Array<string> = tokenContracts.map( contract => contract.slug );
+
+    let allowedTokens: Array<string> = tokenContracts.map( (contract) => {
+       if (contract.slug == 'wmatic') return 'matic';
+       else if (contract.slug == 'weth') return 'eth';
+       else if (contract.slug == 'wbtc') return 'btc';
+       else return contract.slug
+       
+    });
 
     let cryptoCurrencyList = response_raw_data.cryptoCurrencyList;
     let mappedCryptoList: CoinMarketCap.Crypto[] = cryptoCurrencyList.map( function (crypto) {
