@@ -143,7 +143,7 @@ class Trader {
                 }
                 if (isSell === true) {
                     logger_1.default.write({ content: msg });
-                    yield this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice);
+                    yield this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, 'all', currentPrice);
                 }
             }
             return true;

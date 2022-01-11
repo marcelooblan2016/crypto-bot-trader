@@ -171,7 +171,7 @@ class Trader {
 
             if (isSell === true) {
                 logger.write({content: msg!});
-                await this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice);
+                await this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, 'all', currentPrice);
             }
         }
         
