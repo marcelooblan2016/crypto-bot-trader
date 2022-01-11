@@ -58,17 +58,6 @@ exports.default = [
     },
     {
         "network_slug": "matic-mainnet",
-        "name": "Graph Token",
-        "slug": "grt",
-        "stablecoin": false,
-        "contract": "0x5fe2b58c013d7601147dcdd68c143a77499f5531",
-        "decimals": 18,
-        "site": "https://thegraph.com/",
-        "network_url": "https://polygonscan.com/token/0x5fe2b58c013d7601147dcdd68c143a77499f5531",
-        "minimum_balance": 0
-    },
-    {
-        "network_slug": "matic-mainnet",
         "name": "Aave",
         "slug": "aave",
         "stablecoin": false,
@@ -76,17 +65,6 @@ exports.default = [
         "decimals": 18,
         "site": "https://aave.com/",
         "network_url": "https://polygonscan.com/token/0xd6df932a45c0f255f85145f286ea0b292b21c90b",
-        "minimum_balance": 0
-    },
-    {
-        "network_slug": "matic-mainnet",
-        "name": "Basic Authentication Token (BAT)",
-        "slug": "bat",
-        "stablecoin": false,
-        "contract": "0x3cef98bb43d732e2f285ee605a8158cde967d219",
-        "decimals": 18,
-        "site": "https://basicattentiontoken.org/",
-        "network_url": "https://polygonscan.com/token/0x3cef98bb43d732e2f285ee605a8158cde967d219",
         "minimum_balance": 0
     },
     {
@@ -113,17 +91,6 @@ exports.default = [
     },
     {
         "network_slug": "matic-mainnet",
-        "name": "Sand",
-        "slug": "sand",
-        "stablecoin": false,
-        "contract": "0xc6d54d2f624bc83815b49d9c2203b1330b841ca0",
-        "decimals": 18,
-        "site": "http://www.sandbox.game/",
-        "network_url": "https://polygonscan.com/token/0xc6d54d2f624bc83815b49d9c2203b1330b841ca0",
-        "minimum_balance": 0
-    },
-    {
-        "network_slug": "matic-mainnet",
         "name": "Avalanche",
         "slug": "avax",
         "stablecoin": false,
@@ -142,6 +109,28 @@ exports.default = [
         "decimals": 18,
         "site": "https://polygon.technology/",
         "network_url": "https://polygonscan.com/token/0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+        "minimum_balance": 0
+    },
+    {
+        "network_slug": "matic-mainnet",
+        "name": "Wrapped BTC",
+        "slug": "wbtc",
+        "stablecoin": false,
+        "contract": "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
+        "decimals": 8,
+        "site": "https://www.wbtc.network/",
+        "network_url": "https://polygonscan.com/token/0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
+        "minimum_balance": 0
+    },
+    {
+        "network_slug": "matic-mainnet",
+        "name": "Wrapped Ether",
+        "slug": "weth",
+        "stablecoin": false,
+        "contract": "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+        "decimals": 18,
+        "site": "https://weth.io/",
+        "network_url": "https://polygonscan.com/token/0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
         "minimum_balance": 0
     }
 ];
