@@ -4,7 +4,7 @@ swapping of [ERC-20 Tokens][erc20] (buy/sell) based on the market health with bo
 ![image](https://drive.google.com/uc?export=view&id=1IzFTRLwAVSPK3j1h2AkwkqbOBOq6VzeC)
 
 ## List of ERC-20 Tokens Included
-- ChainLink Token, Decentraland, Uniswap, Graph Token, Aave, Basic Authentication Token (BAT), Curve (CRV), Sushi Token, Sand, Avalanche, Wrapped Matic
+- ChainLink Token, Decentraland, Uniswap, Aave, Curve (CRV), Sushi Token, Avalanche, Wrapped Matic, Wrapped BTC, Wrapped Ether
 - [Full Details][erc20List] 
 ## Compatible Networks
 - Polygon
@@ -106,6 +106,16 @@ const { exec } = require("child_process");
     exec(`forever start headless.js --pwd=1`, (error, stdout, stderr) => {});
 
 })();
+```
+
+## Focus Feature
+Focus on a specific token, this is good especially if the volatility of token is really high.
+- focus on matic? wmatic
+- focus on bitcoin? wbtc
+- foucus on etherium? weth
+
+```bash
+node {jsFile} --focus=wmatic
 ```
 
 [erc20]: https://etherscan.io/tokens

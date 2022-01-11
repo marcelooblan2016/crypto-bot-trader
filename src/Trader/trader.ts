@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { filter } from 'lodash';
 import moment from 'moment';
 import traderLibs from "./Libs/lib";
 import ApiCoinMarketCap from 'api.coinmarketcap';
@@ -39,7 +39,7 @@ class Trader {
     }
 
     private map (response_raw_data: CoinMarketCap.CryptoListFromRawData): CoinMarketCap.Crypto[] {
-        let tokenContracts: tokenContractInterface[] = this.tokenContractList;
+        let tokenContracts: tokenContractInterface[] = this.metaMaskWithBuild.selectedTokenContracts;
         
         return traderLibs.map(response_raw_data, tokenContracts);
     }
@@ -57,7 +57,6 @@ class Trader {
             await this.metaMaskWithBuild.clearPopups();
             // check stable coin balancebalance
             let tokenBalances = await this.metaMaskWithBuild.getBalances();
-
             if (typeof tokenBalances == 'boolean') { return false; }
             tokenBalances = (tokenBalances) as mappedTokenBalance[];
             let stableCoinBalance = tokenBalances.filter( (
@@ -68,6 +67,7 @@ class Trader {
             let responseData = await ApiCoinMarketCap.getMarketPrices(1, 150, {tagSlugs: null});
 
             let mappedMarketData = this.map((responseData) as CoinMarketCap.CryptoListFromRawData);
+
             // check token ready for sell
             await this.sellMode({mappedMarketData: mappedMarketData, tokenBalances: tokenBalances});
             await this.buyMode({tokenBalances: tokenBalances, mappedMarketData: mappedMarketData});
@@ -82,7 +82,6 @@ class Trader {
 
     private tokenWithBalanceAndMarketData (tokenBalances: mappedTokenBalance[], mappedMarketData: CoinMarketCap.Crypto[], filterType: number = 1) {
         let exceptionSlugs = this.exceptionSlugs;
-
         return (tokenBalances).filter( function (token) {
 
             if (filterType == 2) {
@@ -129,7 +128,7 @@ class Trader {
         let mappedMarketData = params.mappedMarketData;
         // get token with balance except matic
         let tokenWithBalanceAndMarketData = this.tokenWithBalanceAndMarketData(params.tokenBalances, mappedMarketData);
-        
+
         let sellCutLoss = _.get(this.metaMaskWithBuild.C, 'trading.options.sell_cutloss');
         let sellProfit = _.get(this.metaMaskWithBuild.C, 'trading.options.sell_profit');
         let filteredTokenWithProfitableBalance = tokenWithBalanceAndMarketData.filter((token) => token.balance_nearest_a_usd > 0);

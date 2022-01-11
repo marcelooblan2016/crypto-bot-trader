@@ -1,9 +1,11 @@
 import token from '../../Records/token';
 import logger from '../../Records/logger';
 
-async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void> {
+async function loadTokenContracts(params: MetamaskLibLoadTokenContractsParameters): Promise<void> {
     const page = params.page;
     const C = params.C;
+    const tokenContracts: tokenContractInterface[] = params.tokenContracts;
+
     try {
 
         let currentUrl: string = page!.url();
@@ -13,8 +15,6 @@ async function loadTokenContracts(params: MetamaskLibsParameters): Promise<void>
             currentUrl.match(/\/\/(.*?)\//i)![1],
             "/home.html#add-token"
         ].join("");
-
-        let tokenContracts: tokenContractInterface[] = token.tokenContracts();
 
         for(let index in tokenContracts) {
             await page!.goto(addTokenUrl, {waitUntil: 'networkidle0'});

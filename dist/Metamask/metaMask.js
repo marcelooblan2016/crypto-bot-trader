@@ -38,18 +38,18 @@ const lib_1 = __importDefault(require("./Libs/lib"));
 const config_1 = __importDefault(require("../Records/config"));
 const logger_1 = __importDefault(require("../Records/logger"));
 const security_1 = __importDefault(require("../Records/security"));
+const token_1 = __importDefault(require("../Records/token"));
 class Metamask {
     constructor(options) {
+        this.focus = null;
         this.browser = null;
         this.page = null;
         this.metamask = null;
         this.C = constants_1.default;
         this.processId = process.pid;
+        this.tokenContracts = token_1.default.tokenContracts();
+        this.selectedTokenContracts = this.tokenContracts;
     }
-    // public retrieveSecurityPassword(): string | null
-    // {
-    //     return security.password;
-    // }
     /*
      * initializeSecurity : retrieve / set private key & encrypt it with passphrase
      */
@@ -87,6 +87,15 @@ class Metamask {
                 // security pkey / passphrase
                 let pwd = typeof validArguments['pwd'] != 'undefined' ? validArguments['pwd'] : null;
                 let pKey = yield this.initializeSecurity({ pwd: pwd });
+                // check if focus_only
+                this.focus = typeof validArguments['focus'] != 'undefined' ? validArguments['focus'] : null;
+                if (this.focus != null) {
+                    this.selectedTokenContracts = this.selectedTokenContracts.filter((t) => [this.focus, 'usdc'].includes(t.slug));
+                    if (this.selectedTokenContracts.length == 1) {
+                        logger_1.default.write({ content: `${this.focus} doesn't exists.` });
+                        process.exit(0);
+                    }
+                }
                 // check if fresh start
                 let envValues = config_1.default.envValues();
                 if (typeof envValues['PROCESS_ID'] == 'undefined') {
@@ -133,6 +142,7 @@ class Metamask {
         return __awaiter(this, void 0, void 0, function* () {
             logger_1.default.write({ content: `Import Tokens...` });
             yield lib_1.default.loadTokenContracts({
+                tokenContracts: this.selectedTokenContracts,
                 page: this.page,
                 C: constants_1.default
             });

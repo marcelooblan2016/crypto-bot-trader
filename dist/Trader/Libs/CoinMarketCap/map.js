@@ -6,7 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = __importDefault(require("lodash"));
 function map(response_raw_data, tokenContractList) {
     let tokenContracts = tokenContractList;
-    let allowedTokens = tokenContracts.map(contract => contract.slug);
+    let allowedTokens = tokenContracts.map((contract) => {
+        if (contract.slug == 'wmatic')
+            return 'matic';
+        else if (contract.slug == 'weth')
+            return 'eth';
+        else if (contract.slug == 'wbtc')
+            return 'btc';
+        else
+            return contract.slug;
+    });
     let cryptoCurrencyList = response_raw_data.cryptoCurrencyList;
     let mappedCryptoList = cryptoCurrencyList.map(function (crypto) {
         var _a;
