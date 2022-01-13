@@ -81,8 +81,15 @@ class Trader {
         }).map(function (token) {
             var _a;
             let tokenMarket = (_a = mappedMarketData.filter((tokenMarket) => {
-                if (token.slug == 'wmatic') {
-                    return tokenMarket.symbol == 'matic';
+                let marketSlugFamiliars = [
+                    { 'slug': 'wmatic', 'symbol': 'matic' },
+                    { 'slug': 'weth', 'symbol': 'eth' },
+                    { 'slug': 'wbtc', 'symbol': 'btc' },
+                ];
+                for (let marketSlug of marketSlugFamiliars) {
+                    if (marketSlug.slug == token.slug) {
+                        return true;
+                    }
                 }
                 return tokenMarket.symbol == token.slug;
             })[0]) !== null && _a !== void 0 ? _a : {};
