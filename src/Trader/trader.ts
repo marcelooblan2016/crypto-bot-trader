@@ -105,7 +105,7 @@ class Trader {
                 ];
                 
                 for(let marketSlug of marketSlugFamiliars) {
-                    if (marketSlug.slug == token.slug) {
+                    if (marketSlug.symbol == tokenMarket.symbol) {
                         return true;
                     }
                 }
@@ -200,14 +200,15 @@ class Trader {
         // ready to buy - select profitable tokens
         if (stableCoinWithBalance.balance >= 1) {
             let tokenWithBalanceAndMarketData = this.tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, 2);
+
             let tokenWithBalanceAndMarketDataExceptStableCoin = tokenWithBalanceAndMarketData
             .filter( (token) => token.slug != this.stableCoin.slug);
             stableCoinWithBalance = tokenWithBalanceAndMarketData
             .filter( (token) => token.slug == this.stableCoin.slug)[0];
-        
+
             let percentList = [
                 {key: 'percent_change_1_hour', down: -1},
-                {key: 'percent_change_1_day', down: -3},
+                {key: 'percent_change_1_day', down: -2},
             ];
 
             let buyTokens = null;
