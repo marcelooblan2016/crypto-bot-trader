@@ -123,7 +123,8 @@ class Trader {
                 let tokenBalance = Number(lodash_1.default.get(token, 'balance'));
                 let historyCurrentPrice = lodash_1.default.get(token, 'history.current_price', null);
                 let currentPrice = lodash_1.default.get(token, 'current_price');
-                let gainsDecimal = (currentPrice - historyCurrentPrice) / currentPrice;
+                // formula: c = (x2 - x1) / x1
+                let gainsDecimal = (currentPrice - historyCurrentPrice) / historyCurrentPrice;
                 let gainsPercentage = gainsDecimal * 100;
                 let earnings = (tokenBalance * currentPrice) * gainsDecimal;
                 let isSell = false;
