@@ -150,7 +150,8 @@ class Trader {
             let tokenBalance = Number(_.get(token, 'balance'));
             let historyCurrentPrice: number = _.get(token, 'history.current_price', null);
             let currentPrice: number = _.get(token, 'current_price');
-            let gainsDecimal: number = (currentPrice - historyCurrentPrice) / currentPrice;
+            // formula: c = (x2 - x1) / x1
+            let gainsDecimal: number = (currentPrice - historyCurrentPrice) / historyCurrentPrice;
             let gainsPercentage: number = gainsDecimal * 100;
             let earnings = (tokenBalance * currentPrice) * gainsDecimal;
             let isSell: boolean = false;
