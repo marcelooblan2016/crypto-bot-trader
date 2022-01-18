@@ -80,7 +80,7 @@ class Trader {
             return false;
         }).map(function (token) {
             var _a;
-            let tokenMarket = (_a = mappedMarketData.filter((tokenMarket) => {
+            let tokenMarket = (_a = mappedMarketData.map((tokenMarket) => {
                 let marketSlugFamiliars = [
                     { 'slug': 'wmatic', 'symbol': 'matic' },
                     { 'slug': 'weth', 'symbol': 'eth' },
@@ -88,9 +88,13 @@ class Trader {
                 ];
                 for (let marketSlug of marketSlugFamiliars) {
                     if (marketSlug.symbol == tokenMarket.symbol) {
-                        return true;
+                        tokenMarket.symbol = marketSlug.slug;
+                        break;
                     }
                 }
+                return tokenMarket;
+            })
+                .filter((tokenMarket) => {
                 return tokenMarket.symbol == token.slug;
             })[0]) !== null && _a !== void 0 ? _a : {};
             let swapHistoryDataFound = swapHistory_1.default.read({ slug: token.slug });
