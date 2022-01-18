@@ -97,19 +97,24 @@ class Trader {
 
             return false;
         }).map( function (token) {
-            let tokenMarket = mappedMarketData.filter( (tokenMarket) => {
+            let tokenMarket = mappedMarketData.map((tokenMarket) => {
                 let marketSlugFamiliars: any = [
                     {'slug': 'wmatic', 'symbol': 'matic'},
                     {'slug': 'weth', 'symbol': 'eth'},
                     {'slug': 'wbtc', 'symbol': 'btc'},
                 ];
-                
+
                 for(let marketSlug of marketSlugFamiliars) {
                     if (marketSlug.symbol == tokenMarket.symbol) {
-                        return true;
+                        tokenMarket.symbol = marketSlug.slug;
+                        break;
                     }
                 }
-                
+
+                return tokenMarket;
+            })
+            .filter( (tokenMarket) => {
+
                 return tokenMarket.symbol == token.slug;
             })[0] ?? {};
             let swapHistoryDataFound = swapHistory.read({slug: token.slug});
@@ -201,7 +206,6 @@ class Trader {
         // ready to buy - select profitable tokens
         if (stableCoinWithBalance.balance >= 1) {
             let tokenWithBalanceAndMarketData = this.tokenWithBalanceAndMarketData(tokenBalances, mappedMarketData, 2);
-
             let tokenWithBalanceAndMarketDataExceptStableCoin = tokenWithBalanceAndMarketData
             .filter( (token) => token.slug != this.stableCoin.slug);
             stableCoinWithBalance = tokenWithBalanceAndMarketData
