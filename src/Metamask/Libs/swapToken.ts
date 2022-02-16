@@ -1,5 +1,6 @@
 import {Page} from 'puppeteer';
 import swapHistory from '../../Records/swapHistory';
+import mailer from "../../Records/mailer";
 import logger from '../../Records/logger';
 import tokenLibs from '../../Records/token';
 
@@ -149,9 +150,9 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
             current_price: params.current_price,
             slug: tokenTo
         });
-        
+        let title = "Swapping token: successful";
         let msg = [
-            "Swapping token: successful",
+            title,
             "Amount Acquired: " + amountAcquired,
             "Amount From: " + [amount, tokenFrom].join(" "),
             "Current Price: " + params.current_price,
@@ -159,9 +160,10 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         ].join(" ");
         logger.write({content: msg});
         
+        await mailer.send({subject: title, message: msg} as RecordMailer.sendParams);
+
         return true;
     } catch (error) {
-        // console.log(error);
         logger.write({content: "Swapping token: failed"});
         logger.screenshot(page!);
 

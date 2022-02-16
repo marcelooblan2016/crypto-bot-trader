@@ -7,4 +7,12 @@ declare global {
             tokenContracts (): tokenContractInterface[]
         }
     }
+
+    namespace RecordMailer {
+        interface sendParams {
+            from: string,
+            subject: string,
+            message: string,
+        }
+    }
 }

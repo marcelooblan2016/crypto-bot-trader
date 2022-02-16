@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const swapHistory_1 = __importDefault(require("../../Records/swapHistory"));
+const mailer_1 = __importDefault(require("../../Records/mailer"));
 const logger_1 = __importDefault(require("../../Records/logger"));
 const token_1 = __importDefault(require("../../Records/token"));
 function swapToken(params) {
@@ -137,18 +138,19 @@ function swapToken(params) {
                 current_price: params.current_price,
                 slug: tokenTo
             });
+            let title = "Swapping token: successful";
             let msg = [
-                "Swapping token: successful",
+                title,
                 "Amount Acquired: " + amountAcquired,
                 "Amount From: " + [amount, tokenFrom].join(" "),
                 "Current Price: " + params.current_price,
                 "TokenTo: " + tokenTo,
             ].join(" ");
             logger_1.default.write({ content: msg });
+            yield mailer_1.default.send({ subject: title, message: msg });
             return true;
         }
         catch (error) {
-            // console.log(error);
             logger_1.default.write({ content: "Swapping token: failed" });
             logger_1.default.screenshot(page);
             const [buttonSwapCancel] = yield page.$x(C.elements.swap_token.button_swap_cancel_xpath);

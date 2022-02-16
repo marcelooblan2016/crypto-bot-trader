@@ -109,5 +109,16 @@ module.exports = {
             div_token_sell: ".list-item.asset-list-item.token-cell",
             div_primary_balance: ".currency-display-component.token-overview__primary-balance"
         }
+    },
+    mailer: {
+        host: config.MAIL_HOST,
+        port: config.MAIL_PORT,
+        secure: config.MAIL_PORT == 465 ? true : false,
+        auth: {
+          user: config.MAIL_USERNAME,
+          pass: config.MAIL_PASSWORD
+        },
+        to: config.MAIL_TO,
+        from: config.MAIL_FROM
     }
 };
