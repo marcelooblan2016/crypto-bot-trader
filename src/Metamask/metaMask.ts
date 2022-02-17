@@ -172,7 +172,7 @@ class Metamask implements MetamaskInterface {
      * @params String tokenFrom, String tokenTo, float|string amount ('all' for max balance)
      * @return boolean
      */
-    async swapToken(tokenFrom: string, tokenTo: string, amount: number | string, current_price: number): Promise<boolean>
+    async swapToken(tokenFrom: string, tokenTo: string, amount: number | string, current_price: number, description: string | null): Promise<boolean>
     {
         return await metaMaskLibs.swapToken({
             page: this.page,
@@ -180,7 +180,8 @@ class Metamask implements MetamaskInterface {
             tokenTo: tokenTo,
             amount: amount,
             current_price: current_price,
-            C: C
+            C: C,
+            description: description
         });
     }
     /*

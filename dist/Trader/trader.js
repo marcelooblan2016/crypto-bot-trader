@@ -155,7 +155,7 @@ class Trader {
                 }
                 if (isSell === true) {
                     logger_1.default.write({ content: msg });
-                    yield this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, 'all', currentPrice);
+                    yield this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, 'all', currentPrice, msg);
                 }
             }
             return true;
@@ -195,9 +195,9 @@ class Trader {
                 }
                 if (buyTokens != null) {
                     // buy / swap
-                    logger_1.default.write({ content: "Buy/Swap: " + JSON.stringify(buyTokens) });
-                    // await this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, 'all', buyTokens.current_price);
-                    yield this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, Number(stableCoinWithBalance.balance), buyTokens.current_price);
+                    let msg = "Buy/Swap: " + JSON.stringify(buyTokens);
+                    logger_1.default.write({ content: msg });
+                    yield this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, Number(stableCoinWithBalance.balance), buyTokens.current_price, msg);
                 }
             }
             return true;

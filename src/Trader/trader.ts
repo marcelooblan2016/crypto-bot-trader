@@ -186,7 +186,7 @@ class Trader {
 
             if (isSell === true) {
                 logger.write({content: msg!});
-                await this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, 'all', currentPrice);
+                await this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, 'all', currentPrice, msg);
             }
         }
         
@@ -232,9 +232,9 @@ class Trader {
 
             if (buyTokens != null) {
                 // buy / swap
-                logger.write({content: "Buy/Swap: " + JSON.stringify(buyTokens)});
-                // await this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, 'all', buyTokens.current_price);
-                await this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, Number(stableCoinWithBalance.balance), buyTokens.current_price);
+                let msg = "Buy/Swap: " + JSON.stringify(buyTokens);
+                logger.write({content: msg});
+                await this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, Number(stableCoinWithBalance.balance), buyTokens.current_price, msg);
             }
         }
         
