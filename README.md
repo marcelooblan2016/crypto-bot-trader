@@ -4,7 +4,7 @@ swapping of [ERC-20 Tokens][erc20] (buy/sell) based on the market health with bo
 ![image](https://drive.google.com/uc?export=view&id=1IzFTRLwAVSPK3j1h2AkwkqbOBOq6VzeC)
 
 ## List of ERC-20 Tokens Included
-- ChainLink Token, Decentraland, Uniswap, Aave, Curve (CRV), Sushi Token, Avalanche, Wrapped Matic, Wrapped BTC, Wrapped Ether
+- ChainLink Token, Decentraland, Uniswap, Aave, Curve (CRV), Sushi Token, Avalanche, Wrapped Matic, Wrapped BTC
 - [Full Details][erc20List] 
 ## Compatible Networks
 - Polygon

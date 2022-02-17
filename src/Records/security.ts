@@ -53,8 +53,8 @@ class Security {
             else {
                 logger.write({content: "Password not match, please try again."});
             }
-          }
-          while ( isMatched === false );
+        }
+        while ( isMatched === false );
 
         if(isMatched === true) {
             const cryptr = new Cryptr(password);

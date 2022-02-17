@@ -14,7 +14,7 @@
   },
   "homepage": "https://github.com/marcelooblan2016/crypto-bot-trader.git#readme",
   "dependencies": {
-    "@chainsafe/dappeteer": "^2.3.0",
+    "@chainsafe/dappeteer": "2.3.0",
     "api.coinmarketcap": "^1.0.1",
     "cryptr": "^6.0.2",
     "forever": "^4.0.1",

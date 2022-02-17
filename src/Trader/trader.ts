@@ -97,10 +97,24 @@ class Trader {
 
             return false;
         }).map( function (token) {
-            let tokenMarket = mappedMarketData.filter( (tokenMarket) => {
-                if (token.slug == 'wmatic') {
-                    return tokenMarket.symbol == 'matic';
+            let tokenMarket = mappedMarketData.map((tokenMarket) => {
+                let marketSlugFamiliars: any = [
+                    {'slug': 'wmatic', 'symbol': 'matic'},
+                    {'slug': 'weth', 'symbol': 'eth'},
+                    {'slug': 'wbtc', 'symbol': 'btc'},
+                ];
+
+                for(let marketSlug of marketSlugFamiliars) {
+                    if (marketSlug.symbol == tokenMarket.symbol) {
+                        tokenMarket.symbol = marketSlug.slug;
+                        break;
+                    }
                 }
+
+                return tokenMarket;
+            })
+            .filter( (tokenMarket) => {
+
                 return tokenMarket.symbol == token.slug;
             })[0] ?? {};
             let swapHistoryDataFound = swapHistory.read({slug: token.slug});
@@ -141,7 +155,8 @@ class Trader {
             let tokenBalance = Number(_.get(token, 'balance'));
             let historyCurrentPrice: number = _.get(token, 'history.current_price', null);
             let currentPrice: number = _.get(token, 'current_price');
-            let gainsDecimal: number = (currentPrice - historyCurrentPrice) / currentPrice;
+            // formula: c = (x2 - x1) / x1
+            let gainsDecimal: number = (currentPrice - historyCurrentPrice) / historyCurrentPrice;
             let gainsPercentage: number = gainsDecimal * 100;
             let earnings = (tokenBalance * currentPrice) * gainsDecimal;
             let isSell: boolean = false;
@@ -171,7 +186,7 @@ class Trader {
 
             if (isSell === true) {
                 logger.write({content: msg!});
-                await this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice, msg);
+                await this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, 'all', currentPrice, msg);
             }
         }
         
@@ -195,10 +210,10 @@ class Trader {
             .filter( (token) => token.slug != this.stableCoin.slug);
             stableCoinWithBalance = tokenWithBalanceAndMarketData
             .filter( (token) => token.slug == this.stableCoin.slug)[0];
-        
+
             let percentList = [
                 {key: 'percent_change_1_hour', down: -1},
-                {key: 'percent_change_1_day', down: -3},
+                {key: 'percent_change_1_day', down: -2},
             ];
 
             let buyTokens = null;
