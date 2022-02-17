@@ -35,6 +35,7 @@ const config = (() => {
 })();
 
 module.exports = {
+    app_name: config.APP_NAME ?? "crypto-bot-trader",
     urls: {
         "prefix": "chrome-extension://",
     },
@@ -111,14 +112,21 @@ module.exports = {
         }
     },
     mailer: {
-        host: config.MAIL_HOST,
-        port: config.MAIL_PORT,
-        secure: config.MAIL_PORT == 465 ? true : false,
+        host: config.MAIL_HOST ?? null,
+        port: config.MAIL_PORT ?? null,
+        secure: (function () {
+            let mailPort = config.MAIL_PORT ?? null;
+            if (mailPort != null) {
+                return Number(config.MAIL_PORT) == 465 ? true : false
+            }
+
+            return false;
+        })(),
         auth: {
-          user: config.MAIL_USERNAME,
-          pass: config.MAIL_PASSWORD
+          user: config.MAIL_USERNAME ?? null,
+          pass: config.MAIL_PASSWORD ?? null
         },
-        to: config.MAIL_TO,
-        from: config.MAIL_FROM
+        to: config.MAIL_TO ?? null,
+        from: config.MAIL_FROM ?? null
     }
 };

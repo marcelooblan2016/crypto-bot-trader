@@ -18,6 +18,10 @@ class Mailer {
     
     public async send(params: RecordMailer.sendParams): Promise<boolean> {
         try {
+            if (C.mailer.auth.user == null || C.mailer.auth.pass == null) {
+                throw "mail set up not ready.";
+            }
+            
             let info = await this.transporter.sendMail({
                 from: C.mailer.from, // sender address
                 to: C.mailer.to, // list of receivers

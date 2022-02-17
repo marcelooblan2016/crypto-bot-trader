@@ -21,6 +21,7 @@ function swapToken(params) {
         const page = params.page;
         const C = params.C;
         let currentUrl = page.url();
+        let description = params.description;
         try {
             let tokenFrom = params.tokenFrom;
             let tokenTo = params.tokenTo;
@@ -138,7 +139,7 @@ function swapToken(params) {
                 current_price: params.current_price,
                 slug: tokenTo
             });
-            let title = "Swapping token: successful";
+            let title = `Swapping token: successful from: ${C.app_name}`;
             let msg = [
                 title,
                 "Amount Acquired: " + amountAcquired,
@@ -147,7 +148,11 @@ function swapToken(params) {
                 "TokenTo: " + tokenTo,
             ].join(" ");
             logger_1.default.write({ content: msg });
-            yield mailer_1.default.send({ subject: title, message: msg });
+            let mailContent = [
+                msg,
+                description,
+            ].join(" >>>> ");
+            yield mailer_1.default.send({ subject: title, message: mailContent });
             return true;
         }
         catch (error) {

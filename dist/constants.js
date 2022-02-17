@@ -1,5 +1,5 @@
 "use strict";
-var _a, _b, _c;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
 const envMigrations = require("./Records/Migrations/env");
 const config = (() => {
     let fs = require('fs');
@@ -29,12 +29,13 @@ const config = (() => {
     }
 })();
 module.exports = {
+    app_name: (_a = config.APP_NAME) !== null && _a !== void 0 ? _a : "crypto-bot-trader",
     urls: {
         "prefix": "chrome-extension://",
     },
     metamask_version: 'v10.1.1',
     network_preferred: config.PREFERRED_NETWORK,
-    headless_browser: Boolean(parseInt((_a = config.HEADLESS_BROWSER) !== null && _a !== void 0 ? _a : 0)),
+    headless_browser: Boolean(parseInt((_b = config.HEADLESS_BROWSER) !== null && _b !== void 0 ? _b : 0)),
     networks: [
         { "slug": "ropsten", "name": "Ropsten Test Network" },
         { "slug": "rinkeby", "name": "Rinkeby Test Network" },
@@ -50,8 +51,8 @@ module.exports = {
     ],
     trading: {
         options: {
-            sell_cutloss: parseInt((_b = config.SELL_CUTLOSS) !== null && _b !== void 0 ? _b : -10),
-            sell_profit: parseInt((_c = config.SELL_PROFIT) !== null && _c !== void 0 ? _c : 5)
+            sell_cutloss: parseInt((_c = config.SELL_CUTLOSS) !== null && _c !== void 0 ? _c : -10),
+            sell_profit: parseInt((_d = config.SELL_PROFIT) !== null && _d !== void 0 ? _d : 5)
         }
     },
     elements: {
@@ -105,14 +106,21 @@ module.exports = {
         }
     },
     mailer: {
-        host: config.MAIL_HOST,
-        port: config.MAIL_PORT,
-        secure: config.MAIL_PORT == 465 ? true : false,
+        host: (_e = config.MAIL_HOST) !== null && _e !== void 0 ? _e : null,
+        port: (_f = config.MAIL_PORT) !== null && _f !== void 0 ? _f : null,
+        secure: (function () {
+            var _a;
+            let mailPort = (_a = config.MAIL_PORT) !== null && _a !== void 0 ? _a : null;
+            if (mailPort != null) {
+                return Number(config.MAIL_PORT) == 465 ? true : false;
+            }
+            return false;
+        })(),
         auth: {
-            user: config.MAIL_USERNAME,
-            pass: config.MAIL_PASSWORD
+            user: (_g = config.MAIL_USERNAME) !== null && _g !== void 0 ? _g : null,
+            pass: (_h = config.MAIL_PASSWORD) !== null && _h !== void 0 ? _h : null
         },
-        to: config.MAIL_TO,
-        from: config.MAIL_FROM
+        to: (_j = config.MAIL_TO) !== null && _j !== void 0 ? _j : null,
+        from: (_k = config.MAIL_FROM) !== null && _k !== void 0 ? _k : null
     }
 };

@@ -10,7 +10,8 @@ interface SwapTokenParameters {
     tokenTo: string, 
     amount: number | string,
     current_price: number
-    C: any
+    C: any,
+    description: string | null,
 }
 
 async function swapToken(params: SwapTokenParameters): Promise<boolean> {
@@ -18,6 +19,7 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
     const page = params.page;
     const C = params.C;
     let currentUrl: string = page!.url();
+    let description: string | null = params.description;
 
     try {
         let tokenFrom: string = params.tokenFrom;
@@ -150,7 +152,7 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
             current_price: params.current_price,
             slug: tokenTo
         });
-        let title = "Swapping token: successful";
+        let title = `Swapping token: successful from: ${C.app_name}`;
         let msg = [
             title,
             "Amount Acquired: " + amountAcquired,
@@ -160,7 +162,12 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         ].join(" ");
         logger.write({content: msg});
         
-        await mailer.send({subject: title, message: msg} as RecordMailer.sendParams);
+        let mailContent: string = [
+            msg,
+            description,
+        ].join(" >>>> ");
+
+        await mailer.send({subject: title, message: mailContent} as RecordMailer.sendParams);
 
         return true;
     } catch (error) {

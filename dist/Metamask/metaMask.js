@@ -188,7 +188,7 @@ class Metamask {
      * @params String tokenFrom, String tokenTo, float|string amount ('all' for max balance)
      * @return boolean
      */
-    swapToken(tokenFrom, tokenTo, amount, current_price) {
+    swapToken(tokenFrom, tokenTo, amount, current_price, description) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield lib_1.default.swapToken({
                 page: this.page,
@@ -196,7 +196,8 @@ class Metamask {
                 tokenTo: tokenTo,
                 amount: amount,
                 current_price: current_price,
-                C: constants_1.default
+                C: constants_1.default,
+                description: description
             });
         });
     }

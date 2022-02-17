@@ -29,6 +29,9 @@ class Mailer {
     send(params) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                if (constants_1.default.mailer.auth.user == null || constants_1.default.mailer.auth.pass == null) {
+                    throw "mail set up not ready.";
+                }
                 let info = yield this.transporter.sendMail({
                     from: constants_1.default.mailer.from,
                     to: constants_1.default.mailer.to,
