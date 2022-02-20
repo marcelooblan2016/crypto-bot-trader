@@ -119,5 +119,27 @@ export default [
         "site": "https://www.wbtc.network/",
         "network_url": "https://polygonscan.com/token/0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
         "minimum_balance": 0
+    },
+    {
+        "network_slug": "matic-mainnet",
+        "name": "Wrapped Ether",
+        "slug": "weth",
+        "stablecoin": false,
+        "contract": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "decimals": 18,
+        "site": "https://weth.io/",
+        "network_url": "https://polygonscan.com/token/0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+        "minimum_balance": 0
+    },
+    {
+        "network_slug": "matic-mainnet",
+        "name": "Quickswap",
+        "slug": "quick",
+        "stablecoin": false,
+        "contract": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13",
+        "decimals": 18,
+        "site": "https://quickswap.exchange/",
+        "network_url": "https://polygonscan.com/token/0x831753DD7087CaC61aB5644b308642cc1c33Dc13",
+        "minimum_balance": 0
     }
 ];
