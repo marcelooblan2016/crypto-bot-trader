@@ -35,6 +35,7 @@ function swapToken(params) {
             logger_1.default.write({ content: msgInit });
             let tokenContracts = token_1.default.tokenContracts();
             let tokenFromContract = tokenContracts.filter((token) => token.slug == tokenFrom)[0];
+            let tokenToContract = tokenContracts.filter((token) => token.slug == tokenTo)[0];
             // chrome-extension://odkjoconjphbkgjmioaolohpdhgihomg/home.html#asset/0x2791bca1f2de4661ed88a30c99a7a9449aa84174
             let tokenFromBaseUrl = [
                 C.urls.prefix,
@@ -91,14 +92,35 @@ function swapToken(params) {
             yield page.type(C.elements.swap_token.input_dropdown_input_pair_to, tokenTo, { delay: 20 });
             yield page.waitForTimeout(1000);
             // select tokenTo
-            yield page.evaluate((options) => {
-                const C = options['config'];
-                let tokenTo = options['tokenTo'];
-                [...document.querySelectorAll(C.elements.swap_token.label_dropdown_option_pair_to)].find(element => element.textContent.toLowerCase() === tokenTo).click();
-            }, {
-                'tokenTo': tokenTo,
-                'config': C
-            });
+            try {
+                yield page.evaluate((options) => {
+                    const C = options['config'];
+                    let tokenTo = options['tokenTo'];
+                    [...document.querySelectorAll(C.elements.swap_token.label_dropdown_option_pair_to)].find(element => element.textContent.toLowerCase() === tokenTo).click();
+                }, {
+                    'tokenTo': tokenTo,
+                    'config': C
+                });
+            }
+            catch (subError) {
+                console.log("token not found, attempting it by contract");
+                //tokenToContract
+                yield page.focus(C.elements.swap_token.input_dropdown_input_pair_to);
+                yield page.keyboard.down('Control');
+                yield page.keyboard.press('A');
+                yield page.keyboard.up('Control');
+                yield page.keyboard.press('Backspace');
+                yield page.type(C.elements.swap_token.input_dropdown_input_pair_to, tokenToContract.contract, { delay: 20 });
+                yield page.waitForTimeout(1000);
+                yield page.evaluate((options) => {
+                    const C = options['config'];
+                    let tokenTo = options['tokenTo'];
+                    [...document.querySelectorAll(C.elements.swap_token.label_dropdown_option_pair_to)][0].click();
+                }, {
+                    'tokenTo': tokenTo,
+                    'config': C
+                });
+            }
             yield page.waitForTimeout(1000);
             // if have confirmation
             let isButtonDangerContinue = yield page.evaluate((options) => {
