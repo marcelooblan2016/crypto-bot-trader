@@ -37,6 +37,7 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
 
         let tokenContracts = tokenLibs.tokenContracts();
         let tokenFromContract: tokenContractInterface = tokenContracts.filter( (token) => token.slug == tokenFrom)[0];
+        let tokenToContract: tokenContractInterface = tokenContracts.filter( (token) => token.slug == tokenTo)[0];
         // chrome-extension://odkjoconjphbkgjmioaolohpdhgihomg/home.html#asset/0x2791bca1f2de4661ed88a30c99a7a9449aa84174
         let tokenFromBaseUrl: string = [
             C.urls.prefix,
@@ -97,15 +98,41 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         await page!.type(C.elements.swap_token.input_dropdown_input_pair_to, tokenTo, {delay: 20});
         await page!.waitForTimeout(1000);
         // select tokenTo
-        await page!.evaluate((options) => {
-            const C = options['config'];
-            let tokenTo = options['tokenTo'];
-            [...document.querySelectorAll(C.elements.swap_token.label_dropdown_option_pair_to)].find(element => element.textContent.toLowerCase() === tokenTo).click();
-        }, {
-            'tokenTo': tokenTo,
-            'config': C
-        });
-        await page!.waitForTimeout(1000);
+
+        try {
+            await page!.evaluate((options) => {
+                const C = options['config'];
+                let tokenTo = options['tokenTo'];
+                [...document.querySelectorAll(C.elements.swap_token.label_dropdown_option_pair_to)].find(element => element.textContent.toLowerCase() === tokenTo).click();
+            }, {
+                'tokenTo': tokenTo,
+                'config': C
+            });
+
+            await page!.waitForTimeout(1000);
+        } catch (subError) {
+            console.log("token not found, attempting it by contract");
+            //tokenToContract
+            await page!.focus(C.elements.swap_token.input_dropdown_input_pair_to);
+            await page!.keyboard.down('Control');
+            await page!.keyboard.press('A');
+            await page!.keyboard.up('Control');
+            await page!.keyboard.press('Backspace');
+
+            await page!.type(C.elements.swap_token.input_dropdown_input_pair_to, tokenToContract.contract, {delay: 20});
+            await page!.waitForTimeout(1000);
+
+            await page!.evaluate((options) => {
+                const C = options['config'];
+                let tokenTo = options['tokenTo'];
+                [...document.querySelectorAll(C.elements.swap_token.label_dropdown_option_pair_to)][0].click();
+            }, {
+                'tokenTo': tokenTo,
+                'config': C
+            });
+
+            await page!.waitForTimeout(3000);
+        }
 
         // if have confirmation
         let isButtonDangerContinue: boolean = await page!.evaluate((options) => {

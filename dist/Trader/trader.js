@@ -133,29 +133,39 @@ class Trader {
                 let earnings = (tokenBalance * currentPrice) * gainsDecimal;
                 let isSell = false;
                 let msg = null;
-                if (gainsPercentage >= sellProfit) {
-                    // sell profit
-                    msg = [
-                        "Sell Profit: ",
-                        gainsPercentage + "%",
-                        token.slug,
-                        "Earned: " + earnings + " usd",
-                    ].join(" ");
-                    isSell = true;
+                if (Number.isFinite(gainsPercentage) == true && Number.isFinite(sellProfit)) {
+                    if (gainsPercentage >= sellProfit) {
+                        // sell profit
+                        msg = [
+                            "Sell Profit: ",
+                            gainsPercentage + "%",
+                            token.slug,
+                            "Earned: " + earnings + " usd",
+                        ].join(" ");
+                        isSell = true;
+                    }
+                    else if (gainsPercentage <= sellCutLoss) {
+                        // selling to prevent more loss
+                        msg = [
+                            "Cut Loss: ",
+                            gainsPercentage + "%",
+                            token.slug,
+                            "Earned: " + earnings + " usd",
+                        ].join(" ");
+                        isSell = true;
+                    }
                 }
-                else if (gainsPercentage <= sellCutLoss) {
-                    // selling to prevent more loss
+                else {
                     msg = [
-                        "Cut Loss: ",
-                        gainsPercentage + "%",
-                        token.slug,
-                        "Earned: " + earnings + " usd",
+                        `Infinity occured >>> `,
+                        `tokenBalance: ${tokenBalance}`,
+                        `currentPrice: ${currentPrice}`,
+                        `historyCurrentPrice: ${historyCurrentPrice}`,
                     ].join(" ");
-                    isSell = true;
                 }
                 if (isSell === true) {
                     logger_1.default.write({ content: msg });
-                    yield this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, 'all', currentPrice, msg);
+                    yield this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice, msg);
                 }
             }
             return true;
