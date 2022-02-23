@@ -101,6 +101,7 @@ function swapToken(params) {
                     'tokenTo': tokenTo,
                     'config': C
                 });
+                yield page.waitForTimeout(1000);
             }
             catch (subError) {
                 console.log("token not found, attempting it by contract");
@@ -120,8 +121,8 @@ function swapToken(params) {
                     'tokenTo': tokenTo,
                     'config': C
                 });
+                yield page.waitForTimeout(3000);
             }
-            yield page.waitForTimeout(1000);
             // if have confirmation
             let isButtonDangerContinue = yield page.evaluate((options) => {
                 const C = options['config'];

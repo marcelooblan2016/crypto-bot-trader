@@ -108,6 +108,8 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
                 'tokenTo': tokenTo,
                 'config': C
             });
+
+            await page!.waitForTimeout(1000);
         } catch (subError) {
             console.log("token not found, attempting it by contract");
             //tokenToContract
@@ -128,9 +130,9 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
                 'tokenTo': tokenTo,
                 'config': C
             });
-        }
 
-        await page!.waitForTimeout(1000);
+            await page!.waitForTimeout(3000);
+        }
 
         // if have confirmation
         let isButtonDangerContinue: boolean = await page!.evaluate((options) => {
