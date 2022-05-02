@@ -1,5 +1,5 @@
 "use strict";
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
 const envMigrations = require("./Records/Migrations/env");
 const config = (() => {
     let fs = require('fs');
@@ -122,5 +122,8 @@ module.exports = {
         },
         to: (_j = config.MAIL_TO) !== null && _j !== void 0 ? _j : null,
         from: (_k = config.MAIL_FROM) !== null && _k !== void 0 ? _k : null
+    },
+    slack: {
+        webhook_url: (_l = config.WEBHOOK_URL) !== null && _l !== void 0 ? _l : null
     }
 };

@@ -15,4 +15,10 @@ declare global {
             message: string,
         }
     }
+
+    namespace RecordSlack {
+        interface sendParams {
+            text: string
+        }
+    }
 }
