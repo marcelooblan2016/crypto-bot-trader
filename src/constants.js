@@ -128,5 +128,8 @@ module.exports = {
         },
         to: config.MAIL_TO ?? null,
         from: config.MAIL_FROM ?? null
+    },
+    slack: {
+        webhook_url: config.WEBHOOK_URL ?? null
     }
 };

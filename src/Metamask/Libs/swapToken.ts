@@ -1,6 +1,7 @@
 import {Page} from 'puppeteer';
 import swapHistory from '../../Records/swapHistory';
 import mailer from "../../Records/mailer";
+import slack from "../../Records/slack";
 import logger from '../../Records/logger';
 import tokenLibs from '../../Records/token';
 
@@ -189,12 +190,18 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         ].join(" ");
         logger.write({content: msg});
         
-        let mailContent: string = [
+        let content: string = [
             msg,
             description,
         ].join(" >>>> ");
-
-        await mailer.send({subject: title, message: mailContent} as RecordMailer.sendParams);
+        // if email is available
+        if (mailer.isMailerAvailable() === true) {
+            await mailer.send({subject: title, message: content} as RecordMailer.sendParams);
+        }
+        // if slack is available
+        if (slack.isSlackAvailable() === true) {
+            await slack.send({text: content });
+        }
 
         return true;
     } catch (error) {

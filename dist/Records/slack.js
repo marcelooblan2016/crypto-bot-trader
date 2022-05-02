@@ -13,21 +13,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = __importDefault(require("../constants"));
-const nodemailer_1 = __importDefault(require("nodemailer"));
-class Mailer {
+const axios_1 = __importDefault(require("axios"));
+class Slack {
     constructor(options) {
-        this.transporter = nodemailer_1.default.createTransport({
-            host: constants_1.default.mailer.host,
-            port: constants_1.default.mailer.port,
-            secure: constants_1.default.mailer.secure,
-            auth: {
-                user: constants_1.default.mailer.auth.user,
-                pass: constants_1.default.mailer.auth.pass,
-            },
-        });
+        this.webhook_url = constants_1.default.slack.webhook_url;
     }
-    isMailerAvailable() {
-        if (constants_1.default.mailer.auth.user == null || constants_1.default.mailer.auth.pass == null) {
+    isSlackAvailable() {
+        if (this.webhook_url == null) {
             return false;
         }
         return true;
@@ -35,16 +27,19 @@ class Mailer {
     send(params) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                if (this.isMailerAvailable() === false) {
-                    throw "mail set up not ready.";
+                if (this.isSlackAvailable() === false) {
+                    throw "slack not available.";
                 }
-                let info = yield this.transporter.sendMail({
-                    from: constants_1.default.mailer.from,
-                    to: constants_1.default.mailer.to,
-                    subject: params.subject,
-                    text: params.message, // plain text body
+                const options = {
+                    text: params.text
+                };
+                yield axios_1.default.post(this.webhook_url, JSON.stringify(options))
+                    .then(function (response) {
+                    return true;
+                })
+                    .catch(function (error) {
+                    return false;
                 });
-                console.log("Message sent: %s", info.messageId);
                 return true;
             }
             catch (error) { }
@@ -52,4 +47,4 @@ class Mailer {
         });
     }
 }
-exports.default = new Mailer;
+exports.default = new Slack;
