@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const swapHistory_1 = __importDefault(require("../../Records/swapHistory"));
 const mailer_1 = __importDefault(require("../../Records/mailer"));
+const slack_1 = __importDefault(require("../../Records/slack"));
 const logger_1 = __importDefault(require("../../Records/logger"));
 const token_1 = __importDefault(require("../../Records/token"));
 function swapToken(params) {
@@ -171,11 +172,18 @@ function swapToken(params) {
                 "TokenTo: " + tokenTo,
             ].join(" ");
             logger_1.default.write({ content: msg });
-            let mailContent = [
+            let content = [
                 msg,
                 description,
             ].join(" >>>> ");
-            yield mailer_1.default.send({ subject: title, message: mailContent });
+            // if email is available
+            if (mailer_1.default.isMailerAvailable() === true) {
+                yield mailer_1.default.send({ subject: title, message: content });
+            }
+            // if slack is available
+            if (slack_1.default.isSlackAvailable() === true) {
+                yield slack_1.default.send({ text: content });
+            }
             return true;
         }
         catch (error) {

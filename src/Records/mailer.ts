@@ -15,10 +15,19 @@ class Mailer {
             },
         });
     }
+
+    public isMailerAvailable(): boolean
+    {
+        if (C.mailer.auth.user == null || C.mailer.auth.pass == null) {
+            return false;
+        }
+
+        return true;
+    }
     
     public async send(params: RecordMailer.sendParams): Promise<boolean> {
         try {
-            if (C.mailer.auth.user == null || C.mailer.auth.pass == null) {
+            if (this.isMailerAvailable() === false) {
                 throw "mail set up not ready.";
             }
             
