@@ -47,7 +47,7 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         ].join("");
         await page!.goto(tokenFromBaseUrl, { waitUntil: 'domcontentloaded' });
         await page!.waitForXPath(C.elements.swap_token.button_swap_overview_xpath + "[not(@disabled)]", { visible: true });
-        const [buttonSwapOverview] = await page!.$x(C.elements.swap_token.button_swap_overview_xpath);
+        const [buttonSwapOverview]: any = await page!.$x(C.elements.swap_token.button_swap_overview_xpath);
         await buttonSwapOverview.click();
         await page!.waitForTimeout(1000);
         // click swap from overview
@@ -148,7 +148,7 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         }
 
         await page!.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
-        const [buttonSwapReview] = await page!.$x(C.elements.swap_token.button_swap_review_xpath);
+        const [buttonSwapReview]: any = await page!.$x(C.elements.swap_token.button_swap_review_xpath);
         await buttonSwapReview.click();
         await page!.waitForNavigation();
         
@@ -165,11 +165,11 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         }
 
         await page!.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]", { visible: true });
-        const [buttonSwap] = await page!.$x(C.elements.swap_token.button_swap_xpath);
+        const [buttonSwap]: any = await page!.$x(C.elements.swap_token.button_swap_xpath);
         await buttonSwap.click();
         await page!.waitForNavigation();
         await page!.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 60000 });
-        const [buttonClose] = await page!.$x(C.elements.swap_token.button_close_xpath);
+        const [buttonClose]: any = await page!.$x(C.elements.swap_token.button_close_xpath);
         await buttonClose.click();
         await page!.waitForNavigation();
 
@@ -208,7 +208,7 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         logger.write({content: "Swapping token: failed"});
         logger.screenshot(page!);
 
-        const [buttonSwapCancel] = await page!.$x(C.elements.swap_token.button_swap_cancel_xpath);
+        const [buttonSwapCancel]: any = await page!.$x(C.elements.swap_token.button_swap_cancel_xpath);
         await buttonSwapCancel.click();
     }
 
