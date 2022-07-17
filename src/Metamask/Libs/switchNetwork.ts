@@ -19,8 +19,8 @@ async function switchNetwork(params: switchNetworkParameters): Promise<boolean> 
 
         await page!.evaluate((options) => {
             const C = options['config'];
-            let network = options['network'];
-            let networkSlugged = (network).toLowerCase().replaceAll(" ", "-");
+            let network: any = String(options['network']);
+            let networkSlugged = network.toLowerCase().replaceAll(" ", "-");
             [...document.querySelectorAll(C.elements.switch_network.div_dropdown_network_list)].find(element => {
                 let elementSlugged = element.textContent.toLowerCase().replaceAll(" ", "-");
                 return elementSlugged === networkSlugged

@@ -109,7 +109,7 @@ async function getBalanceAll(params: getBalanceParameters): Promise<boolean|mapp
         
         if (isClickButtonAssets == true) {
             await page!.waitForXPath(C.elements.get_balances.button_assets_xpath, { visible: true });
-            const [buttonAssets] = await page!.$x(C.elements.get_balances.button_assets_xpath);
+            const [buttonAssets]: any = await page!.$x(C.elements.get_balances.button_assets_xpath);
             await buttonAssets.click();
         }
 

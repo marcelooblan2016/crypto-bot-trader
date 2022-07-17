@@ -39,7 +39,7 @@ module.exports = {
     urls: {
         "prefix": "chrome-extension://",
     },
-    metamask_version: 'v10.1.1',
+    metamask_version: 'v10.15.0',
     network_preferred: config.PREFERRED_NETWORK,
     headless_browser: Boolean( parseInt(config.HEADLESS_BROWSER ?? 0) ),
     networks: [
@@ -71,12 +71,20 @@ module.exports = {
             div_dropdown_network_list: ".menu-droppo .dropdown-menu-item",
         },
         add_new_network: {
+            button_add_a_network_xpath: "//button[contains(text(), 'Add a network')]",
+            input_network_name_xpath: "//h6[contains(.,'Network Name')]/parent::node()/parent::node()/following-sibling::input",
+            input_rpc_url_xpath: "//h6[contains(.,'New RPC URL')]/parent::node()/parent::node()/following-sibling::input",
+            input_chain_id_xpath: "//h6[contains(.,'Chain ID')]/parent::node()/parent::node()/following-sibling::input",
+            input_currency_symbol_xpath: "//h6[contains(.,'Currency Symbol')]/parent::node()/parent::node()/following-sibling::input",
+            input_explorer_xpath: "//h6[contains(.,'Block Explorer URL')]/parent::node()/parent::node()/following-sibling::input",
+            /*
             input_network_name: "#network-name",
             input_rpc_url: "#rpc-url",
             input_chain_id: "#chainId",
             input_currency_symbol: "#network-ticker",
             input_block_explorer_url: "#block-explorer-url",
             div_close_button: ".settings-page__close-button",
+            */
             button_save_xpath: "//button[contains(text(), 'Save')]",
         },
         add_token: {
@@ -86,7 +94,8 @@ module.exports = {
             input_custom_symbol: "#custom-symbol",
             input_custom_decimals: "#custom-decimals",
             button_next_xpath: "//button[contains(text(), 'Next')]",
-            button_add_token_xpath: "//button[contains(text(), 'Add Tokens')]"
+            button_add_token_xpath: "//button[contains(text(), 'Add Custom Token')]",
+            button_import_tokens_xpath: "//button[contains(text(), 'Import Tokens')]",
         },
         swap_token: {
             div_max_button: ".build-quote__max-button",

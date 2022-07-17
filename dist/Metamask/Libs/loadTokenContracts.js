@@ -23,12 +23,11 @@ function loadTokenContracts(params) {
             let addTokenUrl = [
                 C.urls.prefix,
                 currentUrl.match(/\/\/(.*?)\//i)[1],
-                "/home.html#add-token"
+                "/home.html#import-token"
             ].join("");
             for (let index in tokenContracts) {
                 yield page.goto(addTokenUrl, { waitUntil: 'networkidle0' });
                 yield page.waitForTimeout(1000);
-                // check if <button>Search</button> <button>Custom Token</button> (Usually happens in windows 10 as per testing)
                 let isSearchAndCustomToken = yield page.evaluate((options) => {
                     const C = options['config'];
                     return document.querySelectorAll(C.elements.add_token.button_search_and_add_token).length >= 2 ? true : false;
@@ -65,12 +64,12 @@ function loadTokenContracts(params) {
                     yield page.focus(C.elements.add_token.input_custom_decimals);
                     yield page.type(C.elements.add_token.input_custom_decimals, (tokenContract['decimals']).toString());
                 }
-                yield page.waitForXPath(C.elements.add_token.button_next_xpath + "[not(@disabled)]");
-                const [buttonNext] = yield page.$x(C.elements.add_token.button_next_xpath);
-                yield buttonNext.click();
                 yield page.waitForXPath(C.elements.add_token.button_add_token_xpath + "[not(@disabled)]");
                 const [buttonAddTokens] = yield page.$x(C.elements.add_token.button_add_token_xpath);
                 yield buttonAddTokens.click();
+                yield page.waitForXPath(C.elements.add_token.button_import_tokens_xpath + "[not(@disabled)]");
+                const [buttonImportTokens] = yield page.$x(C.elements.add_token.button_import_tokens_xpath);
+                yield buttonImportTokens.click();
                 yield page.waitForNavigation();
             }
         }

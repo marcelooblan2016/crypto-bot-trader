@@ -123,7 +123,7 @@ class Metamask {
                 yield this.addNewNetworks();
                 // switch to preferred network
                 //logger.write({content: `Switch network: ${C.network_preferred}`});
-                // await this.switchNetwork(C.network_preferred);
+                yield this.switchNetwork(constants_1.default.network_preferred);
                 yield this.page.waitForTimeout(2000);
                 // load tokens
                 yield this.loadTokenContracts();
@@ -161,16 +161,6 @@ class Metamask {
             for (let index in newNetworks) {
                 let network = newNetworks[index];
                 logger_1.default.write({ content: `Adding new networks ${network.slug}...` });
-                /*
-                 * Disabled
-                await this.metamask.addNetwork({
-                    networkName: network.slug,
-                    rpc: network.rpc_url,
-                    chainId: network.chain_id,
-                    symbol: network.currency_symbol,
-                    explorer: network.block_explorer_url,
-                });
-                 */
                 yield lib_1.default.addNewNetwork({
                     page: this.page,
                     C: constants_1.default,
