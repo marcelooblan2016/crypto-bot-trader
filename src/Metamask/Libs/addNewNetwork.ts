@@ -51,7 +51,8 @@ async function addNewNetwork(params: addNewNetworkParameters): Promise<boolean> 
         // Type Explorer
         const [inputExplorerXpath] = await page!.$x(C.elements.add_new_network.input_explorer_xpath);
         await inputExplorerXpath.type(String(params.explorer));
-        await page!.waitForTimeout(2000)
+        await page!.waitForTimeout(2000);
+        await page!.waitForXPath(C.elements.add_new_network.button_save_xpath + "[not(@disabled)]");
         const [buttonSaveXpath]: any = await page!.$x(C.elements.add_new_network.button_save_xpath);
         await buttonSaveXpath.click();
 

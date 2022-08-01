@@ -50,6 +50,7 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         const [buttonSwapOverview]: any = await page!.$x(C.elements.swap_token.button_swap_overview_xpath);
         await buttonSwapOverview.click();
         await page!.waitForTimeout(1000);
+
         // click swap from overview
 
         // **** TokenFrom
@@ -207,9 +208,13 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
     } catch (error) {
         logger.write({content: "Swapping token: failed"});
         logger.screenshot(page!);
-
-        const [buttonSwapCancel]: any = await page!.$x(C.elements.swap_token.button_swap_cancel_xpath);
-        await buttonSwapCancel.click();
+        logger.write({content: "Redirecting to home..."});
+        let baseUrl: string = [
+            C.urls.prefix,
+            (currentUrl.match(/\/\/(.*?)\//i))![1],
+            `/home.html`
+        ].join("");
+        await page!.goto(baseUrl, { waitUntil: 'domcontentloaded' });
     }
 
     return false;

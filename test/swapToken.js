@@ -11,5 +11,5 @@ const {metaMask} = require('../dist/index');
         "Earned: 5 usd",
     ].join(" ");
     
-    await metaMask.swapToken("matic", "usdc", 1, 0, description);
+    await metaMask.swapToken("matic", "usdc", 3, 0, description);
 })();
