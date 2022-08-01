@@ -189,8 +189,13 @@ function swapToken(params) {
         catch (error) {
             logger_1.default.write({ content: "Swapping token: failed" });
             logger_1.default.screenshot(page);
-            const [buttonSwapCancel] = yield page.$x(C.elements.swap_token.button_swap_cancel_xpath);
-            yield buttonSwapCancel.click();
+            logger_1.default.write({ content: "Redirecting to home..." });
+            let baseUrl = [
+                C.urls.prefix,
+                (currentUrl.match(/\/\/(.*?)\//i))[1],
+                `/home.html`
+            ].join("");
+            yield page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
         }
         return false;
     });

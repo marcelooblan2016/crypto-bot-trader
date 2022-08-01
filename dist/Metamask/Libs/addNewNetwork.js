@@ -48,6 +48,7 @@ function addNewNetwork(params) {
             const [inputExplorerXpath] = yield page.$x(C.elements.add_new_network.input_explorer_xpath);
             yield inputExplorerXpath.type(String(params.explorer));
             yield page.waitForTimeout(2000);
+            yield page.waitForXPath(C.elements.add_new_network.button_save_xpath + "[not(@disabled)]");
             const [buttonSaveXpath] = yield page.$x(C.elements.add_new_network.button_save_xpath);
             yield buttonSaveXpath.click();
             return true;
