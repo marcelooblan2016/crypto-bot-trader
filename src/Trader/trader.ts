@@ -162,7 +162,7 @@ class Trader {
             let earnings = (tokenBalance * currentPrice) * gainsDecimal;
             let isSell: boolean = false;
             let msg: string | null = null;
-
+            let profit = false;
             if (Number.isFinite(gainsPercentage) == true && Number.isFinite(sellProfit)) {
                 if (gainsPercentage >= sellProfit) {
                     // sell profit
@@ -174,6 +174,7 @@ class Trader {
                     ].join(" ");
     
                     isSell = true;
+                    profit = true;
                 }
                 else if (gainsPercentage <= sellCutLoss) {
                     // selling to prevent more loss
@@ -199,6 +200,15 @@ class Trader {
             if (isSell === true) {
                 logger.write({content: msg!});
                 await this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice, msg);
+            
+                if (profit === true) {
+                    // check method type
+                    // if method == 'sendto'
+                       // get wallet address
+                       // amount = baseRoot - (balance + earnings)
+                       // token : usdc
+                       // this.metaMaskWithBuild.sendTo(######)
+                }
             }
         }
         

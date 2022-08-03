@@ -42,6 +42,7 @@ const token_1 = __importDefault(require("../Records/token"));
 class Metamask {
     constructor(options) {
         this.focus = null;
+        this.method = 'basic'; // ['basic', 'sendto']
         this.browser = null;
         this.page = null;
         this.metamask = null;
@@ -84,6 +85,7 @@ class Metamask {
                         validArguments[splittedArgument[0]] = ((_a = splittedArgument[1]) !== null && _a !== void 0 ? _a : null);
                     });
                 }
+                this.method = typeof validArguments['method'] != 'undefined' ? validArguments['method'] : this.method;
                 // security pkey / passphrase
                 let pwd = typeof validArguments['pwd'] != 'undefined' ? validArguments['pwd'] : null;
                 let pKey = yield this.initializeSecurity({ pwd: pwd });
@@ -230,6 +232,22 @@ class Metamask {
                 page: this.page,
                 network: network,
                 C: constants_1.default
+            });
+        });
+    }
+    /*
+     * Send Specific amount to wallet address
+     * @params walletAddress,
+     * @return boolean
+     */
+    sendTo(walletAddress, token, amount) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield lib_1.default.sendTo({
+                page: this.page,
+                C: constants_1.default,
+                walletAddress: walletAddress,
+                token: token,
+                amount: amount
             });
         });
     }

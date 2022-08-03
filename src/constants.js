@@ -39,6 +39,9 @@ module.exports = {
     urls: {
         "prefix": "chrome-extension://",
     },
+    methods: {
+        send_to: config.WALLET_ADDRESS ?? null,
+    },
     metamask_version: 'v10.15.0',
     network_preferred: config.PREFERRED_NETWORK,
     headless_browser: Boolean( parseInt(config.HEADLESS_BROWSER ?? 0) ),
@@ -113,6 +116,14 @@ module.exports = {
             div_transaction_complete_xpath: "//div[contains(text(), 'Transaction complete')]",
             button_close_xpath: "//button[contains(text(), 'Close')]",
             button_swap_cancel_xpath: "//div[contains(text(), 'Cancel')]",
+        },
+        send_to: {
+            input_wallet_address_xpath: "//*[@placeholder='Search, public address (0x), or ENS']",
+            div_dropdown_input_wrapper: ".send-v2__asset-dropdown__input-wrapper",
+            div_token_list_item: ".token-list-item .token-list-item__data",
+            input_amount: ".send-v2__form-field input.unit-input__input",
+            button_next_xpath: "//button[contains(text(),'Next')]",
+            button_confirm_xpath: "//button[contains(text(),'Confirm')]",
         },
         get_balances: {
             button_assets_xpath: "//button[contains(text(), 'Assets')]",

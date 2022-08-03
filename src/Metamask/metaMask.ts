@@ -17,6 +17,7 @@ class Metamask implements MetamaskInterface {
     public focus: string | null = null;
     public tokenContracts: tokenContractInterface[];
     public selectedTokenContracts: tokenContractInterface[];
+    public method: string = 'basic'; // ['basic', 'sendto']
 
     constructor(options? : any) {
         this.browser = null;
@@ -62,12 +63,10 @@ class Metamask implements MetamaskInterface {
                     validArguments[splittedArgument[0]] = (splittedArgument[1] ?? null);
                 });
             }
-            
+            this.method = typeof validArguments['method'] != 'undefined' ? validArguments['method'] : this.method;
             // security pkey / passphrase
             let pwd: string | null = typeof validArguments['pwd'] != 'undefined' ? validArguments['pwd'] : null;
-
             let pKey: string = await this.initializeSecurity({pwd: pwd});
-
             // check if focus_only
             this.focus = typeof validArguments['focus'] != 'undefined' ? validArguments['focus'] : null;
 
@@ -216,6 +215,22 @@ class Metamask implements MetamaskInterface {
             network: network,
             C: C
         })
+    }
+
+    /*
+     * Send Specific amount to wallet address
+     * @params walletAddress,
+     * @return boolean
+     */
+    async sendTo(walletAddress: string, token: string, amount: number): Promise<boolean>
+    {
+        return await metaMaskLibs.sendTo({
+            page: this.page,
+            C: C,
+            walletAddress: walletAddress,
+            token: token,
+            amount: amount
+        });
     }
 }
 
