@@ -122,3 +122,17 @@ node {jsFile} --focus=wmatic
 [erc20List]: https://github.com/marcelooblan2016/crypto-bot-trader/blob/main/src/Records/Migrations/tokenContracts.js
 [npmforever]: https://www.npmjs.com/package/forever
 [npmxvfb]: https://www.npmjs.com/package/xvfb
+
+## Method: 'sendto'
+After a successful trade, profit will be sent to a specific wallet address.
+This feature is good if you have bunch of bot traders & you want the profit to be centralized.
+```bash
+node {jsFile} --focus=wmatic --method=sendto
+```
+In .env in {root}
+```bash
+WALLET_ADDRESS=
+# Exact amount that will be the baseline of trader to prevent draining of wallet; (USDC Currency)
+# Ex: 200
+BASE_AMOUNT=
+```

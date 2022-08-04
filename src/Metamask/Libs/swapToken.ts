@@ -137,17 +137,17 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
         }
 
         // if have confirmation
-        let isButtonDangerContinue: boolean = await page!.evaluate((options) => {
-            const C = options['config'];
-            return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
-        }, {'config': C});
+        // let isButtonDangerContinue: boolean = await page!.evaluate((options) => {
+        //     const C = options['config'];
+        //     return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
+        // }, {'config': C});
 
-        if (isButtonDangerContinue == true) {
-            console.log("button continue found.");
-            await page!.click(C.elements.swap_token.button_swap_continue)
-            await page!.waitForTimeout(2000);
-        }
-
+        // if (isButtonDangerContinue == true) {
+        //     console.log("button continue found.");
+        //     await page!.click(C.elements.swap_token.button_swap_continue)
+        //     await page!.waitForTimeout(2000);
+        // }
+        await page!.waitForTimeout(3000);
         await page!.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
         const [buttonSwapReview]: any = await page!.$x(C.elements.swap_token.button_swap_review_xpath);
         await buttonSwapReview.click();
@@ -206,6 +206,9 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
 
         return true;
     } catch (error) {
+        console.log(error);
+        await page!.waitForTimeout(99999);
+
         logger.write({content: "Swapping token: failed"});
         logger.screenshot(page!);
         logger.write({content: "Redirecting to home..."});

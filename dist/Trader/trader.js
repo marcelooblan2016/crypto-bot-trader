@@ -43,6 +43,7 @@ class Trader {
             try {
                 this.checkpoint();
                 logger_1.default.write({ content: "Analyzing market..." });
+                yield this.metaMaskWithBuild.goHome();
                 yield this.metaMaskWithBuild.clearPopups();
                 // check stable coin balancebalance
                 let tokenBalances = yield this.metaMaskWithBuild.getBalances();
@@ -113,6 +114,7 @@ class Trader {
      * @return boolean
      */
     sellMode(params) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             let mappedMarketData = params.mappedMarketData;
             // get token with balance except matic
@@ -167,14 +169,26 @@ class Trader {
                 }
                 if (isSell === true) {
                     logger_1.default.write({ content: msg });
-                    yield this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice, msg);
-                    if (profit === true) {
-                        // check method type
-                        // if method == 'sendto'
-                        // get wallet address
-                        // amount = baseRoot - (balance + earnings)
-                        // token : usdc
-                        // this.metaMaskWithBuild.sendTo(######)
+                    let isSwapped = yield this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice, msg);
+                    if (profit === true && isSwapped === true) {
+                        // 1 minute delay - for slow update of balance
+                        yield this.metaMaskWithBuild.delay(60000);
+                        // --method=sendto -> sends the profit to a specific wallet address
+                        let method = this.metaMaskWithBuild.method;
+                        let walletAddress = lodash_1.default.get(this.metaMaskWithBuild, 'C.methods.send_to');
+                        let baseBalance = parseInt(lodash_1.default.get(this.metaMaskWithBuild, 'C.methods.base_amount'));
+                        /* Get Update balance */
+                        let balances = yield this.metaMaskWithBuild.getBalances();
+                        let tokenSlug = 'usdc';
+                        let tokenBalance = (_a = balances.filter(function (token) {
+                            return token.slug == tokenSlug;
+                        })[0]) !== null && _a !== void 0 ? _a : null;
+                        let usdcBalance = tokenBalance.balance;
+                        // amountToSend = balance - baseBalance
+                        let amountToSend = parseInt((usdcBalance - baseBalance).toString());
+                        if (method == 'sendto' && amountToSend >= 1) {
+                            yield this.metaMaskWithBuild.sendTo(walletAddress, 'usdc', amountToSend, 0);
+                        }
                     }
                 }
             }

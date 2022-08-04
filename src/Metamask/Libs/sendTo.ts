@@ -39,7 +39,8 @@ async function sendTo(params: sendToParameters): Promise<boolean> {
             'config': C
         });
         // type amount
-        await page!.waitForTimeout(3000);
+        await page!.waitForXPath(C.elements.send_to.button_next_xpath + "[not(@disabled)]");
+        await page!.waitForTimeout(5000);
         await page!.waitForSelector(C.elements.send_to.input_amount);
         await page!.type(C.elements.send_to.input_amount, (amount).toString(), {delay: 20});
         await page!.waitForTimeout(3000);

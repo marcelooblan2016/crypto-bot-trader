@@ -240,14 +240,34 @@ class Metamask {
      * @params walletAddress,
      * @return boolean
      */
-    sendTo(walletAddress, token, amount) {
+    sendTo(walletAddress, token, amount, delay = 0) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (delay > 0) {
+                yield this.page.waitForTimeout(delay);
+            }
             return yield lib_1.default.sendTo({
                 page: this.page,
                 C: constants_1.default,
                 walletAddress: walletAddress,
                 token: token,
                 amount: amount
+            });
+        });
+    }
+    goHome() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield lib_1.default.goHome({
+                page: this.page,
+                C: constants_1.default,
+            });
+        });
+    }
+    delay(delay) {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield lib_1.default.delay({
+                page: this.page,
+                C: constants_1.default,
+                delay: delay
             });
         });
     }

@@ -41,6 +41,7 @@ module.exports = {
     },
     methods: {
         send_to: config.WALLET_ADDRESS ?? null,
+        base_amount: config.BASE_AMOUNT ?? null,
     },
     metamask_version: 'v10.15.0',
     network_preferred: config.PREFERRED_NETWORK,
@@ -80,14 +81,6 @@ module.exports = {
             input_chain_id_xpath: "//h6[contains(.,'Chain ID')]/parent::node()/parent::node()/following-sibling::input",
             input_currency_symbol_xpath: "//h6[contains(.,'Currency Symbol')]/parent::node()/parent::node()/following-sibling::input",
             input_explorer_xpath: "//h6[contains(.,'Block Explorer URL')]/parent::node()/parent::node()/following-sibling::input",
-            /*
-            input_network_name: "#network-name",
-            input_rpc_url: "#rpc-url",
-            input_chain_id: "#chainId",
-            input_currency_symbol: "#network-ticker",
-            input_block_explorer_url: "#block-explorer-url",
-            div_close_button: ".settings-page__close-button",
-            */
             button_save_xpath: "//button[contains(text(), 'Save')]",
         },
         add_token: {

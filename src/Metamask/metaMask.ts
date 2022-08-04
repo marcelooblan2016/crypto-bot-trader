@@ -222,8 +222,11 @@ class Metamask implements MetamaskInterface {
      * @params walletAddress,
      * @return boolean
      */
-    async sendTo(walletAddress: string, token: string, amount: number): Promise<boolean>
+    async sendTo(walletAddress: string, token: string, amount: number, delay: number = 0): Promise<boolean>
     {
+        if (delay > 0) {
+            await this.page!.waitForTimeout(delay);
+        }
         return await metaMaskLibs.sendTo({
             page: this.page,
             C: C,
@@ -232,6 +235,24 @@ class Metamask implements MetamaskInterface {
             amount: amount
         });
     }
+    
+    async goHome(): Promise<void>
+    {
+       await metaMaskLibs.goHome({
+            page: this.page,
+            C: C,
+        });
+    }
+
+    async delay(delay: number): Promise<void>
+    {
+       await metaMaskLibs.delay({
+            page: this.page,
+            C: C,
+            delay: delay
+        });
+    }
+
 }
 
 export default new Metamask

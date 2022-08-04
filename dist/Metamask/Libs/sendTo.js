@@ -49,7 +49,8 @@ function sendTo(params) {
                 'config': C
             });
             // type amount
-            yield page.waitForTimeout(3000);
+            yield page.waitForXPath(C.elements.send_to.button_next_xpath + "[not(@disabled)]");
+            yield page.waitForTimeout(5000);
             yield page.waitForSelector(C.elements.send_to.input_amount);
             yield page.type(C.elements.send_to.input_amount, (amount).toString(), { delay: 20 });
             yield page.waitForTimeout(3000);

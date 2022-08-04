@@ -1,5 +1,5 @@
 "use strict";
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
 const envMigrations = require("./Records/Migrations/env");
 const config = (() => {
     let fs = require('fs');
@@ -35,10 +35,11 @@ module.exports = {
     },
     methods: {
         send_to: (_b = config.WALLET_ADDRESS) !== null && _b !== void 0 ? _b : null,
+        base_amount: (_c = config.BASE_AMOUNT) !== null && _c !== void 0 ? _c : null,
     },
     metamask_version: 'v10.15.0',
     network_preferred: config.PREFERRED_NETWORK,
-    headless_browser: Boolean(parseInt((_c = config.HEADLESS_BROWSER) !== null && _c !== void 0 ? _c : 0)),
+    headless_browser: Boolean(parseInt((_d = config.HEADLESS_BROWSER) !== null && _d !== void 0 ? _d : 0)),
     networks: [
         { "slug": "ropsten", "name": "Ropsten Test Network" },
         { "slug": "rinkeby", "name": "Rinkeby Test Network" },
@@ -54,8 +55,8 @@ module.exports = {
     ],
     trading: {
         options: {
-            sell_cutloss: parseInt((_d = config.SELL_CUTLOSS) !== null && _d !== void 0 ? _d : -10),
-            sell_profit: parseInt((_e = config.SELL_PROFIT) !== null && _e !== void 0 ? _e : 5)
+            sell_cutloss: parseInt((_e = config.SELL_CUTLOSS) !== null && _e !== void 0 ? _e : -10),
+            sell_profit: parseInt((_f = config.SELL_PROFIT) !== null && _f !== void 0 ? _f : 5)
         }
     },
     elements: {
@@ -74,14 +75,6 @@ module.exports = {
             input_chain_id_xpath: "//h6[contains(.,'Chain ID')]/parent::node()/parent::node()/following-sibling::input",
             input_currency_symbol_xpath: "//h6[contains(.,'Currency Symbol')]/parent::node()/parent::node()/following-sibling::input",
             input_explorer_xpath: "//h6[contains(.,'Block Explorer URL')]/parent::node()/parent::node()/following-sibling::input",
-            /*
-            input_network_name: "#network-name",
-            input_rpc_url: "#rpc-url",
-            input_chain_id: "#chainId",
-            input_currency_symbol: "#network-ticker",
-            input_block_explorer_url: "#block-explorer-url",
-            div_close_button: ".settings-page__close-button",
-            */
             button_save_xpath: "//button[contains(text(), 'Save')]",
         },
         add_token: {
@@ -126,8 +119,8 @@ module.exports = {
         }
     },
     mailer: {
-        host: (_f = config.MAIL_HOST) !== null && _f !== void 0 ? _f : null,
-        port: (_g = config.MAIL_PORT) !== null && _g !== void 0 ? _g : null,
+        host: (_g = config.MAIL_HOST) !== null && _g !== void 0 ? _g : null,
+        port: (_h = config.MAIL_PORT) !== null && _h !== void 0 ? _h : null,
         secure: (function () {
             var _a;
             let mailPort = (_a = config.MAIL_PORT) !== null && _a !== void 0 ? _a : null;
@@ -137,13 +130,13 @@ module.exports = {
             return false;
         })(),
         auth: {
-            user: (_h = config.MAIL_USERNAME) !== null && _h !== void 0 ? _h : null,
-            pass: (_j = config.MAIL_PASSWORD) !== null && _j !== void 0 ? _j : null
+            user: (_j = config.MAIL_USERNAME) !== null && _j !== void 0 ? _j : null,
+            pass: (_k = config.MAIL_PASSWORD) !== null && _k !== void 0 ? _k : null
         },
-        to: (_k = config.MAIL_TO) !== null && _k !== void 0 ? _k : null,
-        from: (_l = config.MAIL_FROM) !== null && _l !== void 0 ? _l : null
+        to: (_l = config.MAIL_TO) !== null && _l !== void 0 ? _l : null,
+        from: (_m = config.MAIL_FROM) !== null && _m !== void 0 ? _m : null
     },
     slack: {
-        webhook_url: (_m = config.WEBHOOK_URL) !== null && _m !== void 0 ? _m : null
+        webhook_url: (_o = config.WEBHOOK_URL) !== null && _o !== void 0 ? _o : null
     }
 };

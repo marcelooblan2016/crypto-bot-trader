@@ -13,7 +13,9 @@ declare global {
         swapToken(tokenFrom: string, tokenTo: string, amount: number | string, current_price: number, description: string | null): Promise<boolean>,
         getBalances(tokenSlug?: string): Promise<mappedTokenBalance[]|mappedTokenBalance|boolean>
         clearPopups(): Promise<boolean>,
-        sendTo(walletAddress: string, token: string, amount: number): Promise<boolean>
+        sendTo(walletAddress: string, token: string, amount: number, delay: number): Promise<boolean>
+        goHome(): Promise<void>
+        delay(delay: number): Promise<void>
     }
 
     interface MetamaskLibsParameters {
@@ -52,5 +54,16 @@ declare global {
         walletAddress: string,
         token: string,
         amount: number,
+    }
+
+    interface goHomeParameters {
+        page: Page | null,
+        C: any,
+    }
+
+    interface delayParameters {
+        page: Page | null,
+        C: any,
+        delay: number
     }
 }

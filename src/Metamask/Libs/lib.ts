@@ -4,6 +4,8 @@ import swapToken from "./swapToken";
 import switchNetwork from "./switchNetwork";
 import addNewNetwork from "./addNewNetwork";
 import sendTo from "./sendTo";
+import goHome from "./goHome";
+import delay from "./delay";
 
 export default{
     getBalances: getBalances,
@@ -11,5 +13,7 @@ export default{
     swapToken: swapToken,
     switchNetwork: switchNetwork,
     addNewNetwork: addNewNetwork,
-    sendTo: sendTo
+    sendTo: sendTo,
+    goHome: goHome,
+    delay: delay
 }
