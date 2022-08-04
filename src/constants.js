@@ -39,6 +39,10 @@ module.exports = {
     urls: {
         "prefix": "chrome-extension://",
     },
+    methods: {
+        send_to: config.WALLET_ADDRESS ?? null,
+        base_amount: config.BASE_AMOUNT ?? null,
+    },
     metamask_version: 'v10.15.0',
     network_preferred: config.PREFERRED_NETWORK,
     headless_browser: Boolean( parseInt(config.HEADLESS_BROWSER ?? 0) ),
@@ -77,14 +81,6 @@ module.exports = {
             input_chain_id_xpath: "//h6[contains(.,'Chain ID')]/parent::node()/parent::node()/following-sibling::input",
             input_currency_symbol_xpath: "//h6[contains(.,'Currency Symbol')]/parent::node()/parent::node()/following-sibling::input",
             input_explorer_xpath: "//h6[contains(.,'Block Explorer URL')]/parent::node()/parent::node()/following-sibling::input",
-            /*
-            input_network_name: "#network-name",
-            input_rpc_url: "#rpc-url",
-            input_chain_id: "#chainId",
-            input_currency_symbol: "#network-ticker",
-            input_block_explorer_url: "#block-explorer-url",
-            div_close_button: ".settings-page__close-button",
-            */
             button_save_xpath: "//button[contains(text(), 'Save')]",
         },
         add_token: {
@@ -113,6 +109,14 @@ module.exports = {
             div_transaction_complete_xpath: "//div[contains(text(), 'Transaction complete')]",
             button_close_xpath: "//button[contains(text(), 'Close')]",
             button_swap_cancel_xpath: "//div[contains(text(), 'Cancel')]",
+        },
+        send_to: {
+            input_wallet_address_xpath: "//*[@placeholder='Search, public address (0x), or ENS']",
+            div_dropdown_input_wrapper: ".send-v2__asset-dropdown__input-wrapper",
+            div_token_list_item: ".token-list-item .token-list-item__data",
+            input_amount: ".send-v2__form-field input.unit-input__input",
+            button_next_xpath: "//button[contains(text(),'Next')]",
+            button_confirm_xpath: "//button[contains(text(),'Confirm')]",
         },
         get_balances: {
             button_assets_xpath: "//button[contains(text(), 'Assets')]",

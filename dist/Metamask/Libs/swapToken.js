@@ -125,15 +125,16 @@ function swapToken(params) {
                 yield page.waitForTimeout(3000);
             }
             // if have confirmation
-            let isButtonDangerContinue = yield page.evaluate((options) => {
-                const C = options['config'];
-                return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
-            }, { 'config': C });
-            if (isButtonDangerContinue == true) {
-                console.log("button continue found.");
-                yield page.click(C.elements.swap_token.button_swap_continue);
-                yield page.waitForTimeout(2000);
-            }
+            // let isButtonDangerContinue: boolean = await page!.evaluate((options) => {
+            //     const C = options['config'];
+            //     return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
+            // }, {'config': C});
+            // if (isButtonDangerContinue == true) {
+            //     console.log("button continue found.");
+            //     await page!.click(C.elements.swap_token.button_swap_continue)
+            //     await page!.waitForTimeout(2000);
+            // }
+            yield page.waitForTimeout(3000);
             yield page.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
             const [buttonSwapReview] = yield page.$x(C.elements.swap_token.button_swap_review_xpath);
             yield buttonSwapReview.click();
@@ -187,6 +188,8 @@ function swapToken(params) {
             return true;
         }
         catch (error) {
+            console.log(error);
+            yield page.waitForTimeout(99999);
             logger_1.default.write({ content: "Swapping token: failed" });
             logger_1.default.screenshot(page);
             logger_1.default.write({ content: "Redirecting to home..." });
