@@ -53,7 +53,7 @@ class Trader {
         try {
             this.checkpoint();
             logger.write({content: "Analyzing market..."});
-
+            await this.metaMaskWithBuild.goHome();
             await this.metaMaskWithBuild.clearPopups();
             // check stable coin balancebalance
             let tokenBalances = await this.metaMaskWithBuild.getBalances();
@@ -162,7 +162,7 @@ class Trader {
             let earnings = (tokenBalance * currentPrice) * gainsDecimal;
             let isSell: boolean = false;
             let msg: string | null = null;
-
+            let profit = false;
             if (Number.isFinite(gainsPercentage) == true && Number.isFinite(sellProfit)) {
                 if (gainsPercentage >= sellProfit) {
                     // sell profit
@@ -174,6 +174,7 @@ class Trader {
                     ].join(" ");
     
                     isSell = true;
+                    profit = true;
                 }
                 else if (gainsPercentage <= sellCutLoss) {
                     // selling to prevent more loss
@@ -198,7 +199,28 @@ class Trader {
 
             if (isSell === true) {
                 logger.write({content: msg!});
-                await this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice, msg);
+                let isSwapped = await this.metaMaskWithBuild.swapToken(token.slug, this.stableCoin.slug, tokenBalance, currentPrice, msg);
+            
+                if (profit === true && isSwapped === true) {
+                    // 1 minute delay - for slow update of balance
+                    await this.metaMaskWithBuild.delay(60000);
+                    // --method=sendto -> sends the profit to a specific wallet address
+                    let method = this.metaMaskWithBuild.method;
+                    let walletAddress = _.get(this.metaMaskWithBuild, 'C.methods.send_to');
+                    let baseBalance = parseInt(_.get(this.metaMaskWithBuild, 'C.methods.base_amount'));
+                    /* Get Update balance */
+                    let balances: any = await this.metaMaskWithBuild.getBalances();
+                    let tokenSlug = 'usdc';
+                    let tokenBalance = balances.filter( function (token: any) {
+                        return token.slug == tokenSlug;
+                    })[0] ?? null;
+                    let usdcBalance = tokenBalance.balance;
+                    // amountToSend = balance - baseBalance
+                    let amountToSend = parseInt( (usdcBalance - baseBalance).toString() );
+                    if (method == 'sendto' && amountToSend >= 1) {
+                        await this.metaMaskWithBuild.sendTo(walletAddress, 'usdc', amountToSend, 0);
+                    }
+                }
             }
         }
         
