@@ -104,8 +104,6 @@ async function getBalanceAll(params: getBalanceParameters): Promise<boolean|mapp
             
             return (document.querySelector(".tab--active") as Element).textContent == 'Assets' ? false : true;
         }, C);
-
-        console.log("isClickButtonAssets: " + isClickButtonAssets);
         
         if (isClickButtonAssets == true) {
             await page!.waitForXPath(C.elements.get_balances.button_assets_xpath, { visible: true });

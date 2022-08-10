@@ -61,7 +61,13 @@ class Trader {
                 logger_1.default.write({ content: "Market Analyzed." });
                 return true;
             }
-            catch (error) { }
+            catch (error) {
+                let errorMessage = "An error occured.";
+                if (error instanceof Error) {
+                    errorMessage = [errorMessage, error.message].join(" ");
+                }
+                logger_1.default.write({ content: errorMessage });
+            }
             return false;
         });
     }
@@ -179,7 +185,7 @@ class Trader {
                         let baseBalance = parseInt(lodash_1.default.get(this.metaMaskWithBuild, 'C.methods.base_amount'));
                         /* Get Update balance */
                         let balances = yield this.metaMaskWithBuild.getBalances();
-                        let tokenSlug = 'usdc';
+                        let tokenSlug = this.stableCoin.slug;
                         let tokenBalance = (_a = balances.filter(function (token) {
                             return token.slug == tokenSlug;
                         })[0]) !== null && _a !== void 0 ? _a : null;
@@ -187,7 +193,7 @@ class Trader {
                         // amountToSend = balance - baseBalance
                         let amountToSend = parseInt((usdcBalance - baseBalance).toString());
                         if (method == 'sendto' && amountToSend >= 1) {
-                            yield this.metaMaskWithBuild.sendTo(walletAddress, 'usdc', amountToSend, 0);
+                            yield this.metaMaskWithBuild.sendTo(walletAddress, this.stableCoin.slug, amountToSend, 0);
                         }
                     }
                 }
