@@ -234,10 +234,17 @@ class Trader {
                     }
                 }
                 if (buyTokens != null) {
+                    let stableBalance = Number(stableCoinWithBalance.balance);
                     // buy / swap
-                    let msg = "Buy/Swap: " + JSON.stringify(buyTokens);
+                    let swapTokenMsg = [
+                        `Buy/Swap Details: ${this.stableCoin.slug}`,
+                        `Token: ${buyTokens.slug}`,
+                        `Balance: ${stableBalance}`,
+                        `Current Price: ${buyTokens.current_price}`
+                    ].join(" ");
+                    let msg = [swapTokenMsg, `Buy/Swap: ` + JSON.stringify(buyTokens)].join("\r\n");
                     logger_1.default.write({ content: msg });
-                    yield this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, Number(stableCoinWithBalance.balance), buyTokens.current_price, msg);
+                    yield this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, stableBalance, buyTokens.current_price, msg);
                 }
             }
             return true;
