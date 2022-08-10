@@ -99,7 +99,6 @@ function getBalanceAll(params) {
             let isClickButtonAssets = yield page.evaluate(function (C) {
                 return document.querySelector(".tab--active").textContent == 'Assets' ? false : true;
             }, C);
-            console.log("isClickButtonAssets: " + isClickButtonAssets);
             if (isClickButtonAssets == true) {
                 yield page.waitForXPath(C.elements.get_balances.button_assets_xpath, { visible: true });
                 const [buttonAssets] = yield page.$x(C.elements.get_balances.button_assets_xpath);

@@ -75,7 +75,13 @@ class Trader {
             logger.write({content: "Market Analyzed."});
 
             return true;
-        } catch (error) {}
+        } catch (error) {
+            let errorMessage = "An error occured.";
+            if (error instanceof Error) {
+              errorMessage = [errorMessage, error.message].join(" ");
+            }
+            logger.write({content: errorMessage});
+        }
 
         return false;
     }
@@ -210,7 +216,7 @@ class Trader {
                     let baseBalance = parseInt(_.get(this.metaMaskWithBuild, 'C.methods.base_amount'));
                     /* Get Update balance */
                     let balances: any = await this.metaMaskWithBuild.getBalances();
-                    let tokenSlug = 'usdc';
+                    let tokenSlug = this.stableCoin.slug;
                     let tokenBalance = balances.filter( function (token: any) {
                         return token.slug == tokenSlug;
                     })[0] ?? null;
@@ -218,7 +224,7 @@ class Trader {
                     // amountToSend = balance - baseBalance
                     let amountToSend = parseInt( (usdcBalance - baseBalance).toString() );
                     if (method == 'sendto' && amountToSend >= 1) {
-                        await this.metaMaskWithBuild.sendTo(walletAddress, 'usdc', amountToSend, 0);
+                        await this.metaMaskWithBuild.sendTo(walletAddress, this.stableCoin.slug, amountToSend, 0);
                     }
                 }
             }
@@ -265,10 +271,18 @@ class Trader {
             }
 
             if (buyTokens != null) {
+                let stableBalance = Number(stableCoinWithBalance.balance);
                 // buy / swap
-                let msg = "Buy/Swap: " + JSON.stringify(buyTokens);
+                let swapTokenMsg = [
+                    `Buy/Swap Details: ${this.stableCoin.slug}`,
+                    `Token: ${buyTokens.slug}`,
+                    `Balance: ${stableBalance}`,
+                    `Current Price: ${buyTokens.current_price}`
+                ].join(" ");
+
+                let msg = [swapTokenMsg, `Buy/Swap: ` + JSON.stringify(buyTokens)].join("\r\n");
                 logger.write({content: msg});
-                await this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, Number(stableCoinWithBalance.balance), buyTokens.current_price, msg);
+                await this.metaMaskWithBuild.swapToken(this.stableCoin.slug, buyTokens.slug, stableBalance, buyTokens.current_price, msg);
             }
         }
         
