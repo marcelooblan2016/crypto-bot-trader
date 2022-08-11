@@ -47,7 +47,7 @@ module.exports = {
             "slug": "matic-mainnet",
             "name": "Matic Mainnet",
             "new": true,
-            "rpc_url": "https://polygon-rpc.com",
+            "rpc_url": "https://poly-rpc.gateway.pokt.network",
             "chain_id": 137,
             "currency_symbol": "MATIC",
             "block_explorer_url": "https://polygonscan.com/"
@@ -60,6 +60,9 @@ module.exports = {
         }
     },
     elements: {
+        home: {
+            logo: ".app-header__logo-container"
+        },
         modals: {
             home: ".pover-header__button",
             home_popover: ".popover-header__button",
@@ -98,6 +101,8 @@ module.exports = {
             label_dropdown_option_pair_to: ".dropdown-input-pair.dropdown-input-pair__to .searchable-item-list__labels .searchable-item-list__primary-label",
             button_swap_continue: ".actionable-message__action.actionable-message__action--primary",
             button_swap_review_xpath: "//button[contains(text(), 'Review Swap')]",
+            div_warning: ".view-quote__price-difference-warning-contents-actions",
+            button_swap_warning_xpath: "//button[contains(text(), 'I understand')]",
             button_swap_overview_xpath: "//button[contains(.,'Swap')]",
             button_swap_xpath: "//button[contains(text(),'Swap')]",
             div_transaction_complete_xpath: "//div[contains(text(), 'Transaction complete')]",

@@ -110,8 +110,6 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
                 'tokenTo': tokenTo,
                 'config': C
             });
-
-            await page!.waitForTimeout(1000);
         } catch (subError) {
             console.log("token not found, attempting it by contract");
             //tokenToContract
@@ -135,45 +133,50 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
 
             await page!.waitForTimeout(3000);
         }
-
-        // if have confirmation
-        // let isButtonDangerContinue: boolean = await page!.evaluate((options) => {
-        //     const C = options['config'];
-        //     return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
-        // }, {'config': C});
-
-        // if (isButtonDangerContinue == true) {
-        //     console.log("button continue found.");
-        //     await page!.click(C.elements.swap_token.button_swap_continue)
-        //     await page!.waitForTimeout(2000);
-        // }
         await page!.waitForTimeout(3000);
+        // if have confirmation
+        let isButtonDangerContinue: boolean = await page!.evaluate((options) => {
+            const C = options['config'];
+            return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
+        }, {'config': C});
+
+        if (isButtonDangerContinue == true) {
+            console.log("button continue found.");
+            await page!.click(C.elements.swap_token.button_swap_continue)
+            await page!.waitForTimeout(2000);
+        }
+        // swap review
+        await page!.waitForTimeout(2000);
         await page!.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
         const [buttonSwapReview]: any = await page!.$x(C.elements.swap_token.button_swap_review_xpath);
         await buttonSwapReview.click();
-        await page!.waitForNavigation();
-        
+
         // if have confirmation
         let isActionableMessageButton: boolean = await page!.evaluate((options) => {
             const C = options['config'];
             return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
         }, {'config': C});
-
         if (isActionableMessageButton == true) {
             console.log("actionable message found.");
             await page!.click(C.elements.swap_token.button_swap_continue)
             await page!.waitForTimeout(2000);
         }
+        // attempt to click warning if presented
+        try {
+            await page!.waitForXPath(C.elements.swap_token.button_swap_warning_xpath + "[not(@disabled)]", { visible: true, timeout: 10000 });
+            const [buttonIUnderstandWarning]: any = await page!.$x(C.elements.swap_token.button_swap_warning_xpath);
+            await buttonIUnderstandWarning.click();
+        } catch (e) {}
 
+        await page!.waitForTimeout(2000);
         await page!.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]", { visible: true });
         const [buttonSwap]: any = await page!.$x(C.elements.swap_token.button_swap_xpath);
         await buttonSwap.click();
         await page!.waitForNavigation();
-        await page!.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 60000 });
+        await page!.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 180000 });
         const [buttonClose]: any = await page!.$x(C.elements.swap_token.button_close_xpath);
         await buttonClose.click();
         await page!.waitForNavigation();
-
         // save as history amountAcquired, current_price, slug
         swapHistory.write({
             amount_acquired: amountAcquired,
