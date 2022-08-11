@@ -102,7 +102,6 @@ function swapToken(params) {
                     'tokenTo': tokenTo,
                     'config': C
                 });
-                yield page.waitForTimeout(1000);
             }
             catch (subError) {
                 console.log("token not found, attempting it by contract");
@@ -124,21 +123,24 @@ function swapToken(params) {
                 });
                 yield page.waitForTimeout(3000);
             }
-            // if have confirmation
-            // let isButtonDangerContinue: boolean = await page!.evaluate((options) => {
-            //     const C = options['config'];
-            //     return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
-            // }, {'config': C});
-            // if (isButtonDangerContinue == true) {
-            //     console.log("button continue found.");
-            //     await page!.click(C.elements.swap_token.button_swap_continue)
-            //     await page!.waitForTimeout(2000);
-            // }
             yield page.waitForTimeout(3000);
+            // if have confirmation
+            let isButtonDangerContinue = yield page.evaluate((options) => {
+                const C = options['config'];
+                return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
+            }, { 'config': C });
+            if (isButtonDangerContinue == true) {
+                console.log("button continue found.");
+                yield page.click(C.elements.swap_token.button_swap_continue);
+                yield page.waitForTimeout(2000);
+            }
+            console.log("buttonSwap review");
+            yield page.waitForTimeout(2000);
             yield page.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
             const [buttonSwapReview] = yield page.$x(C.elements.swap_token.button_swap_review_xpath);
             yield buttonSwapReview.click();
-            yield page.waitForNavigation();
+            // await page!.waitForNavigation();
+            console.log("check confirmation");
             // if have confirmation
             let isActionableMessageButton = yield page.evaluate((options) => {
                 const C = options['config'];
@@ -149,11 +151,25 @@ function swapToken(params) {
                 yield page.click(C.elements.swap_token.button_swap_continue);
                 yield page.waitForTimeout(2000);
             }
+            console.log("Check warning");
+            // check price warning ( Price impact is the difference ... )
+            let isWarningActionMessage = yield page.evaluate((options) => {
+                const C = options['config'];
+                return document.querySelectorAll(C.elements.swap_token.div_warning).length >= 1 ? true : false;
+            }, { 'config': C });
+            console.log(isWarningActionMessage);
+            if (isWarningActionMessage == true) {
+                yield page.waitForXPath(C.elements.swap_token.button_swap_warning_xpath + "[not(@disabled)]", { visible: true, timeout: 10000 });
+                const [buttonWarning] = yield page.$x(C.elements.swap_token.button_swap_warning_xpath);
+                yield buttonWarning.click();
+            }
+            console.log("swap");
+            yield page.waitForTimeout(2000);
             yield page.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]", { visible: true });
             const [buttonSwap] = yield page.$x(C.elements.swap_token.button_swap_xpath);
             yield buttonSwap.click();
             yield page.waitForNavigation();
-            yield page.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 60000 });
+            yield page.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 180000 });
             const [buttonClose] = yield page.$x(C.elements.swap_token.button_close_xpath);
             yield buttonClose.click();
             yield page.waitForNavigation();

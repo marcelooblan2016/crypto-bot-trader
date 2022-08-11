@@ -45,8 +45,11 @@ function addNewNetwork(params) {
             const [inputCurrencySymbolXpath] = yield page.$x(C.elements.add_new_network.input_currency_symbol_xpath);
             yield inputCurrencySymbolXpath.type(String(params.symbol));
             // Type Explorer
-            const [inputExplorerXpath] = yield page.$x(C.elements.add_new_network.input_explorer_xpath);
-            yield inputExplorerXpath.type(String(params.explorer));
+            /*
+             * Disabled
+            const [inputExplorerXpath] = await page!.$x(C.elements.add_new_network.input_explorer_xpath);
+            await inputExplorerXpath.type(String(params.explorer));
+             **/
             yield page.waitForTimeout(2000);
             yield page.waitForXPath(C.elements.add_new_network.button_save_xpath + "[not(@disabled)]");
             const [buttonSaveXpath] = yield page.$x(C.elements.add_new_network.button_save_xpath);

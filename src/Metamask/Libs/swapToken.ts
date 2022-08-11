@@ -110,8 +110,6 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
                 'tokenTo': tokenTo,
                 'config': C
             });
-
-            await page!.waitForTimeout(1000);
         } catch (subError) {
             console.log("token not found, attempting it by contract");
             //tokenToContract
@@ -135,41 +133,54 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
 
             await page!.waitForTimeout(3000);
         }
-
-        // if have confirmation
-        // let isButtonDangerContinue: boolean = await page!.evaluate((options) => {
-        //     const C = options['config'];
-        //     return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
-        // }, {'config': C});
-
-        // if (isButtonDangerContinue == true) {
-        //     console.log("button continue found.");
-        //     await page!.click(C.elements.swap_token.button_swap_continue)
-        //     await page!.waitForTimeout(2000);
-        // }
         await page!.waitForTimeout(3000);
+        // if have confirmation
+        let isButtonDangerContinue: boolean = await page!.evaluate((options) => {
+            const C = options['config'];
+            return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
+        }, {'config': C});
+
+        if (isButtonDangerContinue == true) {
+            console.log("button continue found.");
+            await page!.click(C.elements.swap_token.button_swap_continue)
+            await page!.waitForTimeout(2000);
+        }
+console.log("buttonSwap review");
+        await page!.waitForTimeout(2000);
         await page!.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
         const [buttonSwapReview]: any = await page!.$x(C.elements.swap_token.button_swap_review_xpath);
         await buttonSwapReview.click();
-        await page!.waitForNavigation();
-        
+        // await page!.waitForNavigation();
+console.log("check confirmation");
         // if have confirmation
         let isActionableMessageButton: boolean = await page!.evaluate((options) => {
             const C = options['config'];
             return document.querySelectorAll(C.elements.swap_token.button_swap_continue).length >= 1 ? true : false;
         }, {'config': C});
-
         if (isActionableMessageButton == true) {
             console.log("actionable message found.");
             await page!.click(C.elements.swap_token.button_swap_continue)
             await page!.waitForTimeout(2000);
         }
-
+console.log("Check warning");
+        // check price warning ( Price impact is the difference ... )
+        let isWarningActionMessage: boolean = await page!.evaluate((options) => {
+            const C = options['config'];
+                return document.querySelectorAll(C.elements.swap_token.div_warning).length >= 1 ? true : false;
+            }, {'config': C});
+        console.log(isWarningActionMessage);
+        if (isWarningActionMessage == true) {
+            await page!.waitForXPath(C.elements.swap_token.button_swap_warning_xpath + "[not(@disabled)]", { visible: true, timeout: 10000 });
+            const [buttonWarning]: any = await page!.$x(C.elements.swap_token.button_swap_warning_xpath);
+            await buttonWarning.click();
+        }
+console.log("swap");
+        await page!.waitForTimeout(2000);
         await page!.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]", { visible: true });
         const [buttonSwap]: any = await page!.$x(C.elements.swap_token.button_swap_xpath);
         await buttonSwap.click();
         await page!.waitForNavigation();
-        await page!.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 60000 });
+        await page!.waitForXPath(C.elements.swap_token.div_transaction_complete_xpath, { visible: true, timeout: 180000 });
         const [buttonClose]: any = await page!.$x(C.elements.swap_token.button_close_xpath);
         await buttonClose.click();
         await page!.waitForNavigation();
