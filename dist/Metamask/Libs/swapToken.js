@@ -134,13 +134,11 @@ function swapToken(params) {
                 yield page.click(C.elements.swap_token.button_swap_continue);
                 yield page.waitForTimeout(2000);
             }
-            console.log("buttonSwap review");
+            // swap review
             yield page.waitForTimeout(2000);
             yield page.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
             const [buttonSwapReview] = yield page.$x(C.elements.swap_token.button_swap_review_xpath);
             yield buttonSwapReview.click();
-            // await page!.waitForNavigation();
-            console.log("check confirmation");
             // if have confirmation
             let isActionableMessageButton = yield page.evaluate((options) => {
                 const C = options['config'];
@@ -151,19 +149,13 @@ function swapToken(params) {
                 yield page.click(C.elements.swap_token.button_swap_continue);
                 yield page.waitForTimeout(2000);
             }
-            console.log("Check warning");
-            // check price warning ( Price impact is the difference ... )
-            let isWarningActionMessage = yield page.evaluate((options) => {
-                const C = options['config'];
-                return document.querySelectorAll(C.elements.swap_token.div_warning).length >= 1 ? true : false;
-            }, { 'config': C });
-            console.log(isWarningActionMessage);
-            if (isWarningActionMessage == true) {
+            // attempt to click warning if presented
+            try {
                 yield page.waitForXPath(C.elements.swap_token.button_swap_warning_xpath + "[not(@disabled)]", { visible: true, timeout: 10000 });
-                const [buttonWarning] = yield page.$x(C.elements.swap_token.button_swap_warning_xpath);
-                yield buttonWarning.click();
+                const [buttonIUnderstandWarning] = yield page.$x(C.elements.swap_token.button_swap_warning_xpath);
+                yield buttonIUnderstandWarning.click();
             }
-            console.log("swap");
+            catch (e) { }
             yield page.waitForTimeout(2000);
             yield page.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]", { visible: true });
             const [buttonSwap] = yield page.$x(C.elements.swap_token.button_swap_xpath);

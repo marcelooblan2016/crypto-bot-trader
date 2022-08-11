@@ -145,13 +145,12 @@ async function swapToken(params: SwapTokenParameters): Promise<boolean> {
             await page!.click(C.elements.swap_token.button_swap_continue)
             await page!.waitForTimeout(2000);
         }
-console.log("buttonSwap review");
+        // swap review
         await page!.waitForTimeout(2000);
         await page!.waitForXPath(C.elements.swap_token.button_swap_review_xpath + "[not(@disabled)]", { visible: true });
         const [buttonSwapReview]: any = await page!.$x(C.elements.swap_token.button_swap_review_xpath);
         await buttonSwapReview.click();
-        // await page!.waitForNavigation();
-console.log("check confirmation");
+
         // if have confirmation
         let isActionableMessageButton: boolean = await page!.evaluate((options) => {
             const C = options['config'];
@@ -162,19 +161,13 @@ console.log("check confirmation");
             await page!.click(C.elements.swap_token.button_swap_continue)
             await page!.waitForTimeout(2000);
         }
-console.log("Check warning");
-        // check price warning ( Price impact is the difference ... )
-        let isWarningActionMessage: boolean = await page!.evaluate((options) => {
-            const C = options['config'];
-                return document.querySelectorAll(C.elements.swap_token.div_warning).length >= 1 ? true : false;
-            }, {'config': C});
-        console.log(isWarningActionMessage);
-        if (isWarningActionMessage == true) {
+        // attempt to click warning if presented
+        try {
             await page!.waitForXPath(C.elements.swap_token.button_swap_warning_xpath + "[not(@disabled)]", { visible: true, timeout: 10000 });
-            const [buttonWarning]: any = await page!.$x(C.elements.swap_token.button_swap_warning_xpath);
-            await buttonWarning.click();
-        }
-console.log("swap");
+            const [buttonIUnderstandWarning]: any = await page!.$x(C.elements.swap_token.button_swap_warning_xpath);
+            await buttonIUnderstandWarning.click();
+        } catch (e) {}
+
         await page!.waitForTimeout(2000);
         await page!.waitForXPath(C.elements.swap_token.button_swap_xpath + "[not(@disabled)]", { visible: true });
         const [buttonSwap]: any = await page!.$x(C.elements.swap_token.button_swap_xpath);
@@ -184,7 +177,6 @@ console.log("swap");
         const [buttonClose]: any = await page!.$x(C.elements.swap_token.button_close_xpath);
         await buttonClose.click();
         await page!.waitForNavigation();
-
         // save as history amountAcquired, current_price, slug
         swapHistory.write({
             amount_acquired: amountAcquired,
