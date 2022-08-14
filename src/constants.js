@@ -5,13 +5,10 @@ const config = (() => {
     let fs = require('fs');
     try {
         let envFilePath = './.env';
-        console.log("Env File: Loading...");
 
         if (!fs.existsSync(envFilePath)) {
             fs.appendFileSync(envFilePath, envMigrations.default.join("\n"));
         }
-
-        console.log("Env File: Loaded.");
 
         let rawData = fs.readFileSync(envFilePath, 'utf8');
         let envValues = {};
@@ -53,7 +50,7 @@ module.exports = {
             "slug": "matic-mainnet",
             "name": "Matic Mainnet",
             "new": true,
-            "rpc_url": "https://poly-rpc.gateway.pokt.network",
+            "rpc_url": config.NETWORK_RPC_URL ?? "https://polygon-rpc.com",
             "chain_id": 137,
             "currency_symbol": "MATIC",
             "block_explorer_url": "https://polygonscan.com/"
